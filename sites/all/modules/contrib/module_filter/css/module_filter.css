@@ -1,0 +1,5 @@
+/* $Id: module_filter.css,v 1.1.2.1 2010/04/08 17:09:38 greenskin Exp $ */
+
+#module-filter-show-wrapper .form-item {
+  display: inline;
+}
