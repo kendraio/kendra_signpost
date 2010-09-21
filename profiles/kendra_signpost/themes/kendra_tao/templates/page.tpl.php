@@ -9,13 +9,6 @@
 
   <?php print $skipnav ?>
 
-  <?php if ($help || ($show_messages && $messages)): ?>
-    <div id='console'><div class='limiter clear-block'>
-      <?php print $help; ?>
-      <?php if ($show_messages && $messages): print $messages; endif; ?>
-    </div></div>
-  <?php endif; ?>
-
   <?php if ($header): ?>
     <div id='header'><div class='limiter clear-block'>
       <?php print $header; ?>
@@ -35,6 +28,13 @@
       <?php print theme('links', $secondary_links, array('class' => 'links secondary-links')) ?>
     <?php endif; ?>
   </div></div>
+
+  <?php if ($help || ($show_messages && $messages)): ?>
+    <div id='console'><div class='limiter clear-block'>
+      <?php print $help; ?>
+      <?php if ($show_messages && $messages): print $messages; endif; ?>
+    </div></div>
+  <?php endif; ?>
 
   <div id='page'><div class='limiter clear-block'>
 
