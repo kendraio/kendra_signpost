@@ -36,6 +36,7 @@ function system_form_install_select_profile_form_alter(&$form, $form_state) {
 function _kendra_signpost_features() {
   return array(
     'kendra_upload',
+    'kendra_rdf',
   );
 }
 
