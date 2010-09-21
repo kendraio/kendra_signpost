@@ -71,7 +71,14 @@ input.form-submit:hover {
 #content ul { list-style: circle; margin-left: 10px; }
 #content ol { list-style: decimal; margin-left: 10px; }
 
-
+table.sparql th {
+  background: #666;
+  color: #fff;
+}
+table.sparql td {
+  border:1px solid #666;
+  padding: 2px;
+}
 
 
 

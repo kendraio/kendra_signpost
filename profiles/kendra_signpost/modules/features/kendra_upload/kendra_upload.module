@@ -6,9 +6,10 @@ function kendra_upload_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
   switch ($op) {
     case 'insert':
     case 'update':
-      /* Process the CSV file and insert into RDF store
-      */
-      drupal_set_message("Uploaded: ". print_r($node->field_upload_file, TRUE));
+      job_queue_add('_kendra_upload_process_csv', 
+        "Process the uploaded file for node {$node->nid}",
+        array($node->nid), 
+        '', TRUE);
       break;
     case 'view':
       /* Theme the upload for viewing, example:
@@ -17,8 +18,47 @@ function kendra_upload_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
         '#weight' => 10,
       );
       */
+      $graph = url("node/{$node->nid}", array('absolute' => TRUE));
+      $result = kendra_rdf_send("SELECT * FROM <{$graph}> WHERE {?s ?p ?o}");
+      $node->content['sparql_result'] = array(
+        '#value' => $result->data,
+      );
       break;
   }
 }
     
+function _kendra_upload_process_csv($nid) {
+  $node = node_load($nid);
+  if (($handle = fopen($node->field_upload_file[0]['filepath'], 'r')) !== FALSE) {
+    $headers = fgetcsv($handle, 1000, ',', '"');
+    $row = 1;
+    $graph = url("node/{$nid}", array('absolute' => TRUE));
+    $query = "";
+    while (($data = fgetcsv($handle, 1000, ',', '"')) !== FALSE) {
+      foreach ($data as $key => $value) {
+        if (!empty($value)) {
+          $row_uri = $graph ."/rows#{$row}";
+          $relation = $graph .'/relation#'. urlencode($headers[$key]);
+          // TODO: Encode value?
+          $query .= "\n<{$row_uri}> <{$relation}> <". urlencode($value) ."> .\n";
+        }
+      }
+      $row++;
+      // Only import the first 3 rows during debugging
+      if ($row > 3) break;
+    }
+    if ($query != "") {
+      $response = kendra_rdf_send("DROP GRAPH <{$graph}> ");
+      $response = kendra_rdf_send("CREATE GRAPH <{$graph}> ");
+      $query = "INSERT IN GRAPH <{$graph}> \n{ {$query} }";
+      $response = kendra_rdf_send($query);
+      //drupal_set_message(print_r($response, TRUE));
+      //drupal_set_message(print_r($query, TRUE));
+    }
+  }
+  fclose($handle);
+}
+
+
+
 

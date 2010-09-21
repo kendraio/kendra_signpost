@@ -17,6 +17,9 @@ function kendra_signpost_profile_modules() {
     // cck modules
     'content', 'nodereference', 'text', 'optionwidgets',
     'filefield', 'transliteration',
+    
+    // utility modules
+    'job_queue',
   );
 }
 

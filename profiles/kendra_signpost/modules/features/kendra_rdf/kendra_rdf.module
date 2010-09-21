@@ -50,7 +50,27 @@ function _kendra_rdf_settings() {
     '#default_value' => variable_get('kendra_rdf_sparql_endpoint', 'http://kendra.org.uk:8890/sparql'),
     '#description' => t('Enter the URL for accessing the SPARQL endpoint for RDF operations.'),
   );
+  $form['kendra_rdf_database_username'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Database username'),
+    '#default_value' => variable_get('kendra_rdf_database_username', 'dba'),
+    '#description' => t('The username used in authenticated connections to the Virtuoso database.'),
+  );
+  $form['kendra_rdf_database_password'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Database password'),
+    '#default_value' => variable_get('kendra_rdf_database_password', 'dba'),
+    '#description' => t('The password for connections to the Virtuoso database.'),
+  );
   return system_settings_form($form);
+}
+
+function kendra_rdf_send($query) {
+  //drupal_set_message(variable_get('kendra_rdf_sparql_endpoint', 'http://kendra.org.uk:8890/sparql') 
+  //  ."?default-graph-uri=&query=". urlencode($query) ."&format=text/html&debug=on&timeout=");
+  return drupal_http_request(
+    variable_get('kendra_rdf_sparql_endpoint', 'http://kendra.org.uk:8890/sparql') 
+    ."?default-graph-uri=&query=". urlencode($query) ."&format=text/html&debug=on&timeout=");
 }
 
 function _kendra_rdf_test() {
