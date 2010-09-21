@@ -1,37 +1,40 @@
 <?php
 
 /**
- * Implementation of hook_content_default_fields().
+ * Implementation of hook_ctools_plugin_api().
  */
-function kendra_upload_content_default_fields() {
-  module_load_include('inc', 'kendra_upload', 'kendra_upload.defaults');
-  $args = func_get_args();
-  return call_user_func_array('_kendra_upload_content_default_fields', $args);
+function kendra_upload_ctools_plugin_api() {
+  list($module, $api) = func_get_args();
+  if ($module == "strongarm" && $api == "strongarm") {
+    return array("version" => 1);
+  }
 }
 
 /**
  * Implementation of hook_node_info().
  */
 function kendra_upload_node_info() {
-  module_load_include('inc', 'kendra_upload', 'kendra_upload.features.node');
-  $args = func_get_args();
-  return call_user_func_array('_kendra_upload_node_info', $args);
+  $items = array(
+    'kendra_import' => array(
+      'name' => t('Kendra Import'),
+      'module' => 'features',
+      'description' => '',
+      'has_title' => '1',
+      'title_label' => t('Title'),
+      'has_body' => '0',
+      'body_label' => '',
+      'min_word_count' => '0',
+      'help' => '',
+    ),
+  );
+  return $items;
 }
 
 /**
- * Implementation of hook_user_default_permissions().
+ * Implementation of hook_views_api().
  */
-function kendra_upload_user_default_permissions() {
-  module_load_include('inc', 'kendra_upload', 'kendra_upload.defaults');
-  $args = func_get_args();
-  return call_user_func_array('_kendra_upload_user_default_permissions', $args);
-}
-
-/**
- * Implementation of hook_views_default_views().
- */
-function kendra_upload_views_default_views() {
-  module_load_include('inc', 'kendra_upload', 'kendra_upload.features.views');
-  $args = func_get_args();
-  return call_user_func_array('_kendra_upload_views_default_views', $args);
+function kendra_upload_views_api() {
+  return array(
+    'api' => '2',
+  );
 }
