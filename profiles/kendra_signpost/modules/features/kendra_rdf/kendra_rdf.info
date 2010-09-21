@@ -1,0 +1,5 @@
+name = Kendra RDF
+description = Test module for Kendra RDF store functionality
+core = 6.x
+package = Kendra
+

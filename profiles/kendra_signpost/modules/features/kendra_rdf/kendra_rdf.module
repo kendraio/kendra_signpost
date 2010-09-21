@@ -1,0 +1,60 @@
+<?php
+
+function kendra_rdf_init() {
+  include_once("sites/all/libraries/arc/ARC2.php");
+}
+
+function kendra_rdf_perm() {
+  return array('administer kendra rdf');
+}
+
+function kendra_rdf_menu() {
+  return array(
+    'admin/settings/kendra-rdf' => array(
+      'title' => 'Kendra RDF Settings',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('_kendra_rdf_settings'),
+      'access arguments' => array('administer kendra rdf'),
+    ),
+    'sparql-test' => array(
+      'title' => 'SPARQL Test',
+      'page callback' => '_kendra_rdf_test',
+      'access arguments' => array('access content'),
+    ),
+  );
+}
+
+function _kendra_rdf_settings() {
+  $form = array();
+  $form['kendra_rdf_sparql_endpoint'] = array(
+    '#type' => 'textfield',
+    '#title' => t('SPARQL Endpoint'),
+    '#default_value' => variable_get('kendra_rdf_sparql_endpoint', 'http://kendra.org.uk:8890/sparql'),
+    '#description' => t('Enter the URL for accessing the SPARQL endpoint for RDF operations.'),
+  );
+  return system_settings_form($form);
+}
+
+function _kendra_rdf_test() {
+  /* configuration */ 
+  $config = array(
+    /* remote endpoint */
+    'remote_store_endpoint' => variable_get('kendra_rdf_sparql_endpoint', 'http://kendra.org.uk:8890/sparql'),
+  );
+
+  /* instantiation */
+  $store = ARC2::getRemoteStore($config);
+  
+  /* A random test query, taken from the Virtuoso documentation */
+  $q = 'SELECT * FROM <http://BookStore.com> WHERE {?s ?p ?o}';
+  $rows = $store->query($q, 'rows');
+
+  print '<h2>Store:</h2>';
+  krumo($store);
+  print '<h2>Query:</h2>';
+  krumo($q);
+  print '<h2>Rows:</h2>';
+  krumo($rows);
+
+ 
+}
