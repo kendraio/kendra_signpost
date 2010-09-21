@@ -1,3 +1,24 @@
 <?php
 
 include_once('kendra_upload.features.inc');
+
+function kendra_upload_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
+  switch ($op) {
+    case 'insert':
+    case 'update':
+      /* Process the CSV file and insert into RDF store
+      */
+      drupal_set_message("Uploaded: ". print_r($node->field_upload_file, TRUE));
+      break;
+    case 'view':
+      /* Theme the upload for viewing, example:
+      $node->content['my_additional_field'] = array(
+        '#value' => theme('mymodule_my_additional_field', $additional_field),
+        '#weight' => 10,
+      );
+      */
+      break;
+  }
+}
+    
+
