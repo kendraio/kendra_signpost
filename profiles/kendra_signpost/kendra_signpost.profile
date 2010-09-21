@@ -95,7 +95,38 @@ function _kendra_signpost_configure() {
   variable_set('admin_theme', 'rubik');
 }
 
+function _kendra_signpost_check() {
+  // Perform any final installation tasks
+  drupal_flush_all_caches();
+  variable_set('theme_default', 'kendra_tao');
 
+  // As a final step of the install process force a revert of the features
+  // to change settings that may have been altered by other steps
+  // of the install process:
+  $revert = array(
+    'kendra_upload' => array('user_permission', 'variable'),
+  );
+  features_revert($revert);
+}
+
+function kendra_signpost_form_alter(&$form, $form_state, $form_id) {
+  if ($form_id == 'install_configure') {
+    // Set default for site name field.
+    $form['site_information']['site_name']['#default_value'] = "Kendra Signpost Trial";
+    $form['admin_account']['account']['name']['#default_value'] = "admin";
+  }
+}
+
+// For when feature install has finished:
+function _kendra_signpost_features_finished($success, $results) {
+  variable_set('install_task', 'kendra-signpost-configure');
+}
+// For when configuration batch job has finished:
+function _kendra_signpost_configure_finished($success, $results) {
+  variable_set('kendra_signpost_install', 1);
+  // Get out of this batch and let the installer continue.
+  variable_set('install_task', 'profile-finished');
+}
 
 
 

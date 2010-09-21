@@ -1,0 +1,6 @@
+name = Kendra Signpost Theme
+description = Theme for the Kendra Signpost trial based on Tao
+base theme = tao
+core = 6.x
+
+
