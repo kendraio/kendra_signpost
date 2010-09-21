@@ -94,6 +94,7 @@ function kendra_signpost_profile_tasks(&$task, $url) {
 function _kendra_signpost_configure() {
   variable_set('site_footer', 'Powered by '. l('Kendra Signpost', 'http://www.kendra.org.uk', array('absolute' => TRUE)));
   variable_set('admin_theme', 'rubik');
+  variable_set('site_frontpage', 'kendra-front');
 }
 
 function _kendra_signpost_check() {

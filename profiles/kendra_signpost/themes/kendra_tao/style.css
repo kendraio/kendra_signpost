@@ -2,3 +2,19 @@
 #left { width: 200px; float: left; }
 #right { width: 200px; float: right; }
 
+.limiter { width: 950px; }
+
+.site-name a {
+  background: transparent url(images/logo.png) no-repeat;
+  display: block;
+  width: 222px;
+  height: 82px;
+  margin: 10px 0;
+  text-indent: -9999px;
+}
+
+#footer {
+  margin-top: 20px;
+  color: #666;
+  font-size: 0.8em;
+}

@@ -19,9 +19,27 @@ function kendra_rdf_menu() {
     'sparql-test' => array(
       'title' => 'SPARQL Test',
       'page callback' => '_kendra_rdf_test',
+      'access arguments' => array('administer kendra rdf'),
+    ),
+    'kendra-front' => array(
+      'title' => 'Kendra Signpost Trial',
+      'page callback' => '_kendra_rdf_frontpage',
       'access arguments' => array('access content'),
     ),
   );
+}
+
+
+function kendra_rdf_theme($existing, $type, $theme, $path) {
+  return array(
+    'kendra_signpost_frontpage' => array(
+      'template' => 'frontpage',
+    ),
+  );
+}
+
+function _kendra_rdf_frontpage() {
+  return theme('kendra_signpost_frontpage');
 }
 
 function _kendra_rdf_settings() {
