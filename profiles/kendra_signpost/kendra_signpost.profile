@@ -9,7 +9,7 @@ function kendra_signpost_profile_modules() {
     'views', 'views_ui',
     
     // features modules
-    'ctools', 'features', 'strongarm', 'diff', 
+    'ctools', 'features', 'strongarm', 'diff', 'fieldgroup',
     
     // admin modules
     'adminrole', 'admin_menu', 'vertical_tabs',
