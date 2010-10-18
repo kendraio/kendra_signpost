@@ -1,3 +1,21 @@
 <?php
 
 include_once('kendra_cat.features.inc');
+
+function kendra_cat_add_node($headers, $data) {
+  // drupal_set_message(print_r($data, TRUE));
+  global $user;
+  $node = new stdClass();
+  $node->uid = $user->uid;
+  $node->type = 'kendra_cat';
+  $node->title                           = $data[2];
+  $node->field_cat_artist[0]['value']    = $data[3];
+  $node->field_cat_label[0]['value']     = $data[0];
+  $node->field_cat_no[0]['value']        = $data[1];
+  $node->field_cat_date[0]['value']      = $data[6];
+  $node->field_cat_album[0]['value']     = $data[5];
+  $node->field_cat_publisher[0]['value'] = $data[8];
+  $node->field_cat_isrc[0]['value']      = $data[7];
+  node_save($node);  
+}
+

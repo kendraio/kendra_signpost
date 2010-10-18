@@ -43,6 +43,10 @@ function _kendra_upload_process_csv($nid) {
           $query .= "\n<{$row_uri}> <{$relation}> <". urlencode($value) ."> .\n";
         }
       }
+      
+      // creation of cat nodes for solr testing
+      _kendra_uploads_add_cat_node($headers, $data);
+      
       $row++;
       // Only import the first 3 rows during debugging
       if ($row > 3) break;
@@ -60,5 +64,15 @@ function _kendra_upload_process_csv($nid) {
 }
 
 
+function _kendra_uploads_add_cat_node($headers, $data) {
+  // Check for kendra_cat module, and if it exists pass the data
+  // for creation of kendra catalogue node. This is only to be 
+  // used during testing of apachesolr module.
+  if (function_exists('kendra_cat_add_node')) {
+    kendra_cat_add_node($headers, $data);
+  } else {
+    // kendra_cat module not enabled, do nothing.
+  }
+}
 
 
