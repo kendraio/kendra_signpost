@@ -40,6 +40,7 @@ function _kendra_signpost_features() {
   return array(
     'kendra_upload',
     'kendra_rdf',
+    'kendra_cat',
   );
 }
 

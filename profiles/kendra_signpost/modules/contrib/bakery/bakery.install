@@ -1,0 +1,15 @@
+<?php
+// $Id: bakery.install,v 1.1.2.1 2010/10/14 18:04:22 greggles Exp $
+
+/**
+ * Implementation of hook_update_N().
+ */
+function bakery_update_6001() {
+  $ret = array();
+
+  if (module_exists('path')) {
+    db_query("DELETE FROM {url_alias} WHERE source = 'bakery' AND dst IN ('user/login', 'user/register')");
+  }
+  
+  return $ret;
+}
