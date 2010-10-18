@@ -46,5 +46,13 @@ function kendra_search_user_default_permissions() {
     ),
   );
 
+  // Exported permission: use PHP for title patterns
+  $permissions['use PHP for title patterns'] = array(
+    'name' => 'use PHP for title patterns',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
   return $permissions;
 }

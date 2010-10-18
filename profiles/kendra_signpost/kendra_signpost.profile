@@ -22,7 +22,7 @@ function kendra_signpost_profile_modules() {
     'job_queue',
   
   	// search interface modules
-  	'draggableviews', 'draggableviews_cck', 'number'
+  	'draggableviews', 'draggableviews_cck', 'number', 'auto_nodetitle', 'token'
   
   );
 }
