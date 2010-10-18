@@ -1,0 +1,73 @@
+How to install bakery?
+======================
+
+Prerequisites: This module requires the mcrypt PHP module.
+
+You need two Drupal sites, e.g. example.com and sub.example.com.  It
+is ideal if you can copy the user base of the main site to the slave
+site or if sub.example.com is a new site.
+
+Note that "localhost" will not work in most browsers. If you wish to
+test Bakery SSO locally, you must set up a local domain for it to
+work.
+
+On both domains:
+
+1) You edit settings.php and check that $cookie_domain is set to
+   example.com.
+
+2) Login as the user with uid 1.
+
+3) You install bakery.module.
+
+
+On example.com/admin/setting/bakery you chose
+
+a) Master site: yes
+
+b) Master site: http://example.com/
+
+c) Slave sites: http://sub.example.com/
+
+d) Freshness: the default is fine
+
+e) Key: an alphanumeric string, longer is better
+
+f) Cookie domain: example.com
+
+g) Supported profile fields: Any fields that you like to export. Name
+   and Mail are always exported.
+
+
+On sub.example.com/admin/setting/bakery you chose
+
+a) Master site: no
+
+b) Master site: http://example.com/
+
+c) Slave sites: empty
+
+d) Seconds of age before a cookie is old: you should use a number similar 
+   to the value in the settings.php on the parent site.
+
+e) Key: an alphanumeric string, longer is better (the same string as
+       on example.com)
+
+f) Cookie domain: example.com
+
+g) Supported profile fields: Any fields that you like to import. Name
+   and Mail are always imported. You can only import fields that are
+   exported by the master. You can chose to ignore some of them, though.
+
+h) You need to disable the user login block on the slave site. Log-ins
+   are only permitted through the master server.
+
+Additional slave sites can be created like sub.example.com.
+
+Caveats
+=======
+
+If you use bakery with OG, make sure that bakery has a lower weight than OG.
+
+If you run suhosin or mod_security you may run into trouble.
+
