@@ -18,11 +18,13 @@ function kendra_upload_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
         '#weight' => 10,
       );
       */
-      $graph = url("node/{$node->nid}", array('absolute' => TRUE));
-      $result = kendra_rdf_send("SELECT * FROM <{$graph}> WHERE {?s ?p ?o}");
-      $node->content['sparql_result'] = array(
-        '#value' => $result->data,
-      );
+      if ($node->type == 'kendra_upload') {
+        $graph = url("node/{$node->nid}", array('absolute' => TRUE));
+        $result = kendra_rdf_send("SELECT * FROM <{$graph}> WHERE {?s ?p ?o}");
+        $node->content['sparql_result'] = array(
+          '#value' => $result->data,
+        );
+      }
       break;
   }
 }
