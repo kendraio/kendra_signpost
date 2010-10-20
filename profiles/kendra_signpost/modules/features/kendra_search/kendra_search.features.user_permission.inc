@@ -1,4 +1,8 @@
 <?php
+/**
+ * Kendra Search module
+ * @author klokie <klokie@kendra.org.uk>
+ */
 
 /**
  * Implementation of hook_user_default_permissions().
