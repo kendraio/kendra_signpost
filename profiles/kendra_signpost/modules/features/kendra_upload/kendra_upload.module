@@ -77,4 +77,18 @@ function _kendra_uploads_add_cat_node($headers, $data) {
   }
 }
 
-
+/**
+* tell Solr to index imported content
+* see http://www.forumone.com/blogs/post/getting-real-search-apache-solr-drupal
+*/
+function kendra_upload_apachesolr_update_index(&$doc, $node) {
+    if (!empty($node->content['field_cat_album_value'])) {
+        $doc->sm_field_cat_album_value = $node->content['field_cat_album_value'];
+        $doc->sm_field_cat_artist_value = $node->content['field_cat_artist_value'];
+        $doc->sm_field_cat_date_value = $node->content['field_cat_date_value'];
+        $doc->sm_field_cat_isrc_value = $node->content['field_cat_isrc_value'];
+        $doc->sm_field_cat_label_value = $node->content['field_cat_label_value'];
+        $doc->sm_field_cat_no_value = $node->content['field_cat_no_value'];
+        $doc->sm_field_cat_publisher_value = $node->content['field_cat_publisher_value'];
+	}
+}
