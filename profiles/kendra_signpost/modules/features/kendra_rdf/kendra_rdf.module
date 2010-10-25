@@ -65,12 +65,13 @@ function _kendra_rdf_settings() {
   return system_settings_form($form);
 }
 
-function kendra_rdf_send($query) {
+function kendra_rdf_send($query, $format = 'text/html') {
   //drupal_set_message(variable_get('kendra_rdf_sparql_endpoint', 'http://kendra.org.uk:8890/sparql') 
   //  ."?default-graph-uri=&query=". urlencode($query) ."&format=text/html&debug=on&timeout=");
+  $format = urlencode($format);
   return drupal_http_request(
     variable_get('kendra_rdf_sparql_endpoint', 'http://kendra.org.uk:8890/sparql') 
-    ."?default-graph-uri=&query=". urlencode($query) ."&format=text/html&debug=on&timeout=");
+    ."?default-graph-uri=&query=". urlencode($query) ."&format={$format}&debug=on&timeout=");
 }
 
 function _kendra_rdf_test() {
