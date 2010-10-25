@@ -6,7 +6,7 @@ function kendra_upload_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
   switch ($op) {
     case 'insert':
     case 'update':
-      if ($node->type == 'kendra_upload') {
+      if ($node->type == 'kendra_import') {
         job_queue_add('_kendra_upload_process_csv', 
           "Process the uploaded file for node {$node->nid}",
           array($node->nid), 
@@ -14,7 +14,7 @@ function kendra_upload_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       }
       break;
     case 'view':
-      if ($node->type == 'kendra_upload') {
+      if ($node->type == 'kendra_import') {
         $graph = url("node/{$node->nid}", array('absolute' => TRUE));
         $result = kendra_rdf_send("SELECT * FROM <{$graph}> WHERE {?s ?p ?o}");
         $node->content['sparql_result'] = array(
