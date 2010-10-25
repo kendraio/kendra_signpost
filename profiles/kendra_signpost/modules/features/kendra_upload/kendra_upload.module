@@ -6,18 +6,14 @@ function kendra_upload_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
   switch ($op) {
     case 'insert':
     case 'update':
-      job_queue_add('_kendra_upload_process_csv', 
-        "Process the uploaded file for node {$node->nid}",
-        array($node->nid), 
-        '', TRUE);
+      if ($node->type == 'kendra_upload') {
+        job_queue_add('_kendra_upload_process_csv', 
+          "Process the uploaded file for node {$node->nid}",
+          array($node->nid), 
+          '', TRUE);
+      }
       break;
     case 'view':
-      /* Theme the upload for viewing, example:
-      $node->content['my_additional_field'] = array(
-        '#value' => theme('mymodule_my_additional_field', $additional_field),
-        '#weight' => 10,
-      );
-      */
       if ($node->type == 'kendra_upload') {
         $graph = url("node/{$node->nid}", array('absolute' => TRUE));
         $result = kendra_rdf_send("SELECT * FROM <{$graph}> WHERE {?s ?p ?o}");

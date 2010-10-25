@@ -1,3 +1,10 @@
 <?php
 
 include_once('kendra_mapping.features.inc');
+
+function kendra_mapping_allowed_values() {
+  return array(
+    'title' => 'title',
+  );
+}
+
