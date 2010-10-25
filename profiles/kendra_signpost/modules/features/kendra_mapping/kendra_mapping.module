@@ -3,8 +3,21 @@
 include_once('kendra_mapping.features.inc');
 
 function kendra_mapping_allowed_values() {
-  return array(
-    'title' => 'title',
-  );
+  static $maps = NULL;
+  if ($maps == NULL) {
+    // only retrieve mappings on first call of this function
+    $result = db_query("SELECT nid FROM node WHERE type = '%s'", 'kendra_import');
+    $maps = array();
+    while ($node = db_fetch_object($result)) {
+      $graph = url("node/{$node->nid}", array('absolute' => TRUE));
+      $map = kendra_rdf_send("SELECT DISTINCT ?p FROM <{$graph}> WHERE {?s ?p ?o}", 'application/sparql-results+json');
+      $result_list = json_decode($map->data);
+      foreach ($result_list->results->bindings as $binding) {
+        $maps[$binding->p->value] = $binding->p->value;
+      }
+    }
+    //drupal_set_message(print_r($maps, TRUE));
+  }
+  return $maps;
 }
 

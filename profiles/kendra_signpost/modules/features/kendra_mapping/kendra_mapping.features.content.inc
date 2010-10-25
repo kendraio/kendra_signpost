@@ -41,22 +41,21 @@ function kendra_mapping_content_default_fields() {
     'text_processing' => '0',
     'max_length' => '',
     'allowed_values' => '',
-    'allowed_values_php' => '',
+    'allowed_values_php' => 'return kendra_mapping_allowed_values();',
     'widget' => array(
       'rows' => 5,
       'size' => '60',
       'default_value' => array(
         '0' => array(
           'value' => '',
-          '_error_element' => 'default_value_widget][field_map_dest][0][value',
         ),
       ),
       'default_value_php' => NULL,
       'label' => 'Destination item',
       'weight' => '-1',
       'description' => '',
-      'type' => 'text_textfield',
-      'module' => 'text',
+      'type' => 'optionwidgets_select',
+      'module' => 'optionwidgets',
     ),
   );
 
@@ -153,22 +152,21 @@ function kendra_mapping_content_default_fields() {
     'text_processing' => '0',
     'max_length' => '',
     'allowed_values' => '',
-    'allowed_values_php' => '',
+    'allowed_values_php' => 'return kendra_mapping_allowed_values();',
     'widget' => array(
       'rows' => 5,
       'size' => '60',
       'default_value' => array(
         '0' => array(
           'value' => '',
-          '_error_element' => 'default_value_widget][field_map_source][0][value',
         ),
       ),
       'default_value_php' => NULL,
       'label' => 'Source item',
       'weight' => '-3',
       'description' => '',
-      'type' => 'text_textfield',
-      'module' => 'text',
+      'type' => 'optionwidgets_select',
+      'module' => 'optionwidgets',
     ),
   );
 
