@@ -23,6 +23,9 @@ function kendra_signpost_profile_modules() {
     
     // search interface modules
     'draggableviews', 'draggableviews_cck', 'number', 'auto_nodetitle', 'token', 
+  
+  	// rdf / sparql
+  	'rdfdb',
 
     // kendra mapping feature requirements
     'nodereference_url', 'context', 'context_ui', 
