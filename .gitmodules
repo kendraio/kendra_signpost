@@ -1,0 +1,3 @@
+[submodule "profiles/kendra_signpost/modules/contrib/rdfdb"]
+	path = profiles/kendra_signpost/modules/contrib/rdfdb
+	url = /www/kendra/workspace/rdfdb/
