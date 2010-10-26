@@ -1,5 +1,8 @@
-name = Kendra RDF
-description = Test module for Kendra RDF store functionality
-core = 6.x
-package = Kendra
+name = "Kendra RDF"
+description = "Test module for Kendra RDF store functionality"
+core = "6.x"
+package = "Kendra"
 
+dependencies[] = "rdf"
+dependencies[] = "rdfdb"
+dependencies[] = "sparql"

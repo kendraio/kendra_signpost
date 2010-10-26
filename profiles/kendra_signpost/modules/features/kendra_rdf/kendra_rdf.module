@@ -1,99 +1,128 @@
 <?php
 
 function kendra_rdf_init() {
-  include_once("sites/all/libraries/arc/ARC2.php");
+	include_once("sites/all/libraries/arc/ARC2.php");
 }
 
 function kendra_rdf_perm() {
-  return array('administer kendra rdf');
+	return array('administer kendra rdf');
 }
 
 function kendra_rdf_menu() {
-  return array(
+	return array(
     'admin/settings/kendra-rdf' => array(
       'title' => 'Kendra RDF Settings',
       'page callback' => 'drupal_get_form',
       'page arguments' => array('_kendra_rdf_settings'),
       'access arguments' => array('administer kendra rdf'),
-    ),
+	),
     'sparql-test' => array(
       'title' => 'SPARQL Test',
       'page callback' => '_kendra_rdf_test',
       'access arguments' => array('administer kendra rdf'),
-    ),
+	),
     'kendra-front' => array(
       'title' => 'Kendra Signpost Trial',
       'page callback' => '_kendra_rdf_frontpage',
       'access arguments' => array('access content'),
-    ),
-  );
+	),
+	);
 }
 
 
 function kendra_rdf_theme($existing, $type, $theme, $path) {
-  return array(
+	return array(
     'kendra_signpost_frontpage' => array(
       'template' => 'frontpage',
-    ),
-  );
+	),
+	);
 }
 
 function _kendra_rdf_frontpage() {
-  return theme('kendra_signpost_frontpage');
+	return theme('kendra_signpost_frontpage');
 }
 
 function _kendra_rdf_settings() {
-  $form = array();
-  $form['kendra_rdf_sparql_endpoint'] = array(
+	$form = array();
+	$form['kendra_rdf_sparql_endpoint'] = array(
     '#type' => 'textfield',
     '#title' => t('SPARQL Endpoint'),
     '#default_value' => variable_get('kendra_rdf_sparql_endpoint', 'http://kendra.org.uk:8890/sparql'),
     '#description' => t('Enter the URL for accessing the SPARQL endpoint for RDF operations.'),
-  );
-  $form['kendra_rdf_database_username'] = array(
+	);
+	$form['kendra_rdf_database_username'] = array(
     '#type' => 'textfield',
     '#title' => t('Database username'),
     '#default_value' => variable_get('kendra_rdf_database_username', 'dba'),
     '#description' => t('The username used in authenticated connections to the Virtuoso database.'),
-  );
-  $form['kendra_rdf_database_password'] = array(
+	);
+	$form['kendra_rdf_database_password'] = array(
     '#type' => 'textfield',
     '#title' => t('Database password'),
     '#default_value' => variable_get('kendra_rdf_database_password', 'dba'),
     '#description' => t('The password for connections to the Virtuoso database.'),
-  );
-  return system_settings_form($form);
+	);
+	return system_settings_form($form);
+}
+
+/**
+ * count the number of quads within a graph, useful for testing
+ * @param String $graph
+ */
+function kendra_rdf_countQuads($graph) {
+	$rs = rdfdb_query("SELECT * FROM <{$graph}>  WHERE { {  ?s ?p ?o . } } LIMIT 1000")->execute();
+	return count($rs['result']['rows']);
+}
+
+function kendra_rdf_insert($graph, $triples) {
+	$rdfdb_connection = array(
+  'driver' => 'virtuoso',
+  'endpoint' => 'http://kendra.org.uk:8890/sparql',
+	);
+
+	Rdfdb::addConnectionInfo('default', 'default', $rdfdb_connection);
+	rdfdb_set_active('defaut');
+
+	$initial_quads = kendra_rdf_countQuads($graph);
+
+	$rs = rdfdb_insert_data($graph, $triples)->execute();
+
+	$inserted = kendra_rdf_countQuads($graph) - $initial_quads;
+
+	watchdog('kendra_rdf', t("inserted $inserted quads"));
+	
+	return $inserted;
 }
 
 function kendra_rdf_send($query, $format = 'text/html') {
-  //drupal_set_message(variable_get('kendra_rdf_sparql_endpoint', 'http://kendra.org.uk:8890/sparql') 
-  //  ."?default-graph-uri=&query=". urlencode($query) ."&format=text/html&debug=on&timeout=");
-  $format = urlencode($format);
-  return drupal_http_request(
-    variable_get('kendra_rdf_sparql_endpoint', 'http://kendra.org.uk:8890/sparql') 
-    ."?default-graph-uri=&query=". urlencode($query) ."&format={$format}&debug=on&timeout=");
+	//drupal_set_message(variable_get('kendra_rdf_sparql_endpoint', 'http://kendra.org.uk:8890/sparql')
+	//  ."?default-graph-uri=&query=". urlencode($query) ."&format=text/html&debug=on&timeout=");
+	$format = urlencode($format);
+	return drupal_http_request(
+	variable_get('kendra_rdf_sparql_endpoint', 'http://kendra.org.uk:8890/sparql')
+	."?default-graph-uri=&query=". urlencode($query) ."&format={$format}&debug=on&timeout=");
 }
 
 function _kendra_rdf_test() {
-  /* configuration */ 
-  $config = array(
-    /* remote endpoint */
+	/* configuration */
+	$config = array(
+	/* remote endpoint */
     'remote_store_endpoint' => variable_get('kendra_rdf_sparql_endpoint', 'http://kendra.org.uk:8890/sparql'),
-  );
+	);
 
-  /* instantiation */
-  $store = ARC2::getRemoteStore($config);
-  
-  /* A random test query, taken from the Virtuoso documentation */
-  $q = 'SELECT * FROM <http://BookStore.com> WHERE {?s ?p ?o}';
-  $rows = $store->query($q, 'rows');
+	/* instantiation */
+	$store = ARC2::getRemoteStore($config);
 
-  print '<h2>Store:</h2>';
-  krumo($store);
-  print '<h2>Query:</h2>';
-  krumo($q);
-  print '<h2>Rows:</h2>';
-  krumo($rows);
+	/* A random test query, taken from the Virtuoso documentation */
+	$q = 'SELECT * FROM <http://BookStore.com> WHERE {?s ?p ?o}';
+	$rows = $store->query($q, 'rows');
 
- 
+	print '<h2>Store:</h2>';
+	krumo($store);
+	print '<h2>Query:</h2>';
+	krumo($q);
+	print '<h2>Rows:</h2>';
+	krumo($rows);
+
+
 }

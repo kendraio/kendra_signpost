@@ -48,6 +48,7 @@ function _kendra_upload_process_csv($nid) {
 		$row = 1;
 		$graph = url("node/{$nid}", array('absolute' => TRUE));
 		$query = "";
+		$triples = "";
 
 		while (($data = fgetcsv($handle, 1000, ',', '"')) !== FALSE) {
 			foreach ($data as $key => $value) {
@@ -55,7 +56,7 @@ function _kendra_upload_process_csv($nid) {
 					$row_uri = $graph ."/rows#{$row}";
 					$relation = $graph .'/relation#'. urlencode($headers[$key]);
 					// Encode value as a string
-					$query .= "\n<{$row_uri}> <{$relation}> \"". addslashes($value) ."\" .\n";
+					$triples .= "\n<{$row_uri}> <{$relation}> \"". addslashes($value) ."\" .\n";
 				}
 			}
 
@@ -64,22 +65,27 @@ function _kendra_upload_process_csv($nid) {
 
 			$row++;
 			// Only import the first 3 rows during debugging
-			if ($row > 3) break;
+			//if ($row > 3) break;
 		}
 
-		if ($query != "") {
-			$response = kendra_rdf_send("DROP GRAPH <{$graph}> ");
+		if ($triples != "") {
+			//$response = kendra_rdf_send("DROP GRAPH <{$graph}> ");
+			$response = kendra_rdf_send("CLEAR GRAPH <{$graph}> ");
 			$response = kendra_rdf_send("CREATE GRAPH <{$graph}> ");
-			$query = "INSERT IN GRAPH <{$graph}> \n{ {$query} }";
-
+			//$query = "INSERT IN GRAPH <{$graph}> \n{ {$query} }";
+			$query = "INSERT DATA INTO GRAPH <{$graph}> \n{ {$triples} }";
+			
 			// debug output
 			if (module_exists('krumo')) {
 				krumo_add(array('query'=>htmlentities($query)));
+				watchdog('kendra_upload', htmlentities($query));
 			} else {
 				watchdog('kendra_upload', htmlentities($query));
 			}
-						
-			$response = kendra_rdf_send($query);
+
+			//$response = kendra_rdf_send($query);
+			
+			$response = kendra_rdf_insert($graph, $triples);
 			//drupal_set_message(print_r($response, TRUE));
 			//drupal_set_message(print_r($query, TRUE));
 		}
