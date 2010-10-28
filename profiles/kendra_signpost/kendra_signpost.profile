@@ -144,33 +144,3 @@ function _kendra_signpost_configure_finished($success, $results) {
   variable_set('install_task', 'profile-finished');
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
