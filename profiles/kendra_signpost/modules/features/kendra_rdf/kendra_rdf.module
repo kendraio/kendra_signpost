@@ -89,7 +89,7 @@ function kendra_rdf_insert($graph, $triples) {
 
 	$inserted = kendra_rdf_countQuads($graph) - $initial_quads;
 
-	watchdog('kendra_rdf', t("inserted $inserted quads"));
+	watchdog('kendra_rdf', t("inserted $inserted triples"));
 	
 	return $inserted;
 }
