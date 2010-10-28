@@ -12,8 +12,10 @@ function kendra_mapping_allowed_values() {
       $graph = url("node/{$node->nid}", array('absolute' => TRUE));
       $map = kendra_rdf_send("SELECT DISTINCT ?p FROM <{$graph}> WHERE {?s ?p ?o}", 'application/sparql-results+json');
       $result_list = json_decode($map->data);
-      foreach ($result_list->results->bindings as $binding) {
-        $maps[$binding->p->value] = $binding->p->value;
+      if (!empty($result_list->results->bindings)) {
+	      foreach ($result_list->results->bindings as $binding) {
+	        $maps[$binding->p->value] = $binding->p->value;
+	      }
       }
     }
     //drupal_set_message(print_r($maps, TRUE));
