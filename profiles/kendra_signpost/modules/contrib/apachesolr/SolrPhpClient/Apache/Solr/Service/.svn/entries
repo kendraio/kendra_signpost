@@ -2,13 +2,13 @@
 
 dir
 22
-http://solr-php-client.googlecode.com/svn/trunk
+http://solr-php-client.googlecode.com/svn/trunk/Apache/Solr/Service
 http://solr-php-client.googlecode.com/svn
 
 
 
-2009-11-09T22:46:54.183340Z
-22
+2009-08-04T17:53:08.241264Z
+15
 donovan.jimenez
 
 
@@ -26,20 +26,18 @@ svn:special svn:externals svn:needs-lock
 
 e73431f4-bb50-11dd-afb1-a7db9ebf18e3
 
-Apache
-dir
-
-COPYING
+Balancer.php
 file
 
 
 
 
 2010-11-02T16:05:43.000000Z
-7b1ac8e503016b26a651af1fc0e5da60
-2009-01-22T04:01:15.494114Z
-3
+f0ad682e8167aa05dc29c160adb3402a
+2009-08-04T17:53:08.241264Z
+15
 donovan.jimenez
+has-props
 
 
 
@@ -60,6 +58,5 @@ donovan.jimenez
 
 
 
-
-1561
+20536
 
