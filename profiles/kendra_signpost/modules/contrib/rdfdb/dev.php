@@ -30,7 +30,7 @@ $query->fields('n', array('nid', 'title', 'created', 'uid'));
 
 
 // Force filtering of duplicate records in the result set.
-$query->distinct()
+$query->distinct();
 
 $count_alias = $query->addExpression('COUNT(uid)', 'uid_count');
 $query->orderBy('title', 'DESC');
