@@ -8,10 +8,11 @@
  * <p>connect to the Apache Solr instance</p>
  */
 var Manager;
+var Kendra = Kendra || {};
 (function ($) {
   $(function () {
     Manager = new AjaxSolr.Manager({
-      solrUrl: 'http://dev.signpost.kendra.org.uk:8983/solr/'
+      solrUrl: Kendra.solrUrl || ''
     });
     Manager.init();
     Manager.store.addByValue('q', '*:*');

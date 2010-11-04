@@ -41,6 +41,8 @@ function kendra_search_views_api() {
 
 /**
  * Implementation of hook_init().
+ * 
+ * <p>Includes the global object <strong>Kendra</strong></p>
  */
 function kendra_search_init() {
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/core/Core.js');
@@ -49,4 +51,8 @@ function kendra_search_init() {
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/core/Parameter.js');
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/core/ParameterStore.js');
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/kendra_search.js');
+
+	$inline_script = 'var Kendra = Kendra || {};';
+	$inline_script .= 'Kendra.solrUrl = "http://' . variable_get('apachesolr_host', 'localhost') . ':' . variable_get('apachesolr_port', '8983') . variable_get('apachesolr_path', '/solr') . '";';
+	drupal_add_js($inline_script, 'inline');
 }
