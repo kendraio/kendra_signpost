@@ -32,22 +32,15 @@ if is_bad_request():
     print "I'm sorry Dave, I can't do that."
     sys.exit(0)
 
-WRAP_DEBUGGING = 0
+urlobject = urllib.urlopen("http://dev1.kendra.org.uk/cgi-bin/hello.py" + recreated_query)
 
-# Get HTTP header out of the way first
-print "Content-type: text/plain"
-print
+results = urlobject.read()
+content_type = urlobject.info().gettype()
 
-t0 = time.time()
+sys.stdout.write("Content-type: %s\n\r\n\r" % content_type)
+sys.stdout.write(results)
+sys.stdout.flush()
 
-results = urllib.urlopen("http://dev1.kendra.org.uk/cgi-bin/hello.py" + recreated_query).read()
 
-if WRAP_DEBUGGING:
-   print "Proxied data:"
-   print
-print results
 
-if WRAP_DEBUGGING:
-   print
-   print "That took %f seconds" % (time.time() - t0)
 
