@@ -5,7 +5,7 @@
 # Created: 2010-11-05
 # Author: Neil Harris
 
-import cgitb, cgi, sys, urllib, string, os
+import cgitb, cgi, sys, urllib, string, os, time
 
 def urlquote(x):
     return urllib.quote_plus(x)
@@ -17,7 +17,7 @@ form = cgi.FieldStorage(keep_blank_values=1)
 form_data = [(k, form.getlist(k)) for k in form.keys()]
 
 request_uri = os.environ.get("REQUEST_URI", "")
-recreated_url = string.join([make_url_fields(k, vs) for (k, vs) in form_data], "&")
+recreated_query = string.join([make_url_fields(k, vs) for (k, vs) in form_data], "&")
 
 def is_bad_request():
     return 0
@@ -32,19 +32,22 @@ if is_bad_request():
     print "I'm sorry Dave, I can't do that."
     sys.exit(0)
 
+WRAP_DEBUGGING = 0
+
 # Get HTTP header out of the way first
 print "Content-type: text/plain"
 print
-print form_data
-print "new url:", recreated_url
-for k in os.environ:
-    print k, os.environ[k]
-print "done"
 
+t0 = time.time()
 
+results = urllib.urlopen("http://dev1.kendra.org.uk/cgi-bin/hello.py" + recreated_query).read()
 
+if WRAP_DEBUGGING:
+   print "Proxied data:"
+   print
+print results
 
-
-
-
+if WRAP_DEBUGGING:
+   print
+   print "That took %f seconds" % (time.time() - t0)
 
