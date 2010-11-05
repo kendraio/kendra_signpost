@@ -4,6 +4,9 @@ include_once('kendra_mapping.features.inc');
 
 function kendra_mapping_allowed_values() {
   static $maps = NULL;
+  if ($cache = cache_get('kendra_mapping_allowed_values')) {
+    $maps = $cache->data;
+  } 
   if ($maps == NULL) {
     // only retrieve mappings on first call of this function
     $result = db_query("SELECT nid FROM node WHERE type = '%s'", 'kendra_import');
@@ -19,6 +22,7 @@ function kendra_mapping_allowed_values() {
       }
     }
     //drupal_set_message(print_r($maps, TRUE));
+    cache_set('kendra_mapping_allowed_values', $maps);
   }
   return $maps;
 }
