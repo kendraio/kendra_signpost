@@ -34,7 +34,7 @@ function kendra_mapping_content_default_fields() {
     ),
     'widget_active' => '1',
     'type' => 'text',
-    'required' => '0',
+    'required' => '1',
     'multiple' => '0',
     'module' => 'text',
     'active' => '1',
@@ -145,7 +145,7 @@ function kendra_mapping_content_default_fields() {
     ),
     'widget_active' => '1',
     'type' => 'text',
-    'required' => '0',
+    'required' => '1',
     'multiple' => '0',
     'module' => 'text',
     'active' => '1',
@@ -198,15 +198,13 @@ function kendra_mapping_content_default_fields() {
     ),
     'widget_active' => '1',
     'type' => 'text',
-    'required' => '0',
+    'required' => '1',
     'multiple' => '0',
     'module' => 'text',
     'active' => '1',
     'text_processing' => '0',
     'max_length' => '25',
-    'allowed_values' => 'same_as|Same as
-similar_to|Similar to
-kind_of|Kind of',
+    'allowed_values' => 'http://www.w3.org/2002/07/owl#sameAs|http://www.w3.org/2002/07/owl#sameAs',
     'allowed_values_php' => '',
     'widget' => array(
       'default_value' => array(
