@@ -20,6 +20,14 @@ function kendra_cat_add_node($headers, $data) {
   $node = new stdClass();
   $node->uid = $user->uid;
   $node->type = 'kendra_cat';
+
+  foreach ($mappings as $mapping) {
+    // default field value
+    // foreach mapping
+      // check each possible header 
+      // assign data if matches
+  }
+
   $node->title                           = $data[2];
   $node->field_cat_artist[0]['value']    = $data[3];
   $node->field_cat_label[0]['value']     = $data[0];
