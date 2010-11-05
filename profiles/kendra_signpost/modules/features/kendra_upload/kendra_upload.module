@@ -64,30 +64,15 @@ function _kendra_upload_process_csv($nid) {
 			_kendra_uploads_add_cat_node($headers, $data);
 
 			$row++;
-			// Only import the first 3 rows during debugging
-			//if ($row > 3) break;
 		}
 
 		if ($triples != "") {
 			//$response = kendra_rdf_send("DROP GRAPH <{$graph}> ");
 			$response = kendra_rdf_send("CLEAR GRAPH <{$graph}> ");
 			$response = kendra_rdf_send("CREATE GRAPH <{$graph}> ");
-			//$query = "INSERT IN GRAPH <{$graph}> \n{ {$query} }";
 			$query = "INSERT DATA INTO GRAPH <{$graph}> \n{ {$triples} }";
 			
-			// debug output
-			if (module_exists('krumo')) {
-				krumo_add(array('query'=>htmlentities($query)));
-				watchdog('kendra_upload', htmlentities($query));
-			} else {
-				watchdog('kendra_upload', htmlentities($query));
-			}
-
-			//$response = kendra_rdf_send($query);
-			
 			$response = kendra_rdf_insert($graph, $triples);
-			//drupal_set_message(print_r($response, TRUE));
-			//drupal_set_message(print_r($query, TRUE));
 		}
 	}
 	fclose($handle);
