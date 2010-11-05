@@ -3,6 +3,18 @@
 include_once('kendra_cat.features.inc');
 
 function kendra_cat_add_node($headers, $data) {
+  // Default node -> csv heading mappings
+  $mappings = array(
+    'title' => array('Track', 'Title', 'Name'),
+    'field_cat_artist' => array('Artist'),
+    'field_cat_label' => array('Label'),
+    'field_cat_no' => array('Catalogue Number', 'CAE Number'),
+    'field_cat_date' => array('Release Date', 'Year'),
+    'field_cat_album' => array('Album/ep title', 'Album', 'Album'),
+    'field_cat_publisher' => array('Publisher'),
+    'field_cat_isrc' => array('ISRC Code'),
+  );
+  
   // drupal_set_message(print_r($data, TRUE));
   global $user;
   $node = new stdClass();
