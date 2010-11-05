@@ -2,7 +2,7 @@
 
 import os
 
-print "Content-type: text/plain"
+print "Content-type: text/x-undefined-for-testing"
 print
 print "Hello, World!"
 print
