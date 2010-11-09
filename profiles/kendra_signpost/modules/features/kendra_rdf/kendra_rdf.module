@@ -77,7 +77,7 @@ function kendra_rdf_countQuads($graph) {
 function kendra_rdf_insert($graph, $triples) {
 	$rdfdb_connection = array(
   'driver' => 'virtuoso',
-  'endpoint' => 'http://kendra.org.uk:8890/sparql',
+  'endpoint' => variable_get('kendra_rdf_sparql_endpoint', 'http://kendra.org.uk:8890/sparql')
 	);
 
 	Rdfdb::addConnectionInfo('default', 'default', $rdfdb_connection);
