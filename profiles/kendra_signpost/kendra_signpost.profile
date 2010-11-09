@@ -25,7 +25,7 @@ function kendra_signpost_profile_modules() {
     'draggableviews', 'draggableviews_cck', 'number', 'auto_nodetitle', 'token', 'apachesolr',
 
   	// services + json backend
-  	'services', 'json_server',
+  	'services', 'json_server', 'node_service', 'services_keyauth',
   
   	// rdf / sparql
   	'rdfdb',
