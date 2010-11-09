@@ -49,7 +49,19 @@ function kendra_search_map_alter(&$item, $key) {
 /**
  * Implementation of hook_init().
  *
- * <p>Includes the global object <strong>Kendra</strong></p>
+ * <p>Includes the global JSON object <strong>Kendra</strong>, which gets exposed in the HTML.</p>
+ * <p>Its format is based on syntax of modules included in the install profile, replacing underscores with dot syntax:
+ * <pre>
+ *  Kendra = {
+ *      "cat" : {},
+ *      "mapping" : {
+ *          "mappings" : { } // 
+ *      },
+ *      "search" : {
+ *          "solrUrl" : "http://dev.signpost.kendra.org.uk:8983/solr" // see /admin/settings/apachesolr
+ *      }
+ *  }
+ * </pre>
  */
 function kendra_search_init() {
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/core/Core.js');
@@ -70,7 +82,7 @@ function kendra_search_init() {
 		'search' => array(
 		'solrUrl' => 'http://' . variable_get('apachesolr_host', 'localhost') . ':' . variable_get('apachesolr_port', '8983') . variable_get('apachesolr_path', '/solr')
 	)
-	,'mappings'=> $map
+	,'mapping'=> array('mappings'=>$map)
 	);
 
 	$inline_script = 'var Kendra=' . drupal_to_js( $jsonContainer );
