@@ -1,4 +1,10 @@
 <?php
+// $Id$
+
+/**
+ * @file
+ * Kendra Search provides an API for creating and using portable search filters.
+ */
 
 /**
  * Implementation of hook_ctools_plugin_api().
@@ -47,6 +53,30 @@ function kendra_search_map_alter(&$item, $key) {
 }
 
 /**
+ * Function to return an associative array of mappings with key/values based on args
+ * Can be used to get results for FAPI form options.
+ * @return array
+ *  An associative array based on arguments
+ **/
+function kendra_search_get_array() {
+	$mappings = kendra_mapping_allowed_values();
+	array_walk($mappings, 'kendra_search_map_alter');
+
+	return $mappings;
+}
+
+/**
+ * Function for returning an associative array useful for FAPI select elements
+ * @param array
+ *  The first value in the array (defaults to '' => 'Please Choose')
+ * @return array
+ *  Returns an associative array in $mapping['URI'] => $mapping['printable_name'] format.
+ */
+function kendra_search_get_options_array($first_element = array('' => 'Please Choose')) {
+	return array_merge($first_element, kendra_search_get_array());
+}
+
+/**
  * Implementation of hook_init().
  *
  * <p>Includes the global JSON object <strong>Kendra</strong>, which gets exposed in the HTML.</p>
@@ -72,13 +102,6 @@ function kendra_search_init() {
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/kendra_search.js');
 
 	/**
-	 * explose the mapping array as an array( 'mapping URI' => 'translated name' )
-	 */
-	//$map = kendra_mapping_allowed_values();
-	$map = array("http://signpost.kendra.local:8082/node/4/relation#Name" => "Name", "http://signpost.kendra.local:8082/node/4/relation#Artist" => "Artist", "http://signpost.kendra.local:8082/node/4/relation#Composer" => "Composer", "http://signpost.kendra.local:8082/node/4/relation#Album" => "Album", "http://signpost.kendra.local:8082/node/4/relation#Genre" => "Genre", "http://signpost.kendra.local:8082/node/4/relation#Time" => "Time", "http://signpost.kendra.local:8082/node/4/relation#Track+Number" => "Track Number", "http://signpost.kendra.local:8082/node/4/relation#Track+Count" => "Track Count", "http://signpost.kendra.local:8082/node/4/relation#Year" => "Year" );
-	array_walk($map, 'kendra_search_map_alter');
-
-	/**
 	 * expose core Kendra vars in Javascript
 	 */
 	$jsonContainer = array(
@@ -86,7 +109,7 @@ function kendra_search_init() {
 		'solrUrl' => '/cgi-bin/solr_search_proxy.py'
 		// 'solrUrl' => 'http://' . variable_get('apachesolr_host', 'localhost') . ':' . variable_get('apachesolr_port', '8983') . variable_get('apachesolr_path', '/solr')
 	)
-	,'mapping'=> array('mappings'=>$map)
+	,'mapping'=> array('mappings'=>array())
 	);
 
 	$inline_script = 'var Kendra=' . drupal_to_js( $jsonContainer );

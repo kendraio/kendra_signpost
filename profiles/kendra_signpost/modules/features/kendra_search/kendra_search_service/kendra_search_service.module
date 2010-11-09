@@ -1,0 +1,90 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * The module which exposes services related to kendra_search
+ */
+
+define('KENDRA_SEARCH_SERVICE_PERM', 'load CSV mappings data');
+
+/**
+ * Implementation of hook_perm()
+ **/
+function KENDRA_SEARCH_SERVICE_PERM() {
+	return array(KENDRA_SEARCH_SERVICE_PERM);
+}
+
+/**
+ * Function to check user access
+ **/
+function kendra_search_service_access($account) {
+	return user_access(KENDRA_SEARCH_SERVICE_PERM, $account);
+}
+
+/**
+ * Returns an array of mappings
+ * explose the mapping array as an array( 'mapping URI' => 'translated name' )
+ */
+function kendra_search_service_get_options_array($value = '', $label = 'Please Choose') {
+	$mappings = kendra_search_get_options_array(array($value => $label));
+
+	if (!$mappings) {
+		return services_error(t('No mappings were found.'));
+	}
+	return $mappings;
+}
+
+/**
+ * Implementation of hook_service()
+ **/
+function kendra_search_service_service() {
+	return array(
+	array(
+      '#method'   => 'kendra_search.get_options_array',
+      '#callback' => 'kendra_search_service_get_options_array',
+      '#key'      => FALSE,
+	  '#auth' => FALSE,
+//	'#access' => 'kendra_search_service_access',
+      '#args'     => array(
+	array(
+          '#name'         => 'first element value',
+          '#type'         => 'string',
+          '#description'  => t("The value of the first element in the array (defaults to '')"),
+          '#optional'     => TRUE,
+	),
+	array(
+          '#name'         => 'first element label',
+          '#type'         => 'string',
+          '#description'  => t("The label of the first value in the array (defaults to 'Please Choose')"),
+          '#optional'     => TRUE,
+	),
+	),
+      '#return'   => 'array',
+      '#help'     => t('Returns an associative array in $mapping["URI"] => $mapping["printable_name"] format.'),
+	)
+	);
+}
+
+/**
+ * Implementation of hook_init().
+ */
+function kendra_search_service_init() {
+}
+
+/**
+ * Implementation of hook_help()
+ */
+function kendra_search_service_help($path, $arg) {
+	// switch over section
+	switch ($path) {
+		case 'admin/help#kendra_search_service':
+			$content = '<p>' . t("Please see !module_url", array('!module_url'=> l("the Kendra Atrium", "http://atrium.kendra.org.uk/dev/kendra-signpost"))) . '</p>';
+			$content = '<p>' . t("Requires kendra_search_service.module.") . '</p>';
+
+			break;
+		default:
+			$content = "";
+	}
+	return $content;
+}

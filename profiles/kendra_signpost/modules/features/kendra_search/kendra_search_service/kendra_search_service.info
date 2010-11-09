@@ -1,0 +1,8 @@
+core = "6.x"
+dependencies[] = "services"
+dependencies[] = "kendra_search"
+description = "Kendra Search API Service"
+name = "Kendra Search Service"
+package = Services - services
+project = "kendra_search"
+version = "6.x-1.x-dev"
