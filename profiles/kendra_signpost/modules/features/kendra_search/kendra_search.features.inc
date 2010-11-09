@@ -71,8 +71,11 @@ function kendra_search_init() {
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/core/ParameterStore.js');
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/kendra_search.js');
 
-	// explose the mapping array as an array( 'mapping URI' => 'translated name' )
-	$map = kendra_mapping_allowed_values();
+	/**
+	 * explose the mapping array as an array( 'mapping URI' => 'translated name' )
+	 */
+	//$map = kendra_mapping_allowed_values();
+	$map = array("http://signpost.kendra.local:8082/node/4/relation#Name" => "Name", "http://signpost.kendra.local:8082/node/4/relation#Artist" => "Artist", "http://signpost.kendra.local:8082/node/4/relation#Composer" => "Composer", "http://signpost.kendra.local:8082/node/4/relation#Album" => "Album", "http://signpost.kendra.local:8082/node/4/relation#Genre" => "Genre", "http://signpost.kendra.local:8082/node/4/relation#Time" => "Time", "http://signpost.kendra.local:8082/node/4/relation#Track+Number" => "Track Number", "http://signpost.kendra.local:8082/node/4/relation#Track+Count" => "Track Count", "http://signpost.kendra.local:8082/node/4/relation#Year" => "Year" );
 	array_walk($map, 'kendra_search_map_alter');
 
 	/**
@@ -90,3 +93,20 @@ function kendra_search_init() {
 
 	drupal_add_js($inline_script, 'inline');
 }
+
+/**
+ * Implementation of hook_help()
+ * TODO: Refactor help so it is a seperate include (to make more manageable)
+ */
+function kendra_search_help($path, $arg) {
+	// switch over section
+	switch ($path) {
+		case 'admin/help#kendra_search':
+			$content = t("Please see !module_url", array('!module_url'=> l("the Kendra Atrium", "http://atrium.kendra.org.uk/dev/kendra-signpost")));
+			break;
+		default:
+			$content = "";
+	}
+	return $content;
+}
+
