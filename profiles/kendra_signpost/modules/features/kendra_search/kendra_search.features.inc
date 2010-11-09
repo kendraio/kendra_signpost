@@ -55,7 +55,7 @@ function kendra_search_map_alter(&$item, $key) {
  *  Kendra = {
  *      "cat" : {},
  *      "mapping" : {
- *          "mappings" : { } // 
+ *          "mappings" : { } //
  *      },
  *      "search" : {
  *          "solrUrl" : "http://dev.signpost.kendra.org.uk:8983/solr" // see /admin/settings/apachesolr
@@ -80,7 +80,8 @@ function kendra_search_init() {
 	 */
 	$jsonContainer = array(
 		'search' => array(
-		'solrUrl' => 'http://' . variable_get('apachesolr_host', 'localhost') . ':' . variable_get('apachesolr_port', '8983') . variable_get('apachesolr_path', '/solr')
+		'solrUrl' => '/cgi-bin/solr_search_proxy.py'
+		// 'solrUrl' => 'http://' . variable_get('apachesolr_host', 'localhost') . ':' . variable_get('apachesolr_port', '8983') . variable_get('apachesolr_path', '/solr')
 	)
 	,'mapping'=> array('mappings'=>$map)
 	);
