@@ -40,8 +40,15 @@ function kendra_search_views_api() {
 }
 
 /**
+ * translate map values by simple string unencoding, removing the URI prefix
+ */
+function kendra_search_map_alter(&$item, $key) {
+	$item = urldecode(end(split('#', $item)));
+}
+
+/**
  * Implementation of hook_init().
- * 
+ *
  * <p>Includes the global object <strong>Kendra</strong></p>
  */
 function kendra_search_init() {
@@ -52,7 +59,15 @@ function kendra_search_init() {
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/core/ParameterStore.js');
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/kendra_search.js');
 
-	$inline_script = 'var Kendra = Kendra || {};';
-	$inline_script .= 'Kendra.solrUrl = "http://' . variable_get('apachesolr_host', 'localhost') . ':' . variable_get('apachesolr_port', '8983') . variable_get('apachesolr_path', '/solr') . '";';
+	$map = kendra_mapping_allowed_values();
+	array_walk($map, 'kendra_search_map_alter');
+		
+	// expose core Kendra vars in Javascript
+	$inline_script = 'var Kendra=' . drupal_to_js(
+	array('solrUrl' => 'http://' . variable_get('apachesolr_host', 'localhost') . ':' . variable_get('apachesolr_port', '8983') . variable_get('apachesolr_path', '/solr')
+	,'mappings'=> $map
+	)
+	);
+
 	drupal_add_js($inline_script, 'inline');
 }
