@@ -1,3 +1,4 @@
 <?php
 
 include_once('kendra_search.features.inc');
+include_once('kendra_search.help.inc');
