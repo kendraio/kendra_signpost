@@ -32,7 +32,15 @@ if is_bad_request():
     print "I'm sorry Dave, I can't do that."
     sys.exit(0)
 
-urlobject = urllib.urlopen("http://dev1.kendra.org.uk/cgi-bin/hello.py" + recreated_query)
+if os.environ.get('HTTPS', '') == 'on':
+    protocol = 'https'
+else:
+    protocol = 'http'
+
+absolute_url = '%s://%s%s%s/' % (protocol, os.environ['HTTP_HOST'],
+    "/cgi-bin/hello.py", recreated_query)
+
+urlobject = urllib.urlopen(absolute_url)
 
 results = urlobject.read()
 content_type = urlobject.info().gettype()
