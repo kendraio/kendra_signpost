@@ -106,7 +106,7 @@ DirectoryIndex index.php
   # uncomment the following line:
   # RewriteBase /
 
-  RewriteCond %{REQUEST_URI} ^/solr/select [NC]
+  RewriteCond %{REQUEST_URI} ^/solr/select(\?.+)? [NC]
   RewriteRule ^/solr/select(.*)$ /cgi-bin/solr_search_proxy.py$1 [L,QSA]
 
   # Rewrite URLs of the form 'x' to the form 'index.php?q=x'.
