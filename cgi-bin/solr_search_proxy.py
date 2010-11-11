@@ -21,27 +21,34 @@ recreated_query = string.join([make_url_fields(k, vs) for (k, vs) in form_data],
 
 def is_bad_request():
     if os.environ.get("REQUEST_METHOD", None) != "GET": return "not a GET command"
+    if not os.environ.get("HTTP_HOST", None): return "no HTTP_HOST specified"
     return 0
-
-# Do some sanity checking: we are not a general-purpose proxy
-if is_bad_request():
-    print "Status: 403 Forbidden"
-    print "Content-type: text/plain"
-    print 
-    print "I'm sorry Dave, I can't do that."
-    sys.exit(0)
 
 if os.environ.get('HTTPS', '') == 'on':
     protocol = 'https'
 else:
     protocol = 'http'
 
+logfile = open("/tmp/solr_search_proxy_log_%f" % time.time(), "w")
+print >> logfile, "recreated_query", recreated_query
+print >> logfile, "environment"
+for k in os.environ:
+    print >> logfile, k, os.environ.get(k)
+logfile.close()
+
+# Do some sanity checking before actually dispatching: we are not a general-purpose proxy
+if 0: # is_bad_request():
+    print "Status: 403 Forbidden"
+    print "Content-type: text/plain"
+    print 
+    print "I'm sorry Dave, I can't do that."
+    sys.exit(0)
+
 # Redirect to call local installation of Solr search 
-absolute_url = '%s://%s:%d/solr/select/?%s' % (protocol, 8983, os.environ['HTTP_HOST'],
+absolute_url = '%s://%s:%d/solr/select/?%s' % (protocol, os.environ['HTTP_HOST'], 8983,
     recreated_query)
 
 urlobject = urllib.urlopen(absolute_url)
-
 results = urlobject.read()
 content_type = urlobject.info().gettype()
 
