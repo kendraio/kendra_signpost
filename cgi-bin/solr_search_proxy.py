@@ -20,8 +20,7 @@ request_uri = os.environ.get("REQUEST_URI", "")
 recreated_query = string.join([make_url_fields(k, vs) for (k, vs) in form_data], "&")
 
 def is_bad_request():
-    return 0
-    if os.environ.get("REQUEST_METHOD", None) != "POST": return "not a POST command"
+    if os.environ.get("REQUEST_METHOD", None) != "GET": return "not a GET command"
     return 0
 
 # Do some sanity checking: we are not a general-purpose proxy
@@ -37,8 +36,9 @@ if os.environ.get('HTTPS', '') == 'on':
 else:
     protocol = 'http'
 
-absolute_url = '%s://%s%s%s/' % (protocol, os.environ['HTTP_HOST'],
-    "/cgi-bin/hello.py", recreated_query)
+# Redirect to call local installation of Solr search 
+absolute_url = '%s://%s:%d/solr/select/?%s' % (protocol, 8983, os.environ['HTTP_HOST'],
+    recreated_query)
 
 urlobject = urllib.urlopen(absolute_url)
 
