@@ -64,6 +64,8 @@ jQuery.extend(Kendra, {
 				}, function(status, data) {
 					if (status == false) {
 						Kendra.util.log("services: FATAL ERROR");
+					} else if (data['#error'] == true) {
+						Kendra.util.log("services: error: "+data['#message']);
 					} else {
 						Kendra.mapping.mappings = jQuery.extend(Kendra.mapping.mappings, data);
 						Kendra.util.log(data, 'Kendra.getMappings: merged ' + Kendra.util
@@ -88,7 +90,8 @@ jQuery.extend(Kendra, {
 			 */
 			handleResponse : function(data) {
 				this.response = data;
-				Kendra.util.log(this.response, 'Kendra.solrQuery: got response: ' + data.response.numFound + ' records');
+				Kendra.util
+						.log(this.response, 'Kendra.solrQuery: got response: ' + data.response.numFound + ' records');
 
 				for ( var widgetId in this.widgets) {
 					this.widgets[widgetId].afterRequest();
