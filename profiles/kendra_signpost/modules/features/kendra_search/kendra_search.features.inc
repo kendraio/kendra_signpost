@@ -108,7 +108,7 @@ function kendra_search_init() {
 	 */
 	$jsonContainer = array(
 		'search' => array(
-	'solrUrl' => 'http://dev.signpost.kendra.org.uk/solr'
+	'solrUrl' => 'http://dev.signpost.kendra.org.uk/solr/'
 	//'solrUrl' => '/cgi-bin/solr_search_proxy.py'
 	// 'solrUrl' => 'http://' . variable_get('apachesolr_host', 'localhost') . ':' . variable_get('apachesolr_port', '8983') . variable_get('apachesolr_path', '/solr')
 	)
