@@ -102,20 +102,20 @@ function kendra_search_init() {
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/core/ParameterStore.js');
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/kendra_search.js');
 	drupal_add_js(drupal_get_path('module', 'json_server') .'/json_server.js');
-	
+
 	/**
 	 * expose core Kendra vars in Javascript
 	 */
 	$jsonContainer = array(
 		'search' => array(
-	'solrUrl' => 'http://dev.signpost.kendra.org.uk/cgi-bin/solr_search_proxy.py/'
+	'solrUrl' => 'http://dev.signpost.kendra.org.uk/solr'
 	//'solrUrl' => '/cgi-bin/solr_search_proxy.py'
 	// 'solrUrl' => 'http://' . variable_get('apachesolr_host', 'localhost') . ':' . variable_get('apachesolr_port', '8983') . variable_get('apachesolr_path', '/solr')
 	)
 	,'mapping'=> array('mappings'=>array())
 	);
 
-	$inline_script = 'var Kendra=' . drupal_to_js( $jsonContainer );
+	$inline_script = 'var Kendra=Kendra || {};jQuery.extend(Kendra,' . drupal_to_js( $jsonContainer ) . ');';
 
 	drupal_add_js($inline_script, 'inline');
 }
