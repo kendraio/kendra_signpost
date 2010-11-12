@@ -55,6 +55,7 @@ function _kendra_signpost_features() {
     'kendra_cat',
     'kendra_mapping', 
     'kendra_search', 
+    'kendra_search_service', 
   );
 }
 
