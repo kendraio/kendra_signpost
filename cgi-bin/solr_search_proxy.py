@@ -37,11 +37,11 @@ for k in os.environ:
 logfile.close()
 
 # Do some sanity checking before actually dispatching: we are not a general-purpose proxy
-if 0: # is_bad_request():
+if is_bad_request():
     print "Status: 403 Forbidden"
     print "Content-type: text/plain"
     print 
-    print "I'm sorry Dave, I can't do that."
+    print "I'm sorry Dave, I can't do that:", is_bad_request()
     sys.exit(0)
 
 # Redirect to call local installation of Solr search 
