@@ -1,0 +1,24 @@
+@CHARSET "UTF-8";
+
+#search-log {
+	-moz-border-radius-bottomleft: 10px;
+	-moz-border-radius-bottomright: 10px;
+	-moz-border-radius-topleft: 10px;
+	-moz-border-radius-topright: 10px;
+	border: 1px solid #CCCCCC;
+	bottom: 1em;
+	left: 1em;
+	padding: 1em;
+	position: absolute;
+	width: 400px;
+	z-index: 1000;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+	max-height: 200px;
+	overflow:auto;
+	background-color: #eeeeee;
+}
+
+#search-log .row {
+	border-top: 1px dotted #cccccc;
+}
