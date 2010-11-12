@@ -1,5 +1,5 @@
 <?php
-// $Id: draggableviews_theme.inc,v 1.6.2.31 2010/08/27 14:10:30 sevi Exp $
+// $Id: draggableviews_theme.inc,v 1.6.2.30 2009/10/31 13:15:04 sevi Exp $
 
 /**
  * @file
@@ -8,15 +8,12 @@
 
 function template_preprocess_draggableviews_view_draggabletable(&$vars, $style_plugin_name) {
   $view     = $vars['view'];
-  
-  // COPY BEGIN from theme.inc,v 1.84.2.14 (2010/06/16). lines 304-404.
 
   // We need the raw data for this grouping, which is passed in as $vars['rows'].
   // However, the template also needs to use for the rendered fields.  We
   // therefore swap the raw data out to a new variable and reset $vars['rows']
   // so that it can get rebuilt.
-  // Store rows so that they may be used by further preprocess functions.
-  $result   = $vars['result'] = $vars['rows'];
+  $result   = $vars['rows'];
   $vars['rows'] = array();
 
   $options  = $view->style_plugin->options;
@@ -30,14 +27,18 @@ function template_preprocess_draggableviews_view_draggabletable(&$vars, $style_p
 
   $query    = tablesort_get_querystring();
   if ($query) {
-    $query = '&' . $query;
+    $query = '&'. $query;
   }
 
   // Fields must be rendered in order as of Views 2.3, so we will pre-render
   // everything.
-  $renders = $handler->render_fields($result);
-  // @Todo: This is a current workaround because render_fields doesn't return any values unless it is called twice.
-  $renders = $handler->render_fields($result);
+  $renders = array();
+  $keys = array_keys($view->field);
+  foreach ($result as $count => $row) {
+    foreach ($keys as $id) {
+      $renders[$count][$id] = $view->field[$id]->theme($row);
+    }
+  }
 
   foreach ($columns as $field => $column) {
     // render the header labels
@@ -59,9 +60,9 @@ function template_preprocess_draggableviews_view_draggabletable(&$vars, $style_p
           $label .= theme('tablesort_indicator', $initial);
         }
         $link_options = array(
-          'html' => true,
+          'html' => TRUE,
           'attributes' => array('title' => $title),
-          'query' => 'order=' . urlencode($field) . '&sort=' . $initial . $query,
+          'query' => 'order='. urlencode($field) .'&sort='. $initial . $query,
         );
         $vars['header'][$field] = l($label, $_GET['q'], $link_options);
       }
@@ -79,20 +80,19 @@ function template_preprocess_draggableviews_view_draggabletable(&$vars, $style_p
       if (!empty($fields[$field]) && empty($fields[$field]->options['exclude'])) {
         $field_output = $renders[$num][$field];
 
-        if (!isset($vars['rows'][$num][$column])) {
-          $vars['rows'][$num][$column] = '';
-        }
-
         // Don't bother with separators and stuff if the field does not show up.
-        if ($field_output === '') {
+        if (!isset($field_output) && isset($vars['rows'][$num][$column])) {
           continue;
         }
 
         // Place the field into the column, along with an optional separator.
-        if ($vars['rows'][$num][$column] !== '') {
+        if (isset($vars['rows'][$num][$column])) {
           if (!empty($options['info'][$column]['separator'])) {
             $vars['rows'][$num][$column] .= filter_xss_admin($options['info'][$column]['separator']);
           }
+        }
+        else {
+          $vars['rows'][$num][$column] = '';
         }
 
         $vars['rows'][$num][$column] .= $field_output;
@@ -100,22 +100,15 @@ function template_preprocess_draggableviews_view_draggabletable(&$vars, $style_p
     }
   }
 
-  $count = 0;
   foreach ($vars['rows'] as $num => $row) {
-    $vars['row_classes'][$num][] = ($count++ % 2 == 0) ? 'odd' : 'even';
+    $vars['row_classes'][$num][] = ($num % 2 == 0) ? 'odd' : 'even';
   }
-
-  $vars['row_classes'][0][] = 'views-row-first';
-  $vars['row_classes'][count($vars['row_classes']) - 1][] = 'views-row-last';
 
   $vars['class'] = 'views-table';
   if (!empty($options['sticky'])) {
     drupal_add_js('misc/tableheader.js');
     $vars['class'] .= " sticky-enabled";
   }
-  $vars['class'] .= ' cols-'. count($vars['rows']);
-  
-  // COPY END
 
 
   // Draggableviews output begin
@@ -313,10 +306,8 @@ function template_preprocess_draggableviews_view_draggabletable_form($vars) {
  * Theme the form for the table style plugin
  */
 function theme_draggableviews_ui_style_plugin_draggabletable($form) {
-  unset($form['order']);
-  unset($form['default']);
-  
-  // The following lines are a modification of: views/includes/admin.inc,v 1.161.2.12 2010/06/17 02:45:36 merlinofchaos. Lines 3060 - 3101. 
+  // the following lines are copied from the table style plugin
+  /* COPY BEGIN */
   $output = drupal_render($form['description_markup']);
 
   $header = array(
@@ -325,6 +316,10 @@ function theme_draggableviews_ui_style_plugin_draggabletable($form) {
     t('Separator'),
     array(
       'data' => t('Sortable'),
+      'align' => 'center',
+    ),
+    array(
+      'data' => t('Default sort'),
       'align' => 'center',
     ),
   );
@@ -339,19 +334,23 @@ function theme_draggableviews_ui_style_plugin_draggabletable($form) {
         'data' => drupal_render($form['info'][$id]['sortable']),
         'align' => 'center',
       );
+      $row[] = array(
+        'data' => drupal_render($form['default'][$id]),
+        'align' => 'center',
+      );
     }
     else {
+      $row[] = '';
       $row[] = '';
     }
     $rows[] = $row;
   }
-  drupal_render($form['default'][-1]);
 
   // Add the special 'None' row.
-  $rows[] = array(t('None'), '', '', '');
+  $rows[] = array(t('None'), '', '', '', array('align' => 'center', 'data' => drupal_render($form['default'][-1])));
 
   $output .= theme('table', $header, $rows);
-  // Copy/Modification end
+  /* COPY END */
 
 
   // Render Draggable view settings

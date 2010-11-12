@@ -1,5 +1,5 @@
 <?php
-// $Id: token.api.php,v 1.1.2.2 2010/09/23 01:04:12 davereid Exp $
+// $Id: token.api.php,v 1.1.2.1 2010/08/10 03:42:54 davereid Exp $
 
 /**
  * @file
@@ -14,16 +14,12 @@
 /**
  * Provide metadata about available placeholder tokens and token types.
  *
- * @param $type
- *   The type of tokens to list (e.g. 'global', 'node', or 'user'). To list all
- *   tokens, use 'all'.
- *
  * @return
  *   An associative array of available tokens. The base array is keys of token
  *   types and an array of its tokens. The token arrays are keys containing the
  *   raw name of the token and values containing its user-friendly name.
  */
-function hook_token_list($type = 'all') {
+function hook_token_list() {
   $tokens = array();
 
   if ($type == 'global' || $type == 'all') {
@@ -41,7 +37,8 @@ function hook_token_list($type = 'all') {
  * Provide replacement values for placeholder tokens.
  *
  * @param $type
- *   The type of token being replaced (e.g. 'global', 'node', or 'user').
+ *   The type of token being replaced. 'global', 'node', and 'user', are
+ *   common.
  * @param $data
  *   (optional) An object to be used when generating replacement values.
  * @param $options

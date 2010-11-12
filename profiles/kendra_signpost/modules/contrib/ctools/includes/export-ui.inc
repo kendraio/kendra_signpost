@@ -1,5 +1,5 @@
 <?php
-// $Id: export-ui.inc,v 1.1.2.9 2010/10/15 21:05:55 merlinofchaos Exp $
+// $Id: export-ui.inc,v 1.1.2.6 2010/07/21 23:04:59 merlinofchaos Exp $
 
 /**
  * @file
@@ -32,8 +32,6 @@ function ctools_export_ui_process(&$plugin, $info) {
     'strings' => array(),
     'list' => NULL,
     'access' => 'administer site configuration',
-    'use advanced help' => FALSE,
-    'advanced help' => array(),
   );
 
   // Provide CRUD access defaults based on the base 'access' setting:
@@ -46,6 +44,7 @@ function ctools_export_ui_process(&$plugin, $info) {
     return;
   }
 
+  $error = FALSE;
   // The following keys are required and the plugin cannot be processed
   // without them.
   $keys = array(
@@ -62,16 +61,12 @@ function ctools_export_ui_process(&$plugin, $info) {
     }
   }
 
-  // If we're on the modules page and building a menu, there is a design flaw
-  // in Drupal core that causes modules to be installed but the schema does
-  // not become available until AFTER menu rebuild. This helps smooth that
-  // out. This is a HACK but it should work:
-  $schema = ctools_export_get_schema($plugin['schema']);
-
-  if (!$schema && $_GET['q'] == 'admin/build/modules/list/confirm') {
-    $schema = ctools_export_get_schema($plugin['schema'], TRUE);
+  // We process all so that a developer can see all the missing keys at once.
+  if ($error) {
+    return;
   }
 
+  $schema = ctools_export_get_schema($plugin['schema']);
   if (empty($schema)) {
     // If we're updating the schema may not have been read yet, so don't report this error in that case.
     if (!defined('MAINTENANCE_MODE')) {
@@ -312,7 +307,6 @@ function ctools_export_ui_process(&$plugin, $info) {
     'confirmation' => array(),
     'help' => array(),
     'message' => array(),
-    'advanced help' => array(),
   );
 
   // Strings used in drupal_set_title().
@@ -367,35 +361,6 @@ function ctools_export_ui_process(&$plugin, $info) {
     'enable' => t('@plugin %title was enabled.', array('@plugin' => $plugin['title singular proper'])),
     'disable' => t('@plugin %title was disabled.', array('@plugin' => $plugin['title singular proper'])),
   );
-
-  // Strings used if advanced help module is enabled.
-
-
-  if (!empty($plugin['use advanced help'])) {
-    if (module_exists('advanced_help')) {
-      $plugin['advanced help'] += array(
-        'enabled' => TRUE,
-        'topic' => $plugin['module'],
-        'module' => $plugin['module'],
-      );
-     }
-     else {
-        $plugin['advanced help'] += array(
-          'enabled' => FALSE,
-        );
-     }
-
-     // Get the module name.
-     $info = drupal_parse_info_file(drupal_get_path('module', $plugin['module']) .'/'. $plugin['module'] .'.info');
-     $plugin['strings']['advanced help'] += array(
-       // The strings to show when the advanced help module is enabled or disabled.
-       'enabled' => t('Learn more about the @module module.', array('@module' => $info['name'])),
-       'disabled' => t('Learn more about the @module module by enabling the <a href="@path">Advanced help</a> module.', array('@module' => $info['name'], '@path' => 'http://drupal.org/project/advanced_help')),
-     );
-  }
-
-
-
 }
 
 /**

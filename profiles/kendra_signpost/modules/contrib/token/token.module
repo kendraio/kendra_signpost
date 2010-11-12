@@ -1,5 +1,5 @@
 <?php
-// $Id: token.module,v 1.7.4.38 2010/09/30 19:39:43 davereid Exp $
+// $Id: token.module,v 1.7.4.33 2010/08/10 03:33:32 davereid Exp $
 
 /**
  * @file
@@ -36,44 +36,6 @@ function token_help($path, $arg) {
 }
 
 /**
- * Return an array of the core modules supported by token.module.
- */
-function _token_core_supported_modules() {
-  return array('node', 'user', 'taxonomy', 'comment');
-}
-
-/**
- * Implements hook_menu().
- */
-function token_menu() {
-  $items = array();
-
-  // Devel token pages.
-  if (module_exists('devel')) {
-    $items['node/%node/devel/token'] = array(
-      'title' => 'Tokens',
-      'page callback' => 'token_devel_token_object',
-      'page arguments' => array('node', 1),
-      'access arguments' => array('access devel information'),
-      'type' => MENU_LOCAL_TASK,
-      'file' => 'token.pages.inc',
-      'weight' => 5,
-    );
-    $items['user/%user/devel/token'] = array(
-      'title' => 'Tokens',
-      'page callback' => 'token_devel_token_object',
-      'page arguments' => array('user', 1),
-      'access arguments' => array('access devel information'),
-      'type' => MENU_LOCAL_TASK,
-      'file' => 'token.pages.inc',
-      'weight' => 5,
-    );
-  }
-
-  return $items;
-}
-
-/**
  * Implements hook_theme().
  */
 function token_theme() {
@@ -90,7 +52,21 @@ function token_theme() {
 }
 
 /**
- * Implements hook_token_values().
+ * Sample implementation of hook_token_values().
+ *
+ * @param type
+ *   A flag indicating the class of substitution tokens to use. If an
+ *   object is passed in the second param, 'type' should contain the
+ *   object's type. For example, 'node', 'comment', or 'user'. If your
+ *   implementation of the hook inserts globally applicable tokens that
+ *   do not depend on a particular object, it should only return values
+ *   when $type is 'global'.
+ * @param object
+ *   Optionally, the object to use for building substitution values.
+ *   A node, comment, user, etc.
+ * @return
+ *   A keyed array containing the substitution tokens and the substitution
+ *   values for the passed-in type and object.
  */
 function token_token_values($type, $object = NULL) {
   global $user;
@@ -131,7 +107,18 @@ function token_token_values($type, $object = NULL) {
 }
 
 /**
- * Implements hook_token_list().
+ * Sample implementation of hook_token_list(). Documents the individual
+ * tokens handled by your module.
+ *
+ * @param type
+ *   A flag indicating the class of substitution tokens to return
+ *   information on. If this is set to 'all', a complete list is being
+ *   built and your module should return its full list, regardless of
+ *   type. Global tokens should always be returned, regardless of the
+ *   $type passed in.
+ * @return
+ *   A keyed array listing the substitution tokens. Elements should be
+ *   in the form of: $list[$type][$token] = $description
  */
 function token_token_list($type = 'all') {
   $tokens = array();
@@ -170,7 +157,8 @@ function token_include() {
   if (!$run) {
     $run = TRUE;
     $modules_enabled = array_keys(module_list());
-    $modules = array_intersect(_token_core_supported_modules(), $modules_enabled);
+    $modules = array('node', 'user', 'taxonomy', 'comment');
+    $modules = array_intersect($modules, $modules_enabled);
     foreach ($modules as $module) {
       module_load_include('inc', 'token', "token_$module");
     }
@@ -178,122 +166,111 @@ function token_include() {
 }
 
 /**
- * Replace all tokens in a given string with appropriate values.
+ * Return the value of $original, with all instances of placeholder
+ * tokens replaced by their proper values. To replace multiple types
+ * at once see token_replace_multiple().
  *
- * @param $text
- *   A string potentially containing replaceable tokens.
- * @param $type
- *   (optional) A flag indicating the class of substitution tokens to use. If
- *   an object is passed in the second param, 'type' should contain the
- *   object's type. For example, 'node', 'comment', or 'user'. If no type is
- *   specified, only 'global' site-wide substitution tokens are built.
- * @param $object
- *   (optional) An object to use for building substitution values (e.g. a node
- *   comment, or user object).
- * @param $leading
- *   (optional) Character(s) to prepend to the token key before searching for
- *   matches. Defaults to TOKEN_PREFIX.
- * @param $trailing
- *   (optional) Character(s) to append to the token key before searching for
- *   matches. Defaults to TOKEN_SUFFIX.
- * @param $options
- *   (optional) A keyed array of settings and flags to control the token
- *   generation and replacement process.
- * @param $flush
- *   (optional) A flag indicating whether or not to flush the token cache.
- *   Useful for processes that need to slog through huge numbers of tokens
- *   in a single execution cycle. Flushing it will keep them from burning
- *   through memory. Defaults to FALSE.
- *
- * @return
- *   Text with tokens replaced.
+ * @param original
+ *  A string, or an array of strings, to perform token substitutions
+ *  on.
+ * @param type
+ *   A flag indicating the class of substitution tokens to use. If an
+ *   object is passed in the second param, 'type' should contain the
+ *   object's type. For example, 'node', 'comment', or 'user'. If no
+ *   type is specified, only 'global' site-wide substitution tokens are
+ *   built.
+ * @param object
+ *   Optionally, the object to use for building substitution values.
+ *   A node, comment, user, etc.
+ * @param leading
+ *    Character(s) to prepend to the token key before searching for
+ *    matches. Defaults to an open-bracket.
+ * @param trailing
+ *    Character(s) to append to the token key before searching for
+ *    matches. Defaults to a close-bracket.
+ * @param flush
+ *    A flag indicating whether or not to flush the token cache.
+ *    Useful for processes that need to slog through huge numbers
+ *    of tokens in a single execution cycle. Flushing it will
+ *    keep them from burning through memory.
+ *    The default is FALSE.
+ * @return The modified version of $original, with all substitutions
+ *   made.
  */
-function token_replace($text, $type = 'global', $object = NULL, $leading = TOKEN_PREFIX, $trailing = TOKEN_SUFFIX, $options = array(), $flush = FALSE) {
+function token_replace($original, $type = 'global', $object = NULL, $leading = TOKEN_PREFIX, $trailing = TOKEN_SUFFIX, $options = array(), $flush = FALSE) {
   $full = token_get_values($type, $object, $flush, $options);
-  $tokens = token_prepare_tokens($full->tokens, $leading, $trailing);
-  return str_replace($tokens, $full->values, $text);
+  return _token_replace_tokens($original, $full->tokens, $full->values, $leading, $trailing);
 }
 
 /**
- * Replace all tokens in a given string with appropriate values.
+ * Return the value of $original, with all instances of placeholder
+ * tokens replaced by their proper values. Contrary to token_replace(),
+ * this function supports replacing multiple types.
  *
- * Contrary to token_replace() this function supports replacing multiple types.
- *
- * @param $text
- *   A string potentially containing replaceable tokens.
- * @param $types
- *   (optional) An array of substitution classes and optional objects. The key
- *   is a flag indicating the class of substitution tokens to use. If an object
- *   is passed as value, the key should contain the object's type. For example,
- *   'node', 'comment', or 'user'. The object will be used for building
- *   substitution values. If no type is specified, only 'global' site-wide
- *   substitution tokens are built.
- * @param $leading
- *   (optional) Character(s) to prepend to the token key before searching for
- *   matches. Defaults to TOKEN_PREFIX.
- * @param $trailing
- *   (optional) Character(s) to append to the token key before searching for
- *   matches. Defaults to TOKEN_SUFFIX.
- * @param $options
- *   (optional) A keyed array of settings and flags to control the token
- *   generation and replacement process.
- * @param $flush
- *   (optional) A flag indicating whether or not to flush the token cache.
- *   Useful for processes that need to slog through huge numbers of tokens
- *   in a single execution cycle. Flushing it will keep them from burning
- *   through memory. Defaults to FALSE.
- *
- * @return
- *   Text with tokens replaced.
+ * @param original
+ *  A string, or an array of strings, to perform token substitutions
+ *  on.
+ * @param types
+ *   An array of substitution classes and optional objects. The key is
+ *   a flag indicating the class of substitution tokens to use.
+ *   If an object is passed as value, the key should contain the
+ *   object's type. For example, 'node', 'comment', or 'user'. The
+ *   object will be used for building substitution values. If no type
+ *   is specified, only 'global' site-wide substitution tokens are built.
+ * @param leading
+ *    Character(s) to prepend to the token key before searching for
+ *    matches. Defaults to an open-bracket.
+ * @param trailing
+ *    Character(s) to append to the token key before searching for
+ *    matches. Defaults to a close-bracket.
+ * @param flush
+ *    A flag indicating whether or not to flush the token cache.
+ *    Useful for processes that need to slog through huge numbers
+ *    of tokens in a single execution cycle. Flushing it will
+ *    keep them from burning through memory.
+ *    The default is FALSE.
+ * @return The modified version of $original, with all substitutions
+ *   made.
  */
-function token_replace_multiple($text, $types = array(), $leading = TOKEN_PREFIX, $trailing = TOKEN_SUFFIX, $options = array(), $flush = FALSE) {
+function token_replace_multiple($original, $types = array('global' => NULL), $leading = TOKEN_PREFIX, $trailing = TOKEN_SUFFIX, $options = array(), $flush = FALSE) {
   $full = new stdClass();
   $full->tokens = $full->values = array();
-
-  // Allow global token replacement by default.
-  if (empty($types) || !is_array($types)) {
-    $types = array('global' => NULL);
-  }
-
   foreach ($types as $type => $object) {
     $temp = token_get_values($type, $object, $flush, $options);
     $full->tokens = array_merge($full->tokens, $temp->tokens);
     $full->values = array_merge($full->values, $temp->values);
   }
+  return _token_replace_tokens($original, $full->tokens, $full->values, $leading, $trailing);
+}
 
-  $tokens = token_prepare_tokens($full->tokens, $leading, $trailing);
-  return str_replace($tokens, $full->values, $text);
+// Internally used function to replace tokens.
+function _token_replace_tokens($original, $tokens, $values, $leading, $trailing) {
+  $tokens = token_prepare_tokens($tokens, $leading, $trailing);
+  return str_replace($tokens, $values, $original);
 }
 
 /**
  * Return a list of valid substitution tokens and their values for
  * the specified type.
  *
- * @param $type
- *   (optional) A flag indicating the class of substitution tokens to use. If an
+ * @param type
+ *   A flag indicating the class of substitution tokens to use. If an
  *   object is passed in the second param, 'type' should contain the
  *   object's type. For example, 'node', 'comment', or 'user'. If no
  *   type is specified, only 'global' site-wide substitution tokens are
  *   built.
- * @param $object
- *   (optional) An object to use for building substitution values (e.g. a node
- *   comment, or user object).
- * @param $flush
- *   (optional) A flag indicating whether or not to flush the token cache.
- *   Useful for processes that need to slog through huge numbers of tokens
- *   in a single execution cycle. Flushing it will keep them from burning
- *   through memory. Defaults to FALSE.
- * @param $options
- *   (optional) A keyed array of settings and flags to control the token
- *   generation process.
- *
+ * @param object
+ *   Optionally, the object to use for building substitution values.
+ *   A node, comment, user, etc.
+ * @param flush
+ *   A flag indicating whether or not to flush the token cache.
+ *   Useful for processes that need to slog through huge numbers
+ *   of tokens in a single execution cycle. Flushing it will
+ *   keep them from burning through memory.
+ *   The default is FALSE.
  * @return
- *   An object with two properties:
- *   - tokens: All the possible tokens names generated.
- *   - values: The corresponding values for the tokens.
- *
- * Note that before performing actual token replacement that the token names
- * should be run through token_prepare_tokens().
+ *   A keyed array containing the substitution tokens and the substitution
+ *   values for the passed-in type and object.
  */
 function token_get_values($type = 'global', $object = NULL, $flush = FALSE, $options = array()) {
   static $tokens;
@@ -343,7 +320,7 @@ function token_get_values($type = 'global', $object = NULL, $flush = FALSE, $opt
     $tokens['global']['default'] = module_invoke_all('token_values', 'global');
   }
 
-  $all = array_merge($tokens['global']['default'], $tokens[$type][$id]);
+  $all = _token_array_merge($tokens['global']['default'], $tokens[$type][$id]);
 
   $result = new stdClass();
   $result->tokens = array_keys($all);
@@ -355,20 +332,52 @@ function token_get_values($type = 'global', $object = NULL, $flush = FALSE, $opt
 }
 
 /**
+ * Merge two arrays of token values, checking and warning for duplication.
+ *
+ * Because array_merge will combinue elements that have the same key into an
+ * array instead of overriding the existing element, this causes problems since
+ * we need the values to always be a string.
+ *
+ * @param $array1
+ *   An array of token values keyed by token name.
+ * @param $array2
+ *   An array of token values keyed by token name.
+ * @return
+ *   A merged array of token values keyed by token name.
+ */
+function _token_array_merge($array1, $array2) {
+  static $warned = array();
+
+  $merged = array_merge($array1, $array2);
+  foreach ($merged as $key => $value) {
+    if (is_array($value)) {
+      if (empty($warned[$key])) {
+        // Only warn once about duplicate token.
+        watchdog('token', 'More than one module has defined the %key token.', array('%key' => $key), WATCHDOG_WARNING);
+        $warned[$key] = TRUE;
+      }
+      // Use the last-defined value (module with lowest weight).
+      $merged[$key] = array_pop($value);
+    }
+  }
+
+  return $merged;
+}
+
+/**
  * A helper function that retrieves all currently exposed tokens,
  * and merges them recursively. This is only necessary when building
  * the token listing -- during actual value replacement, only tokens
  * in a particular domain are requested and a normal array_marge() is
  * sufficient.
  *
- * @param $types
+ * @param types
  *   A flag indicating the class of substitution tokens to use. If an
  *   object is passed in the second param, 'types' should contain the
  *   object's type. For example, 'node', 'comment', or 'user'. 'types'
  *   may also be an array of types of the form array('node','user'). If no
  *   type is specified, only 'global' site-wide substitution tokens are
  *   built.
- *
  * @return
  *   The array of usable tokens and their descriptions, organized by
  *   token type.
@@ -378,10 +387,11 @@ function token_get_list($types = 'all') {
   $return = array();
   settype($types, 'array');
   foreach (module_implements('token_list') as $module) {
+    $function = $module .'_token_list';
     foreach ($types as $type) {
-      $module_token_list = module_invoke($module, 'token_list', $type);
-      if (isset($module_token_list) && is_array($module_token_list)) {
-        foreach ($module_token_list as $category => $tokens) {
+      $result = $function($type);
+      if (is_array($result)) {
+        foreach ($result as $category => $tokens) {
           foreach ($tokens as $token => $title) {
             // Automatically append a raw token warning.
             if (substr($token, -4) === '-raw' && strpos($title, t('raw user input')) === FALSE && strpos($title, '1269441371') === FALSE) {
@@ -397,17 +407,21 @@ function token_get_list($types = 'all') {
 }
 
 /**
- * A helper function to prepare raw tokens for replacement.
+ * A helper function that transforms all the elements of an
+ * array. Used to change the delimiter style from brackets to
+ * percent symbols etc.
  *
- * @param $tokens
- *   The array of tokens names with no delimiting characters.
- * @param $leading
- *   String to prepend to the token. Default is TOKEN_PREFIX.
- * @param $trailing
- *   String to append to the token. Default is TOKEN_SUFFIX.
- *
- * @return
- *   An array of the formatted tokens.
+ * @param tokens
+ *    The array of tokens keys with no delimiting characters
+ * @param leading
+ *    Character(s) to prepend to the token key before searching for
+ *    matches. Defaults to an open-bracket.
+ * @param trailing
+ *    Character(s) to append to the token key before searching for
+ *    matches. Defaults to a close-bracket.
+ *  @return
+ *    The array of token keys, each wrapped in the specified
+ *    delimiter style.
  */
 function token_prepare_tokens($tokens = array(), $leading = TOKEN_PREFIX, $trailing = TOKEN_SUFFIX) {
   foreach ($tokens as $key => $value) {
@@ -416,9 +430,9 @@ function token_prepare_tokens($tokens = array(), $leading = TOKEN_PREFIX, $trail
   return $tokens;
 }
 
-/**
- * A helper function to return an object's ID for use in static caching.
- */
+// Internal utility function used for static caching. There are
+// almost certainly better ways to do this, but for the moment it's
+// sufficient.
 function _token_get_id($type = 'global', $object = NULL) {
   if (!isset($object)) {
     return "default";
@@ -513,13 +527,12 @@ function token_get_date_token_values($timestamp = NULL, $token_prefix = '') {
  *   A string with the raw text containing the raw tokens.
  * @param $valid_types
  *   An array of token types to validage against.
- * @param $leading
- *   Character(s) to prepend to the token key before searching for
- *   matches. Defaults to TOKEN_PREFIX.
- * @param $trailing
- *   Character(s) to append to the token key before searching for
- *   matches. Defaults to TOKEN_SUFFIX.
- *
+ * @param leading
+ *    Character(s) to prepend to the token key before searching for
+ *    matches. Defaults to an open-bracket.
+ * @param trailing
+ *    Character(s) to append to the token key before searching for
+ *    matches. Defaults to a close-bracket.
  * @return
  *   An array with the invalid tokens in their original raw forms.
  */
@@ -535,16 +548,6 @@ function token_get_invalid_tokens_by_context($text, $valid_types = array(), $lea
       if (isset($tokens[$token])) {
         $found = TRUE;
         break;
-      }
-      elseif (preg_match('/^(.*[_-])\d+$/', $token, $result)) {
-        // Some modules use a 'wildcard' token, e.g. Location.module defines
-        // [location-country_N] but users actually use [location-country_0].
-        // If the token has a digit on the end and there is a 'wildcard'
-        // token definition, we should allow it.
-        if (isset($tokens[$result[1] . 'N']) || isset($tokens[$result[1] . '?'])) {
-          $found = TRUE;
-          break;
-        }
       }
     }
     if (!$found) {
@@ -562,13 +565,12 @@ function token_get_invalid_tokens_by_context($text, $valid_types = array(), $lea
  *
  * @param $text
  *   The text to be scanned for possible tokens.
- * @param $leading
- *   Character(s) to prepend to the token key before searching for
- *   matches. Defaults to TOKEN_PREFIX.
- * @param $trailing
- *   Character(s) to append to the token key before searching for
- *   matches. Defaults to TOKEN_SUFFIX.
- *
+ * @param leading
+ *    Character(s) to prepend to the token key before searching for
+ *    matches. Defaults to an open-bracket.
+ * @param trailing
+ *    Character(s) to append to the token key before searching for
+ *    matches. Defaults to a close-bracket.
  * @return
  *   An array of discovered tokens.
  */
@@ -604,37 +606,4 @@ function token_element_validate_token_context(&$element, &$form_state) {
     form_error($element, t('The %element-title is using the following invalid tokens: @invalid-tokens.', array('%element-title' => $element['#title'], '@invalid-tokens' => implode(', ', $invalid_tokens))));
   }
   return $element;
-}
-
-/**
- * Find tokens that have been declared twice by different modules.
- */
-function token_find_duplicate_tokens() {
-  token_include();
-  $all_tokens = array();
-
-  foreach (module_implements('token_list') as $module) {
-    $module_token_list = module_invoke($module, 'token_list', 'all');
-    if (!isset($module_token_list) || !is_array($module_token_list)) {
-      // Skip modules that do not return an array as that is a valid return
-      // value.
-      continue;
-    }
-    if (in_array($module, _token_core_supported_modules())) {
-      $module = 'token';
-    }
-    foreach ($module_token_list as $type => $tokens) {
-      foreach (array_keys($tokens) as $token) {
-        $all_tokens[$type . ':' . $token][] = $module;
-      }
-    }
-  }
-
-  foreach ($all_tokens as $token => $modules) {
-    if (count($modules) < 2) {
-      unset($all_tokens[$token]);
-    }
-  }
-
-  return $all_tokens;
 }

@@ -1,5 +1,5 @@
 <?php
-// $Id: views_panes.inc,v 1.14.2.15 2010/08/20 21:20:40 merlinofchaos Exp $
+// $Id: views_panes.inc,v 1.14.2.14 2010/07/23 21:47:21 merlinofchaos Exp $
 
 /**
  * @file
@@ -50,10 +50,7 @@ function views_content_views_panes_content_type_content_types($plugin) {
         if (empty($display->handler->panel_pane_display)) {
           continue;
         }
-        $info = _views_content_panes_content_type($view, $display);
-        if ($info) {
-          $types[$view->name . '-' . $id] = $info;
-        }
+        $types[$view->name . '-' . $id] = _views_content_panes_content_type($view, $display);
       }
 
       $view->destroy();
@@ -82,12 +79,6 @@ function views_content_views_panes_content_type_content_type($subtype, $plugin) 
 }
 
 function _views_content_panes_content_type($view, $display) {
-  // Ensure the handler is the right type, as Views will fall back to
-  // the default display if something is broken:
-  if (get_class($display->handler) != 'views_content_plugin_display_panel_pane') {
-    return;
-  }
-
   $title = $display->handler->get_option('pane_title');
   if (!$title) {
     $title = $view->name;
