@@ -53,7 +53,7 @@ urlobject = urllib.urlopen(absolute_url)
 results = urlobject.read()
 content_type = urlobject.info().gettype()
 
-sys.stdout.write("Content-type: %s\n\r\n\r" % content_type)
+sys.stdout.write("Content-type: %s\r\n\r\n" % content_type)
 sys.stdout.write(results)
 sys.stdout.flush()
 
