@@ -25,6 +25,7 @@ def is_bad_request():
     return 0
 
 if os.environ.get('HTTPS', '') == 'on':
+    # Warning: proxied HTTPS requests will not attempt to validate the server certificate!
     protocol = 'https'
 else:
     protocol = 'http'
