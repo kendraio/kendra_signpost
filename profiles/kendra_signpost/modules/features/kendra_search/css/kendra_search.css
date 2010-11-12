@@ -9,7 +9,7 @@
 	bottom: 1em;
 	left: 1em;
 	padding: 1em;
-	position: absolute;
+	position: fixed;
 	width: 400px;
 	z-index: 1000;
 	-webkit-border-radius: 10px;
