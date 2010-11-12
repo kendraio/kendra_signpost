@@ -60,7 +60,8 @@ function kendra_search_map_alter(&$item, $key) {
  **/
 function kendra_search_get_array() {
 	$mappings = kendra_mapping_allowed_values();
-	array_walk($mappings, 'kendra_search_map_alter');
+	//die(print_r($mappings));
+	if (is_array($mappings)) array_walk($mappings, 'kendra_search_map_alter');
 
 	return $mappings;
 }
@@ -100,14 +101,16 @@ function kendra_search_init() {
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/core/Parameter.js');
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/core/ParameterStore.js');
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/kendra_search.js');
-
+	drupal_add_js(drupal_get_path('module', 'json_server') .'/json_server.js');
+	
 	/**
 	 * expose core Kendra vars in Javascript
 	 */
 	$jsonContainer = array(
 		'search' => array(
-		'solrUrl' => '/cgi-bin/solr_search_proxy.py'
-		// 'solrUrl' => 'http://' . variable_get('apachesolr_host', 'localhost') . ':' . variable_get('apachesolr_port', '8983') . variable_get('apachesolr_path', '/solr')
+	'solrUrl' => 'http://dev.signpost.kendra.org.uk/cgi-bin/solr_search_proxy.py/'
+	//'solrUrl' => '/cgi-bin/solr_search_proxy.py'
+	// 'solrUrl' => 'http://' . variable_get('apachesolr_host', 'localhost') . ':' . variable_get('apachesolr_port', '8983') . variable_get('apachesolr_path', '/solr')
 	)
 	,'mapping'=> array('mappings'=>array())
 	);

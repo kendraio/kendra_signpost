@@ -26,8 +26,8 @@ function kendra_search_service_access($account) {
  * Returns an array of mappings
  * explose the mapping array as an array( 'mapping URI' => 'translated name' )
  */
-function kendra_search_service_get_options_array($value = '', $label = 'Please Choose') {
-	$mappings = kendra_search_get_options_array(array($value => $label));
+function kendra_search_service_get_mappings_array() {
+	$mappings = kendra_search_get_array();
 
 	if (!$mappings) {
 		return services_error(t('No mappings were found.'));
@@ -41,8 +41,8 @@ function kendra_search_service_get_options_array($value = '', $label = 'Please C
 function kendra_search_service_service() {
 	return array(
 	array(
-      '#method'   => 'kendra_search.get_options_array',
-      '#callback' => 'kendra_search_service_get_options_array',
+      '#method'   => 'kendra_search.get_mappings_array',
+      '#callback' => 'kendra_search_service_get_mappings_array',
       '#key'      => FALSE,
 	  '#auth' => FALSE,
 //	'#access' => 'kendra_search_service_access',
