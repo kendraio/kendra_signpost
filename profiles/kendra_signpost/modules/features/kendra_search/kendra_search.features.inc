@@ -101,6 +101,9 @@ function kendra_search_init() {
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/core/Parameter.js');
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/core/ParameterStore.js');
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/kendra_search.js');
+
+	drupal_add_css(drupal_get_path('module', 'kendra_search') . "/css/kendra_search.css", "module");
+
 	drupal_add_js(drupal_get_path('module', 'json_server') .'/json_server.js');
 
 	/**
