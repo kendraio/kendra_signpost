@@ -32,7 +32,9 @@ jQuery.extend(Kendra, {
 				if ($('#search-log').length == 0) {
 					$('body').append('<div id="search-log"><h5>log:</h5></div>');
 				}
-				$('#search-log').append('<div class="row">' + label + '</div>');
+				$('#search-log').append('<div class="row">' + label + '</div>').stop().animate( {
+					scrollTop : $('#search-log').attr("scrollHeight")
+				}, 2500);
 			}
 		},
 
@@ -65,7 +67,7 @@ jQuery.extend(Kendra, {
 					if (status == false) {
 						Kendra.util.log("services: FATAL ERROR");
 					} else if (data['#error'] == true) {
-						Kendra.util.log("services: error: "+data['#message']);
+						Kendra.util.log("services: error: " + data['#message']);
 					} else {
 						Kendra.mapping.mappings = jQuery.extend(Kendra.mapping.mappings, data);
 						Kendra.util.log(data, 'Kendra.getMappings: merged ' + Kendra.util
