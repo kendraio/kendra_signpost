@@ -68,7 +68,9 @@ jQuery.extend(Kendra, {
 		 *            Function callback
 		 */
 		connect : function(success, failure) {
-			var success = success || {}, failure = failure || {};
+			var success = success || function() {
+			}, failure = failure || function() {
+			};
 
 			if (Kendra.service.sessid) {
 				success();
