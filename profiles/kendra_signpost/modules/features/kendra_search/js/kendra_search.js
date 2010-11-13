@@ -53,62 +53,98 @@ jQuery.extend(Kendra, {
 		}
 	},
 
-	getMappings : function() {
-		/**
-		 * fetch mappings
-		 */
-		Drupal.service('kendra_search.get_mappings_array', {
-		// api_key : "123461823762348756293",
-				// sessid : "sdfjahsldjfhlaksuertybsi",
-				// extra_parameter : "asdfasdf",
-				// other_parameter : [ "nodes", "are",
-				// "good" ]
-				}, function(status, data) {
-					if (status == false) {
-						Kendra.util.log("services: FATAL ERROR");
-					} else if (data['#error'] == true) {
-						Kendra.util.log("services: error: " + data['#message']);
-					} else {
-						Kendra.mapping.mappings = jQuery.extend(Kendra.mapping.mappings, data);
-						Kendra.util.log(data, 'Kendra.getMappings: merged ' + Kendra.util
-								.arrayLength(Kendra.mapping.mappings) + ' mappings');
+	/**
+	 * container for services
+	 */
+	service : {
+		sessid : 0,
 
-						Kendra.solrQuery('*:*');
+		/**
+		 * connect to the services module to get a valid session ID
+		 * 
+		 * @param success
+		 *            Function callback
+		 * @param failure
+		 *            Function callback
+		 */
+		connect : function(success, failure) {
+			var success = success || {}, failure = failure || {};
+
+			if (Kendra.service.sessid) {
+				success();
+			} else {
+				Drupal.service('system.connect', {}, function(status, data) {
+					if (status == false) {
+						Kendra.util.log("Kendra.service.connect: failed");
+						failure();
+					} else {
+						Kendra.util.log("Kendra.service.connect: succeeded");
+						Kendra.service.sessid = data.sessid;
+						success(data);
 					}
 				});
-	},
-
-	/**
-	 * set up ApacheSolr query
-	 * 
-	 * @param query
-	 */
-	solrQuery : function(query) {
-		Kendra.Manager = new AjaxSolr.Manager( {
-			solrUrl : Kendra.search.solrUrl || '',
-
-			/**
-			 * override AbstractManager.handleResponse
-			 */
-			handleResponse : function(data) {
-				this.response = data;
-				Kendra.util
-						.log(this.response, 'Kendra.solrQuery: got response: ' + data.response.numFound + ' records');
-
-				for ( var widgetId in this.widgets) {
-					this.widgets[widgetId].afterRequest();
-				}
 			}
-		});
-		Kendra.Manager.init();
-		Kendra.Manager.store.addByValue('q', query);
-		Kendra.Manager.doRequest();
+		},
+
+		/**
+		 * fetch CSV mappings
+		 */
+		getMappings : function() {
+			Kendra.service.connect(function() {
+				Drupal.service('kendra_search.get_mappings_array', {
+					sessid : Kendra.service.sessid
+				// api_key : "123461823762348756293",
+						// extra_parameter : "asdfasdf",
+						// other_parameter : [ "nodes", "are",
+						// "good" ]
+						}, function(status, data) {
+							if (status == false) {
+								Kendra.util.log("Kendra.service.getMappings: FATAL ERROR");
+							} else if (data['#error'] == true) {
+								Kendra.util.log("Kendra.service.getMappings: error: " + data['#message']);
+							} else {
+								Kendra.mapping.mappings = jQuery.extend(Kendra.mapping.mappings, data);
+								Kendra.util.log(data, 'Kendra.service.getMappings: merged ' + Kendra.util
+										.arrayLength(Kendra.mapping.mappings) + ' mappings');
+
+								Kendra.service.solrQuery('*:*');
+							}
+						});
+			});
+		},
+
+		/**
+		 * set up ApacheSolr query
+		 * 
+		 * @param query
+		 */
+		solrQuery : function(query) {
+			Kendra.Manager = new AjaxSolr.Manager( {
+				solrUrl : Kendra.search.solrUrl || '',
+
+				/**
+				 * override AbstractManager.handleResponse
+				 */
+				handleResponse : function(data) {
+					this.response = data;
+					Kendra.util.log(this.response,
+							'Kendra.service.solrQuery: got response: ' + data.response.numFound + ' records');
+
+					for ( var widgetId in this.widgets) {
+						this.widgets[widgetId].afterRequest();
+					}
+				}
+			});
+			Kendra.Manager.init();
+			Kendra.Manager.store.addByValue('q', query);
+			Kendra.Manager.doRequest();
+		}
 	}
 });
 
 // document ready:
 (function($) {
 	$(function() {
-		Kendra.getMappings();
+		Kendra.service.getMappings();
 	});
 })(jQuery);
