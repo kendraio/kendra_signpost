@@ -22,6 +22,9 @@
 #search-log .row {
 	border-top: 1px dotted #cccccc;
 }
+#search-log a.close {
+	float:right;
+}
 #search-log .row a.toggle {
 }
 #search-log .row pre {

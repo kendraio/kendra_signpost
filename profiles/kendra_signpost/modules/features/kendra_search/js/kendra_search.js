@@ -34,7 +34,7 @@ jQuery.extend(Kendra, {
 					$msg.append('&nbsp;<a href="#" class="toggle" onclick="$(this).hide().next().show();return false">show</a>' + '<pre>' + Drupal.toJson(obj) + '</pre>');
 
 				if ($('#search-log').length == 0) {
-					$('body').append('<div id="search-log"><h5>log:</h5></div>');
+					$('body').append('<div id="search-log"><a class="close" href="#" onclick="$(this).hide();return false">[x]</a><h5>log:</h5></div>');
 				}
 				$('#search-log').append($msg).stop().animate( {
 					scrollTop : $('#search-log').attr("scrollHeight")
