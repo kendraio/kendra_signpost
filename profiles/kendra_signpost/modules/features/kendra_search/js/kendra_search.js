@@ -31,10 +31,10 @@ jQuery.extend(Kendra, {
 			if (label) {
 				var $msg = $('<div class="row">' + label + '</div>');
 				if (label != obj)
-					$msg.append('&nbsp;<a href="#" class="toggle" onclick="$(this).hide().next().show();return false">show</a>' + '<pre>' + Drupal.toJson(obj) + '</pre>');
+					$msg.append('&nbsp;<a href="#" class="toggle" onclick="$(this).hide().next().fadeIn();return false">show</a>' + '<pre>' + Drupal.toJson(obj) + '</pre>');
 
 				if ($('#search-log').length == 0) {
-					$('body').append('<div id="search-log"><a class="close" href="#" onclick="$(\'#search-log\').hide();return false">[x]</a><h5>log:</h5></div>');
+					$('body').append('<div id="search-log"><a class="close" href="#" onclick="$(\'#search-log\').fadeOut();return false">[x]</a><h5>log:</h5></div>');
 				}
 				$('#search-log').append($msg).stop().animate( {
 					scrollTop : $('#search-log').attr("scrollHeight")
@@ -43,8 +43,8 @@ jQuery.extend(Kendra, {
 		},
 
 		/**
-		 * arrayLength utility function to compute length of an
-		 * associative array
+		 * arrayLength utility function to compute length of an associative
+		 * array
 		 * 
 		 * @param arr
 		 *            Array
@@ -64,8 +64,7 @@ jQuery.extend(Kendra, {
 		sessid : 0,
 
 		/**
-		 * connect to the services module to get a valid session
-		 * ID
+		 * connect to the services module to get a valid session ID
 		 * 
 		 * @param success
 		 *            Function callback
@@ -129,8 +128,7 @@ jQuery.extend(Kendra, {
 				solrUrl : Kendra.search.solrUrl || '',
 
 				/**
-				 * override
-				 * AbstractManager.handleResponse
+				 * override AbstractManager.handleResponse
 				 */
 				handleResponse : function(data) {
 					this.response = data;
