@@ -29,18 +29,22 @@ jQuery.extend(Kendra, {
 				label = obj;
 			}
 			if (label) {
+				var $msg = $('<div class="row">' + label + '</div>');
+				if (label != obj)
+					$msg.append('&nbsp;<a href="#" class="toggle" onclick="$(this).hide().next().show();return false">show</a>' + '<pre>' + Drupal.toJson(obj) + '</pre>');
+
 				if ($('#search-log').length == 0) {
 					$('body').append('<div id="search-log"><h5>log:</h5></div>');
 				}
-				$('#search-log').append('<div class="row">' + label + '</div>').stop().animate( {
+				$('#search-log').append($msg).stop().animate( {
 					scrollTop : $('#search-log').attr("scrollHeight")
 				}, 2500);
 			}
 		},
 
 		/**
-		 * arrayLength utility function to compute length of an associative
-		 * array
+		 * arrayLength utility function to compute length of an
+		 * associative array
 		 * 
 		 * @param arr
 		 *            Array
@@ -60,7 +64,8 @@ jQuery.extend(Kendra, {
 		sessid : 0,
 
 		/**
-		 * connect to the services module to get a valid session ID
+		 * connect to the services module to get a valid session
+		 * ID
 		 * 
 		 * @param success
 		 *            Function callback
@@ -106,8 +111,7 @@ jQuery.extend(Kendra, {
 								Kendra.util.log("Kendra.service.getMappings: error: " + data['#message']);
 							} else {
 								Kendra.mapping.mappings = jQuery.extend(Kendra.mapping.mappings, data);
-								Kendra.util.log(data, 'Kendra.service.getMappings: merged ' + Kendra.util
-										.arrayLength(Kendra.mapping.mappings) + ' mappings');
+								Kendra.util.log(data, 'Kendra.service.getMappings: merged ' + Kendra.util.arrayLength(Kendra.mapping.mappings) + ' mappings');
 
 								Kendra.service.solrQuery('*:*');
 							}
@@ -125,12 +129,12 @@ jQuery.extend(Kendra, {
 				solrUrl : Kendra.search.solrUrl || '',
 
 				/**
-				 * override AbstractManager.handleResponse
+				 * override
+				 * AbstractManager.handleResponse
 				 */
 				handleResponse : function(data) {
 					this.response = data;
-					Kendra.util.log(this.response,
-							'Kendra.service.solrQuery: got response: ' + data.response.numFound + ' records');
+					Kendra.util.log(this.response, 'Kendra.service.solrQuery: got response: ' + data.response.numFound + ' records');
 
 					for ( var widgetId in this.widgets) {
 						this.widgets[widgetId].afterRequest();
