@@ -1,5 +1,9 @@
 // $Id$
 /**
+ * kendra_search.js
+ * @author Klokie <klokie@kendra.org.uk>
+ * @package kendra_search
+ * 
  * Requires ajaxsolr.
  */
 /**
