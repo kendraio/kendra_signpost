@@ -38,9 +38,12 @@
 
 #kendra-query-builder {
 	border: 1px solid orange;
-	padding: 1em;
 }
 
-#kendra-query-builder input, #kendra-query-builder select {
+#kendra-query-builder table {
+	margin: 1em;
+}
+
+#kendra-query-builder input,#kendra-query-builder select {
 	margin-right: 1em;
 }

@@ -127,7 +127,7 @@ jQuery.extend(Kendra, {
 								Kendra.util.log("Kendra.service.getMappings: error: " + data['#message']);
 								failure();
 							} else {
-								Kendra.mapping.mappings = jQuery.extend(Kendra.mapping.mappings, data);
+								Kendra.mapping.mappings = $.extend(Kendra.mapping.mappings, data);
 								Kendra.util.log(data, 'Kendra.service.getMappings: merged ' + Kendra.util.arrayLength(Kendra.mapping.mappings) + ' mappings');
 
 								success();
@@ -164,46 +164,78 @@ jQuery.extend(Kendra, {
 			/**
 			 * container
 			 */
-			html += '<div class="Kendra-service-buildQueryForm-rule draggable">';
+			html += '<table id="kendra-portable-filters" class="Kendra-service-buildQueryForm-rule views-table">';
+
+			/**
+			 * open row
+			 */
+			html += '<tr class="draggable">';
+
+			html += '<td>';
+			html += '<input type="hidden" class="hidden_nid" name="hidden_nid" value=""/>';
+			html += '<a class="tabledrag-handle" href="#" title="Drag to re-order"><div class="handle">&nbsp;</div></a>';
+			html += '</td>';
 
 			/**
 			 * operator 1: transform the Kendra.mapping.mappings array into an
 			 * HTML select element
 			 */
-			html += '<span id="Kendra-service-buildQueryForm-op1-span">';
+			html += '<td id="Kendra-service-buildQueryForm-op1-wrapper">';
 			html += '<select id="Kendra-service-buildQueryForm-op1" name="op1">';
 			for ( var key in Kendra.mapping.mappings) {
 				html += '<option value="' + key + '">' + Kendra.mapping.mappings[key] + '</option>';
 			}
 			html += '</select>';
-			html += '</span>';
+			html += '</td>';
 
 			/**
 			 * operand
 			 */
-			html += '<span id="Kendra-service-buildQueryForm-op2-span">';
+			html += '<td id="Kendra-service-buildQueryForm-op2-wrapper">';
 			html += '<select id="Kendra-service-buildQueryForm-op2" name="op2">';
 			for ( var key in operands) {
 				html += '<option value="' + key + (operands[key].selected ? '" selected="selected">' : '">') + operands[key].label + '</option>';
 			}
 			html += '</select>';
-			html += '</span>';
+			html += '</td>';
 
 			/**
 			 * operator 2: text field
 			 */
-			html += '<span id="Kendra-service-buildQueryForm-op3-span">';
+			html += '<td id="Kendra-service-buildQueryForm-op3-wrapper">';
 
 			html += '<input id="Kendra-service-buildQueryForm-op3" name="op3" type="text" value="" class="form-text" />';
 
-			html += '</span>';
+			html += '</td>';
+
+			/**
+			 * close row
+			 */
+			html += '</tr>';
 
 			/**
 			 * closure
 			 */
-			html += '</div>';
+			html += '</table>';
 
 			$(selector).html(html);
+
+			/**
+			 * @hack
+			 */
+			if (typeof Drupal.behaviors.draggableviewsLoad == 'function') {
+				Drupal.settings = $.extend(Drupal.settings, {
+					'draggableviews' : {
+						'kendra-portable-filters' : {
+							'parent' : null,
+							'states' : []
+						}
+					}
+				});
+				Drupal.behaviors.draggableviewsLoad();
+				Kendra.util.log(Drupal.settings.draggableviews, 'initializing draggableviews');
+			} else
+				Kendra.util.log(typeof Drupal.behaviors.draggableviewsLoad);
 		},
 
 		/**
@@ -261,13 +293,13 @@ jQuery.extend(Kendra, {
 				};
 
 				Kendra.service.solrQuery('*:*', params);
-			}, failure = function(){
+			}, failure = function() {
 				$('#kendra-query-builder').html('No mappings were found. Please <a href="kendra-import">import a catalogue</a> first.');
 			};
 
 			Kendra.service.getMappings(function() {
 				success('#kendra-query-builder');
-			}, function(){
+			}, function() {
 				failure();
 			});
 		}
