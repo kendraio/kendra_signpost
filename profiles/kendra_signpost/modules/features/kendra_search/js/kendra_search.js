@@ -164,6 +164,10 @@ jQuery.extend(Kendra, {
 // document ready:
 (function($) {
 	$(function() {
-		Kendra.service.getMappings();
+		var $form = $('form#node-form');
+		if ($form.length > 0 && $form.find('input[name=form_id]#edit-portable-filter-node-form').length > 0) {
+			$form.find('textarea#edit-body').parents('#edit-body-wrapper').hide().before('<div><h3>'+'MAPPINGS GO HERE'+'</h3></div>');
+			Kendra.service.getMappings();
+		}
 	});
 })(jQuery);
