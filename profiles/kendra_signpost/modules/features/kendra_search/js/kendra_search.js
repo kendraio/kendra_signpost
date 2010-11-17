@@ -246,7 +246,7 @@ jQuery.extend(Kendra, {
 		if ($form.length > 0 && $form.find('input[name=form_id]#edit-portable-filter-node-form').length > 0) {
 			$form.find('.body-field-wrapper').hide().before('<div id="kendra-query-builder"><h3>' + 'MAPPINGS GO HERE' + '</h3></div>');
 
-			var callback = function(selector) {
+			var success = function(selector) {
 				/**
 				 * build the query form
 				 */
@@ -261,10 +261,14 @@ jQuery.extend(Kendra, {
 				};
 
 				Kendra.service.solrQuery('*:*', params);
+			}, failure = function(){
+				$('#kendra-query-builder').html('No mappings were found. Please <a href="kendra-import">import a catalogue</a> first.');
 			};
 
 			Kendra.service.getMappings(function() {
-				callback('#kendra-query-builder');
+				success('#kendra-query-builder');
+			}, function(){
+				failure();
 			});
 		}
 	});
