@@ -149,10 +149,22 @@ jQuery.extend(Kendra, {
 			Kendra.util.log('Kendra.service.buildQueryForm');
 
 			var html = '', operands = {
-				'^=' : 'starts with',
-				'*=' : 'contains',
-				'$=' : 'ends with'
+				'^=' : {
+					'label' : 'starts with'
+				},
+				'*=' : {
+					'label' : 'contains',
+					'selected' : 'selected'
+				},
+				'$=' : {
+					'label' : 'ends with'
+				}
 			};
+
+			/**
+			 * container
+			 */
+			html += '<div class="Kendra-service-buildQueryForm-rule draggable">';
 
 			/**
 			 * operator 1: transform the Kendra.mapping.mappings array into an
@@ -172,7 +184,7 @@ jQuery.extend(Kendra, {
 			html += '<span id="Kendra-service-buildQueryForm-op2-span">';
 			html += '<select id="Kendra-service-buildQueryForm-op2" name="op2">';
 			for ( var key in operands) {
-				html += '<option value="' + key + '">' + operands[key] + '</option>';
+				html += '<option value="' + key + (operands[key].selected ? '" selected="selected">' : '">') + operands[key].label + '</option>';
 			}
 			html += '</select>';
 			html += '</span>';
@@ -183,8 +195,13 @@ jQuery.extend(Kendra, {
 			html += '<span id="Kendra-service-buildQueryForm-op3-span">';
 
 			html += '<input id="Kendra-service-buildQueryForm-op3" name="op3" type="text" value="" class="form-text" />';
-			
+
 			html += '</span>';
+
+			/**
+			 * closure
+			 */
+			html += '</div>';
 
 			$(selector).html(html);
 		},

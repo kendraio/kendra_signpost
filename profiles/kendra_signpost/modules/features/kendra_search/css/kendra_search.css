@@ -40,3 +40,7 @@
 	border: 1px solid orange;
 	padding: 1em;
 }
+
+#kendra-query-builder input, #kendra-query-builder select {
+	margin-right: 1em;
+}
