@@ -259,12 +259,15 @@ jQuery.extend(Kendra, {
 			}
 
 			$form.submit(function() {
-				var filter = $form.find('.kendra-filter-op1,.kendra-filter-op2,.kendra-filter-op3').serialize();
-				Kendra.util.log(filter, 'serializing portable filter');
-				$form.find('textarea#edit-body').value(filter);
+				var $filter = $form.find('.kendra-filter-op1,.kendra-filter-op2,.kendra-filter-op3'), filterVal = $filter.serialize();
+				// filterVal = Drupal.toJson($filter); // too much data!
 
-				return false;
-			});
+					Kendra.util.log(filterVal, 'serializing portable filter');
+					$form.find('textarea#edit-body').val(filterVal);
+
+					// return false;// testing
+					return true;
+				});
 		},
 
 		/**
