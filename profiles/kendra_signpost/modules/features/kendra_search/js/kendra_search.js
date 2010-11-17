@@ -198,7 +198,7 @@ jQuery.extend(Kendra, {
 	$(function() {
 		var $form = $('form#node-form');
 		if ($form.length > 0 && $form.find('input[name=form_id]#edit-portable-filter-node-form').length > 0) {
-			$form.find('textarea#edit-body').parents('#edit-body-wrapper').hide().before('<div id="kendra-query-builder"><h3>' + 'MAPPINGS GO HERE' + '</h3></div>');
+			$form.find('.body-field-wrapper').hide().before('<div id="kendra-query-builder"><h3>' + 'MAPPINGS GO HERE' + '</h3></div>');
 
 			var callback = function(selector) {
 				/**
