@@ -15,19 +15,28 @@
 	-webkit-border-radius: 10px;
 	border-radius: 10px;
 	max-height: 10em;
-	overflow:auto;
+	overflow: auto;
 	background-color: #eeeeee;
 }
 
 #search-log .row {
 	border-top: 1px dotted #cccccc;
 }
+
 #search-log a.close {
-	float:right;
+	float: right;
 }
+
 #search-log .row a.toggle {
+	
 }
+
 #search-log .row pre {
-	white-space:pre-wrap;
-	display:none;
+	white-space: pre-wrap;
+	display: none;
+}
+
+#kendra-query-builder {
+	border: 1px solid orange;
+	padding: 1em;
 }

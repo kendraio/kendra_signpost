@@ -98,9 +98,20 @@ jQuery.extend(Kendra, {
 		},
 
 		/**
+		 * getMappings
+		 * 
 		 * fetch CSV mappings
+		 * 
+		 * @param success
+		 *            Function callback
+		 * @param failure
+		 *            Function callback
 		 */
-		getMappings : function() {
+		getMappings : function(success, failure) {
+			var success = success || function() {
+			}, failure = failure || function() {
+			};
+
 			Kendra.service.connect(function() {
 				Drupal.service('kendra_search.get_mappings_array', {
 					sessid : Kendra.service.sessid
@@ -111,21 +122,42 @@ jQuery.extend(Kendra, {
 						}, function(status, data) {
 							if (status == false) {
 								Kendra.util.log("Kendra.service.getMappings: FATAL ERROR");
+								failure();
 							} else if (data['#error'] == true) {
 								Kendra.util.log("Kendra.service.getMappings: error: " + data['#message']);
+								failure();
 							} else {
 								Kendra.mapping.mappings = jQuery.extend(Kendra.mapping.mappings, data);
 								Kendra.util.log(data, 'Kendra.service.getMappings: merged ' + Kendra.util.arrayLength(Kendra.mapping.mappings) + ' mappings');
 
-								var params = {
-									facet : true,
-									'json.nl' : 'map'
-								};
-
-								Kendra.service.solrQuery('*:*', params);
+								success();
 							}
 						});
 			});
+		},
+
+		/**
+		 * buildQueryForm
+		 * 
+		 * using the current list of mappings, create and render a form for
+		 * querying Solr
+		 */
+		buildQueryForm : function(selector) {
+			if (!selector || $(selector).length == 0) {
+				return false;
+			}
+			Kendra.util.log('Kendra.service.buildQueryForm');
+
+			/**
+			 * transform the Kendra.mapping.mappings array into an HTML select element
+			 */
+			var html = '<select id="Kendra-service-buildQueryForm-select">';
+
+			for (var key in Kendra.mapping.mappings) html += '<option value="' + key + '">' + Kendra.mapping.mappings[key] + '</option>';
+			
+			html += '</select>';
+
+			$(selector).html(html);
 		},
 
 		/**
@@ -166,8 +198,28 @@ jQuery.extend(Kendra, {
 	$(function() {
 		var $form = $('form#node-form');
 		if ($form.length > 0 && $form.find('input[name=form_id]#edit-portable-filter-node-form').length > 0) {
-			$form.find('textarea#edit-body').parents('#edit-body-wrapper').hide().before('<div><h3>'+'MAPPINGS GO HERE'+'</h3></div>');
-			Kendra.service.getMappings();
+			$form.find('textarea#edit-body').parents('#edit-body-wrapper').hide().before('<div id="kendra-query-builder"><h3>' + 'MAPPINGS GO HERE' + '</h3></div>');
+
+			var callback = function(selector) {
+				/**
+				 * build the query form
+				 */
+				Kendra.service.buildQueryForm(selector);
+
+				/**
+				 * run a test query
+				 */
+				var params = {
+					facet : true,
+					'json.nl' : 'map'
+				};
+
+				Kendra.service.solrQuery('*:*', params);
+			};
+
+			Kendra.service.getMappings(function() {
+				callback('#kendra-query-builder');
+			});
 		}
 	});
 })(jQuery);
