@@ -148,14 +148,43 @@ jQuery.extend(Kendra, {
 			}
 			Kendra.util.log('Kendra.service.buildQueryForm');
 
-			/**
-			 * transform the Kendra.mapping.mappings array into an HTML select element
-			 */
-			var html = '<select id="Kendra-service-buildQueryForm-select">';
+			var html = '', operands = {
+				'^=' : 'starts with',
+				'*=' : 'contains',
+				'$=' : 'ends with'
+			};
 
-			for (var key in Kendra.mapping.mappings) html += '<option value="' + key + '">' + Kendra.mapping.mappings[key] + '</option>';
-			
+			/**
+			 * operator 1: transform the Kendra.mapping.mappings array into an
+			 * HTML select element
+			 */
+			html += '<span id="Kendra-service-buildQueryForm-op1-span">';
+			html += '<select id="Kendra-service-buildQueryForm-op1" name="op1">';
+			for ( var key in Kendra.mapping.mappings) {
+				html += '<option value="' + key + '">' + Kendra.mapping.mappings[key] + '</option>';
+			}
 			html += '</select>';
+			html += '</span>';
+
+			/**
+			 * operand
+			 */
+			html += '<span id="Kendra-service-buildQueryForm-op2-span">';
+			html += '<select id="Kendra-service-buildQueryForm-op2" name="op2">';
+			for ( var key in operands) {
+				html += '<option value="' + key + '">' + operands[key] + '</option>';
+			}
+			html += '</select>';
+			html += '</span>';
+
+			/**
+			 * operator 2: text field
+			 */
+			html += '<span id="Kendra-service-buildQueryForm-op3-span">';
+
+			html += '<input id="Kendra-service-buildQueryForm-op3" name="op3" type="text" value="" class="form-text" />';
+			
+			html += '</span>';
 
 			$(selector).html(html);
 		},
