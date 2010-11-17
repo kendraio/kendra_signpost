@@ -4,7 +4,8 @@
  * @author Klokie <klokie@kendra.org.uk>
  * @package kendra_search
  * 
- * Requires ajaxsolr.
+ * @requires ajaxsolr
+ * @requires drupal.org/services
  */
 /**
  * kendra_search.js
@@ -35,10 +36,10 @@ jQuery.extend(Kendra, {
 			if (label) {
 				var $msg = $('<div class="row">' + label + '</div>');
 				if (label != obj)
-					$msg.append('&nbsp;<a href="#" class="toggle" onclick="$(this).hide().next().fadeIn();return false">show</a>' + '<pre>' + Drupal.toJson(obj) + '</pre>');
+					$msg.append( [ '&nbsp;', '<a href="#" class="toggle" onclick="', '$(this).hide().next().fadeIn();return false', '">show</a>', '<pre>', Drupal.toJson(obj), '</pre>' ].join(''));
 
 				if ($('#search-log').length == 0) {
-					$('body').append('<div id="search-log"><a class="close" href="#" onclick="$(\'#search-log\').fadeOut();return false">[x]</a><h5>log:</h5></div>');
+					$('body').append( [ '<div id="search-log">', '<a class="close" href="#" onclick="', "$('#search-log').fadeOut();return false", '">[x]</a><h5>', 'log:', '</h5></div>' ].join(''));
 				}
 				$('#search-log').append($msg).stop().animate( {
 					scrollTop : $('#search-log').attr("scrollHeight")
@@ -116,7 +117,12 @@ jQuery.extend(Kendra, {
 								Kendra.mapping.mappings = jQuery.extend(Kendra.mapping.mappings, data);
 								Kendra.util.log(data, 'Kendra.service.getMappings: merged ' + Kendra.util.arrayLength(Kendra.mapping.mappings) + ' mappings');
 
-								Kendra.service.solrQuery('*:*');
+								var params = {
+									facet : true,
+									'json.nl' : 'map'
+								};
+
+								Kendra.service.solrQuery('*:*', params);
 							}
 						});
 			});
@@ -127,7 +133,8 @@ jQuery.extend(Kendra, {
 		 * 
 		 * @param query
 		 */
-		solrQuery : function(query) {
+		solrQuery : function(query, params) {
+			var params = params || {};
 			Kendra.Manager = new AjaxSolr.Manager( {
 				solrUrl : Kendra.search.solrUrl || '',
 
@@ -145,6 +152,10 @@ jQuery.extend(Kendra, {
 			});
 			Kendra.Manager.init();
 			Kendra.Manager.store.addByValue('q', query);
+
+			for ( var name in params) {
+				Manager.store.addByValue(name, params[name]);
+			}
 			Kendra.Manager.doRequest();
 		}
 	}
