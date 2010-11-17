@@ -154,7 +154,7 @@ jQuery.extend(Kendra, {
 			Kendra.Manager.store.addByValue('q', query);
 
 			for ( var name in params) {
-				Manager.store.addByValue(name, params[name]);
+				Kendra.Manager.store.addByValue(name, params[name]);
 			}
 			Kendra.Manager.doRequest();
 		}

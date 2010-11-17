@@ -21,6 +21,17 @@ function kendra_search_ctools_plugin_api() {
  */
 function kendra_search_node_info() {
 	$items = array(
+    'portable_filter' => array(
+      'name' => t('Portable Filter'),
+      'module' => 'features',
+      'description' => t('User-generated smart content filter'),
+      'has_title' => '1',
+      'title_label' => t('Title'),
+      'has_body' => '1',
+      'body_label' => t('Body'),
+      'min_word_count' => '0',
+      'help' => '',
+	),
     'portable_filter_rule' => array(
       'name' => t('Portable Filter Rule'),
       'module' => 'features',
@@ -31,8 +42,7 @@ function kendra_search_node_info() {
       'body_label' => '',
       'min_word_count' => '0',
       'help' => '',
-	),
-	);
+	));
 	return $items;
 }
 

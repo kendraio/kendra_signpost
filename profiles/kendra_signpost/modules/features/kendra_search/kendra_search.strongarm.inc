@@ -1,11 +1,17 @@
 <?php
-// $Id$
 
 /**
  * Implementation of hook_strongarm().
  */
 function kendra_search_strongarm() {
   $export = array();
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'ant_pattern_portable_filter';
+  $strongarm->value = '';
+
+  $export['ant_pattern_portable_filter'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
@@ -57,6 +63,15 @@ function kendra_search_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'node_options_portable_filter';
+  $strongarm->value = array(
+    0 => 'status',
+  );
+
+  $export['node_options_portable_filter'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'node_options_portable_filter_rule';
   $strongarm->value = array(
     0 => 'status',
@@ -64,5 +79,40 @@ function kendra_search_strongarm() {
   );
 
   $export['node_options_portable_filter_rule'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'services_auth_module';
+  $strongarm->value = '';
+
+  $export['services_auth_module'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'services_key_expiry';
+  $strongarm->value = '30';
+
+  $export['services_key_expiry'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'services_use_content_permissions';
+  $strongarm->value = 0;
+
+  $export['services_use_content_permissions'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'services_use_key';
+  $strongarm->value = 1;
+
+  $export['services_use_key'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'services_use_sessid';
+  $strongarm->value = 1;
+
+  $export['services_use_sessid'] = $strongarm;
   return $export;
 }
