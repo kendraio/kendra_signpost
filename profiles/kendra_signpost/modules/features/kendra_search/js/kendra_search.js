@@ -137,17 +137,23 @@ jQuery.extend(Kendra, {
 		},
 
 		/**
-		 * buildQueryForm
 		 * 
-		 * using the current list of mappings, create and render a form for
-		 * querying Solr
 		 */
-		buildQueryForm : function(selector) {
-			if (!selector || $(selector).length == 0) {
-				return false;
-			}
-			Kendra.util.log('Kendra.service.buildQueryForm');
+		buildQueryFormHeader : function(selector) {
+			return '<table id="kendra-portable-filters" class="kendra-filter-rule views-table">';
+		},
 
+		/**
+		 * 
+		 */
+		buildQueryFormFooter : function(selector) {
+			return '</table>';
+		},
+
+		/**
+		 * 
+		 */
+		buildQueryFormRow : function(selector) {
 			var html = '', operands = {
 				'^=' : {
 					'label' : 'starts with'
@@ -161,14 +167,6 @@ jQuery.extend(Kendra, {
 				}
 			};
 
-			/**
-			 * container
-			 */
-			html += '<table id="kendra-portable-filters" class="Kendra-service-buildQueryForm-rule views-table">';
-
-			/**
-			 * open row
-			 */
 			html += '<tr class="draggable">';
 
 			html += '<td>';
@@ -180,8 +178,8 @@ jQuery.extend(Kendra, {
 			 * operator 1: transform the Kendra.mapping.mappings array into an
 			 * HTML select element
 			 */
-			html += '<td id="Kendra-service-buildQueryForm-op1-wrapper">';
-			html += '<select id="Kendra-service-buildQueryForm-op1" name="op1">';
+			html += '<td id="kendra-filter-op1-wrapper">';
+			html += '<select class="kendra-filter-op1" name="op1">';
 			for ( var key in Kendra.mapping.mappings) {
 				html += '<option value="' + key + '">' + Kendra.mapping.mappings[key] + '</option>';
 			}
@@ -191,8 +189,8 @@ jQuery.extend(Kendra, {
 			/**
 			 * operand
 			 */
-			html += '<td id="Kendra-service-buildQueryForm-op2-wrapper">';
-			html += '<select id="Kendra-service-buildQueryForm-op2" name="op2">';
+			html += '<td id="kendra-filter-op2-wrapper">';
+			html += '<select class="kendra-filter-op2" name="op2">';
 			for ( var key in operands) {
 				html += '<option value="' + key + (operands[key].selected ? '" selected="selected">' : '">') + operands[key].label + '</option>';
 			}
@@ -202,40 +200,71 @@ jQuery.extend(Kendra, {
 			/**
 			 * operator 2: text field
 			 */
-			html += '<td id="Kendra-service-buildQueryForm-op3-wrapper">';
+			html += '<td id="kendra-filter-op3-wrapper">';
 
-			html += '<input id="Kendra-service-buildQueryForm-op3" name="op3" type="text" value="" class="form-text" />';
+			html += '<input class="kendra-filter-op3 form-text" name="op3" type="text" value="" />';
 
 			html += '</td>';
 
-			/**
-			 * close row
-			 */
 			html += '</tr>';
 
-			/**
-			 * closure
-			 */
-			html += '</table>';
+			return html;
+		},
 
-			$(selector).html(html);
+		/**
+		 * buildQueryForm
+		 * 
+		 * using the current list of mappings, create and render a form for
+		 * querying Solr
+		 */
+		buildQueryForm : function(selector) {
+			if (!selector || $(selector).length == 0) {
+				return false;
+			}
+			Kendra.util.log('Kendra.service.buildQueryForm');
 
-			/**
-			 * @hack
-			 */
+			var html = '';
+
+			html += Kendra.service.buildQueryFormHeader(selector);
+
+			html += Kendra.service.buildQueryFormRow(selector);
+
+			html += Kendra.service.buildQueryFormFooter(selector);
+
+			return html;
+		},
+
+		/**
+		 * buildQueryFormPostProcess
+		 * 
+		 * make the search form rows draggable
+		 * 
+		 * @hack this should probably be triggered via a sub-module?
+		 * 
+		 * @param $form
+		 *            JQuery object
+		 */
+		buildQueryFormPostProcess : function($form) {
 			if (typeof Drupal.behaviors.draggableviewsLoad == 'function') {
 				Drupal.settings = $.extend(Drupal.settings, {
 					'draggableviews' : {
+						// table_id:
 						'kendra-portable-filters' : {
-							'parent' : null,
-							'states' : []
+							'parent' : null
 						}
 					}
 				});
-				Drupal.behaviors.draggableviewsLoad();
 				Kendra.util.log(Drupal.settings.draggableviews, 'initializing draggableviews');
-			} else
-				Kendra.util.log(typeof Drupal.behaviors.draggableviewsLoad);
+				Drupal.behaviors.draggableviewsLoad();
+			}
+
+			$form.submit(function() {
+				var filter = $form.find('.kendra-filter-op1,.kendra-filter-op2,.kendra-filter-op3').serialize();
+				Kendra.util.log(filter, 'serializing portable filter');
+				$form.find('textarea#edit-body').value(filter);
+
+				return false;
+			});
 		},
 
 		/**
@@ -274,7 +303,8 @@ jQuery.extend(Kendra, {
 // document ready:
 (function($) {
 	$(function() {
-		var $form = $('form#node-form');
+		var $form = $('form#node-form'), html = '';
+
 		if ($form.length > 0 && $form.find('input[name=form_id]#edit-portable-filter-node-form').length > 0) {
 			$form.find('.body-field-wrapper').hide().before('<div id="kendra-query-builder"><h3>' + 'MAPPINGS GO HERE' + '</h3></div>');
 
@@ -282,7 +312,17 @@ jQuery.extend(Kendra, {
 				/**
 				 * build the query form
 				 */
-				Kendra.service.buildQueryForm(selector);
+				html = Kendra.service.buildQueryForm(selector);
+
+				$(selector).html(html);
+
+				Kendra.service.buildQueryFormPostProcess($form);
+
+				/**
+				 * test: do it again html =
+				 * Kendra.service.buildQueryFormRow(selector); $('table',
+				 * selector).append(html);
+				 */
 
 				/**
 				 * run a test query
@@ -293,6 +333,7 @@ jQuery.extend(Kendra, {
 				};
 
 				Kendra.service.solrQuery('*:*', params);
+
 			}, failure = function() {
 				$('#kendra-query-builder').html('No mappings were found. Please <a href="kendra-import">import a catalogue</a> first.');
 			};
