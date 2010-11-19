@@ -22,7 +22,7 @@ function kendra_signpost_profile_modules() {
     'job_queue',
     
     // search interface modules
-    'draggableviews', 'draggableviews_cck', 'number', 'auto_nodetitle', 'token', 'apachesolr', 'search',
+    'draggableviews', 'draggableviews_cck', 'number', 'auto_nodetitle', 'token', 'apachesolr', 'search', 'apachesolr_search',
 
   	// services + json backend
   	'services', 'json_server', 'node_service', 'services_keyauth', 'system_service',
@@ -114,6 +114,16 @@ function _kendra_signpost_configure() {
   variable_set('site_footer', 'Powered by '. l('Kendra Signpost', 'http://www.kendra.org.uk', array('absolute' => TRUE)));
   variable_set('admin_theme', 'rubik');
   variable_set('site_frontpage', 'kendra-front');
+  variable_set('apachesolr_search_excluded_types', array(
+    'kendra_map' => 'kendra_map',
+    'kendra_map_item' => 'kendra_map_item',
+    'portable_filter' => 'portable_filter',
+    'portable_filter_rule' => 'portable_filter_rule',
+    'sparql' => 'sparql',
+    'kendra_cat' => 0,
+    'kendra_import' => 0,
+  ));
+
 }
 
 function _kendra_signpost_check() {
