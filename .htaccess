@@ -108,6 +108,7 @@ DirectoryIndex index.php
 
   RewriteCond %{REQUEST_URI} ^/solr/select(\?.+)? [NC]
   RewriteRule ^solr/select(.*)$ /cgi-bin/solr_search_proxy.py$1 [L,QSA]
+  RewriteRule ^solr/update(.*)$ /cgi-bin/solr_update_proxy.py$1 [L,QSA]
 
   # Rewrite URLs of the form 'x' to the form 'index.php?q=x'.
   RewriteCond %{REQUEST_FILENAME} !-f
