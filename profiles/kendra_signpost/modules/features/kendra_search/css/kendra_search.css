@@ -41,7 +41,8 @@
 	border: 1px solid #CCCCCC;
 }
 
-#kendra-query-builder table,#kendra-query-builder h3 {
+#kendra-query-builder table,#kendra-query-builder h3,#kendra-query-builder>*
+	{
 	margin: 1em;
 }
 
