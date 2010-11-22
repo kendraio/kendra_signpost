@@ -108,6 +108,8 @@ function kendra_search_init() {
 	drupal_add_js(drupal_get_path('module', 'json_server') .'/json_server.js');
 	drupal_add_js(drupal_get_path('module', 'draggableviews') .'/draggableviews.js');
 	
+	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/json2.js');
+	
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/core/Core.js');
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/core/AbstractManager.js');
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/managers/Manager.jquery.js');
@@ -132,5 +134,10 @@ function kendra_search_init() {
 	$inline_script = 'var Kendra=Kendra || {};jQuery.extend(Kendra,' . drupal_to_js( $jsonContainer ) . ');';
 
 	drupal_add_js($inline_script, 'inline');
+	
+	/**
+	 * make the portable filter rules draggable
+	 */
+	drupal_add_tabledrag('kendra-portable-filter-editor', 'order', 'sibling', 'filter-weight');
 }
 
