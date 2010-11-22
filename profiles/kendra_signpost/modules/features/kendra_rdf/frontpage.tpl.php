@@ -8,6 +8,6 @@
 <li><?php print l('List', 'cat_nodes'); ?> all catalogue node items.</li>
 <li><?php print l('Create a mapping node', 'node/add/kendra-map'); ?> and then add mapping items to it.</li>
 <li><?php print l('View all mappings', 'mappings'); ?>.</li>
-<li><?php print l('Query', 'demo/portable_filters'); ?> with the Kendra Match user interface <em>[demo, not connected to back end]</em></li>
+<li><?php print l('Create a query', 'node/add/portable-filter'); ?> using the mappings.</li>
 </ol>
 

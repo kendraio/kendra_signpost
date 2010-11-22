@@ -21,6 +21,17 @@ function kendra_search_ctools_plugin_api() {
  */
 function kendra_search_node_info() {
 	$items = array(
+    'portable_filter' => array(
+      'name' => t('Portable Filter'),
+      'module' => 'features',
+      'description' => t('User-generated smart content filter'),
+      'has_title' => '1',
+      'title_label' => t('Title'),
+      'has_body' => '1',
+      'body_label' => t('Body'),
+      'min_word_count' => '0',
+      'help' => '',
+	),
     'portable_filter_rule' => array(
       'name' => t('Portable Filter Rule'),
       'module' => 'features',
@@ -31,8 +42,7 @@ function kendra_search_node_info() {
       'body_label' => '',
       'min_word_count' => '0',
       'help' => '',
-	),
-	);
+	));
 	return $items;
 }
 
@@ -60,7 +70,8 @@ function kendra_search_map_alter(&$item, $key) {
  **/
 function kendra_search_get_array() {
 	$mappings = kendra_mapping_allowed_values();
-	array_walk($mappings, 'kendra_search_map_alter');
+	//die(print_r($mappings));
+	if (is_array($mappings)) array_walk($mappings, 'kendra_search_map_alter');
 
 	return $mappings;
 }
@@ -94,6 +105,9 @@ function kendra_search_get_options_array($first_element = array('' => 'Please Ch
  * </pre>
  */
 function kendra_search_init() {
+	drupal_add_js(drupal_get_path('module', 'json_server') .'/json_server.js');
+	drupal_add_js(drupal_get_path('module', 'draggableviews') .'/draggableviews.js');
+	
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/core/Core.js');
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/core/AbstractManager.js');
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/managers/Manager.jquery.js');
@@ -101,18 +115,21 @@ function kendra_search_init() {
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/core/ParameterStore.js');
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/kendra_search.js');
 
+	drupal_add_css(drupal_get_path('module', 'kendra_search') . "/css/kendra_search.css", "module");
+
 	/**
 	 * expose core Kendra vars in Javascript
 	 */
 	$jsonContainer = array(
 		'search' => array(
-		'solrUrl' => '/cgi-bin/solr_search_proxy.py'
-		// 'solrUrl' => 'http://' . variable_get('apachesolr_host', 'localhost') . ':' . variable_get('apachesolr_port', '8983') . variable_get('apachesolr_path', '/solr')
+	'solrUrl' => 'http://dev.signpost.kendra.org.uk/solr/'
+	//'solrUrl' => '/cgi-bin/solr_search_proxy.py'
+	// 'solrUrl' => 'http://' . variable_get('apachesolr_host', 'localhost') . ':' . variable_get('apachesolr_port', '8983') . variable_get('apachesolr_path', '/solr')
 	)
 	,'mapping'=> array('mappings'=>array())
 	);
 
-	$inline_script = 'var Kendra=' . drupal_to_js( $jsonContainer );
+	$inline_script = 'var Kendra=Kendra || {};jQuery.extend(Kendra,' . drupal_to_js( $jsonContainer ) . ');';
 
 	drupal_add_js($inline_script, 'inline');
 }
