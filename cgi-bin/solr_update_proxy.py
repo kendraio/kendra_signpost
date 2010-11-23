@@ -18,17 +18,17 @@ def is_bad_request():
     if not os.environ.get("HTTP_HOST", None): return "no HTTP_HOST specified"
     return 0
 
-if os.environ.get('HTTPS', '') == 'on':
-    # Warning: proxied HTTPS requests will not attempt to validate the server certificate!
-    protocol = 'https'
-else:
-    protocol = 'http'
-
 logfile = open("/tmp/solr_update_proxy_log_%0.5f" % time.time(), "w")
 print >> logfile, "environment"
 for k in os.environ:
     print >> logfile, k, os.environ.get(k)
 logfile.close()
+
+if os.environ.get('HTTPS', '') == 'on':
+    # Warning: proxied HTTPS requests will not attempt to validate the server certificate!
+    protocol = 'https'
+else:
+    protocol = 'http'
 
 # Do some sanity checking before actually dispatching: we are not a general-purpose proxy
 if is_bad_request():
@@ -50,9 +50,9 @@ try:
 	request = urllib2.Request(absolute_url, content, {'Content-Type': content_type})
 	urlobject = urllib2.urlopen(request)
 	results = urlobject.read()
-	content_type = urlobject.info().gettype()
+	results_type = urlobject.info().gettype()
 except urllib2.HTTPError, e:
-        results = repr((e.code, e.msg, e.read()))
+        results = repr((e.code, e.msg, e.headers.items(), e.read()))
         results_type = "text/plain"
 except:
         exc_info = sys.exc_info()
