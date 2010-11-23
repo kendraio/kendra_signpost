@@ -10,12 +10,12 @@ import cgitb, cgi, sys, urllib, string, os, time
 def urlquote(x):
     return urllib.quote_plus(x)
 
-def make_url_fields(key, values):
-    return string.join(["%s=%s" % (urlquote(key), urlquote(val)) for val in values], "&")
+request_uri = os.environ.get("REQUEST_URI", "")
 
 def is_bad_request():
     if os.environ.get("REQUEST_METHOD", None) not in ["GET", "HEAD"]: return "not a GET or HEAD command"
     if not os.environ.get("HTTP_HOST", None): return "no HTTP_HOST specified"
+    if request_uri[:6] != "/solr/": return "not a /solr/ request"
     return 0
 
 if os.environ.get('HTTPS', '') == 'on':
@@ -39,13 +39,17 @@ if is_bad_request():
     sys.exit(0)
 
 # Redirect to call local installation of Solr 
-absolute_url = '%s://%s:%d/solr/admin/ping' % (protocol, os.environ['HTTP_HOST'], 8983)
+absolute_url = '%s://%s:%d%s' % (protocol, os.environ['HTTP_HOST'], 8983, request_uri)
 
 urlobject = urllib.urlopen(absolute_url)
 results = urlobject.read()
 content_type = urlobject.info().gettype()
 
-sys.stdout.write("Content-type: %s\r\n\r\n" % content_type)
+if os.environ.get("REQUEST_METHOD", None) == "HEAD":
+   results = ""
+
+sys.stdout.write("Content-type: %s\r\n" % content_type)
+sys.stdout.write("Content-length: %d\r\n\r\n" % len(results))
 sys.stdout.write(results)
 sys.stdout.flush()
 
