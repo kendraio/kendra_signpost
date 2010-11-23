@@ -14,7 +14,7 @@ def make_url_fields(key, values):
     return string.join(["%s=%s" % (urlquote(key), urlquote(val)) for val in values], "&")
 
 def is_bad_request():
-    if os.environ.get("REQUEST_METHOD", None) != "GET": return "not a GET command"
+    if os.environ.get("REQUEST_METHOD", None) not in ["GET", "HEAD"]: return "not a GET or HEAD command"
     if not os.environ.get("HTTP_HOST", None): return "no HTTP_HOST specified"
     return 0
 
