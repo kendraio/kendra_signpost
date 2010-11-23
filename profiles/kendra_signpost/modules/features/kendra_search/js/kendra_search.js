@@ -271,7 +271,7 @@ jQuery.extend(Kendra, {
 			for ( var key in operands) {
 				html += '<option value="' + key;
 				if (rule && typeof rule.op2 != 'undefined' && rule.op2 != '') {
-					if (operands[key] == rule.op2) {
+					if (key == rule.op2) {
 						html += ' selected="selected"';
 					}
 				} else if (operands[key].selected) {
