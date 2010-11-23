@@ -36,7 +36,7 @@ jQuery.extend(Kendra, {
 			if (label) {
 				var $msg = $('<div class="row">' + label + '</div>');
 				if (label != obj)
-					$msg.append( [ '&nbsp;', '<a href="#" class="toggle" onclick="', '$(this).hide().next().fadeIn();return false', '">show</a>', '<pre>', Drupal.toJson(obj), '</pre>' ].join(''));
+					$msg.append( [ '&nbsp;', '<a href="#" class="toggle" onclick="', '$(this).hide().next().fadeIn();return false', '">show</a>', '<pre>', JSON.stringify(obj), '</pre>' ].join(''));
 
 				if ($('#search-log').length == 0) {
 					$('body').append( [ '<div id="search-log">', '<a class="close" href="#" onclick="', "$('#search-log').fadeOut();return false", '">[x]</a><h5>', 'log:', '</h5></div>' ].join(''));
@@ -137,21 +137,88 @@ jQuery.extend(Kendra, {
 		},
 
 		/**
+		 * buildQueryFormHeader
 		 * 
+		 * build the top of the portable filter editor
 		 */
 		buildQueryFormHeader : function(selector) {
-			return '<table id="kendra-portable-filters" class="kendra-filter-rule views-table">';
+			var html = '';
+			html += '<table id="kendra-portable-filters" class="kendra-filter-rule views-table">';
+			return html;
 		},
 
 		/**
+		 * buildQueryFormFooter
 		 * 
+		 * build the bottom of the portable filter editor
 		 */
 		buildQueryFormFooter : function(selector) {
-			return '</table>';
+			var html = '';
+			html += '</table>';
+			return html;
 		},
 
 		/**
+		 * buildQueryFormAddRule
 		 * 
+		 * add a new row to the portable filter editor
+		 * 
+		 * @param el
+		 *            calling link
+		 * @returns true upon success, false upon failure
+		 */
+		buildQueryFormAddRule : function(el) {
+			var $row = $(el).parents('tr.draggable:eq(0)');
+			if ($row.length != 1) {
+				return false;
+			}
+
+			$row.clone(true).insertAfter($row);
+
+			Kendra.service.buildQueryFormToggleRemoveLinks();
+
+			return true;
+		},
+
+		/**
+		 * buildQueryFormRemoveRule
+		 * 
+		 * remove the selected row to the portable filter editor
+		 * 
+		 * @param el
+		 *            calling link
+		 * @returns true upon success, false upon failure
+		 */
+		buildQueryFormRemoveRule : function(el) {
+			var $row = $(el).parents('tr.draggable:eq(0)');
+			if ($row.length != 1 || $(el).hasClass('disabled')) {
+				return false;
+			}
+
+			$row.remove();
+
+			Kendra.service.buildQueryFormToggleRemoveLinks();
+
+			return true;
+		},
+
+		/**
+		 * buildQueryFormToggleRemoveLinks
+		 * 
+		 * enable all 'remove rule' links unless there's only one rule
+		 */
+		buildQueryFormToggleRemoveLinks : function($el) {
+			var $links = $('a.portable-filter-remove-rule', ($el ? $el : '#kendra-portable-filters'));
+
+			if ($links.length > 1) {
+				$links.removeClass('disabled');
+			} else {
+				$links.addClass('disabled');
+			}
+		},
+
+		/**
+		 * buildQueryFormRow
 		 */
 		buildQueryFormRow : function(selector) {
 			var html = '', operands = {
@@ -173,150 +240,161 @@ jQuery.extend(Kendra, {
 			html += '<input type="hidden" class="hidden_nid" name="hidden_nid" value=""/>';
 			html += '<input type="hidden" class="field_filter_parent_nid" value="0" id="edit-field-field-filter-parent-nid" name="field_filter_parent_nid_3"/>';
 			// html += '<a class="tabledrag-handle" href="#" title="Drag to
-		// re-order"><div class="handle">&nbsp;</div></a>';
-		html += '</td>';
+			// re-order"><div class="handle">&nbsp;</div></a>';
+			html += '</td>';
+
+			/**
+			 * operator 1: transform the Kendra.mapping.mappings array into an
+			 * HTML select element
+			 */
+			html += '<td class="kendra-filter-op1-wrapper">';
+			html += '<select class="kendra-filter-op1" name="op1">';
+			for ( var key in Kendra.mapping.mappings) {
+				html += '<option value="' + key + '">' + Kendra.mapping.mappings[key] + '</option>';
+			}
+			html += '</select>';
+			html += '</td>';
+
+			/**
+			 * operand
+			 */
+			html += '<td class="kendra-filter-op2-wrapper">';
+			html += '<select class="kendra-filter-op2" name="op2">';
+			for ( var key in operands) {
+				html += '<option value="' + key + (operands[key].selected ? '" selected="selected">' : '">') + operands[key].label + '</option>';
+			}
+			html += '</select>';
+			html += '</td>';
+
+			/**
+			 * operator 2: text field
+			 */
+			html += '<td class="kendra-filter-op3-wrapper">';
+			html += '<input class="kendra-filter-op3 form-text" name="op3" type="text" value="" />';
+			html += '</td>';
+
+			html += '<td class="kendra-filter-button-wrapper">';
+			html += '<div class="portable-filter-add-rule-wrapper">' + '<a class="portable-filter-add-rule" title="Add a rule" href="#" onclick="' + "return !Kendra.service.buildQueryFormAddRule(this);" + '">' + '+' + '</a>'
+					+ '<a class="portable-filter-remove-rule" title="Remove this rule" href="#" onclick="' + "return !Kendra.service.buildQueryFormRemoveRule(this);" + '">' + '-' + '</a>' + '</div>';
+			html += '</td>';
+
+			html += '</tr>';
+
+			return html;
+		},
 
 		/**
-		 * operator 1: transform the Kendra.mapping.mappings array into an HTML
-		 * select element
-		 */
-		html += '<td id="kendra-filter-op1-wrapper">';
-		html += '<select class="kendra-filter-op1" name="op1">';
-		for ( var key in Kendra.mapping.mappings) {
-			html += '<option value="' + key + '">' + Kendra.mapping.mappings[key] + '</option>';
-		}
-		html += '</select>';
-		html += '</td>';
-
-		/**
-		 * operand
-		 */
-		html += '<td id="kendra-filter-op2-wrapper">';
-		html += '<select class="kendra-filter-op2" name="op2">';
-		for ( var key in operands) {
-			html += '<option value="' + key + (operands[key].selected ? '" selected="selected">' : '">') + operands[key].label + '</option>';
-		}
-		html += '</select>';
-		html += '</td>';
-
-		/**
-		 * operator 2: text field
-		 */
-		html += '<td id="kendra-filter-op3-wrapper">';
-
-		html += '<input class="kendra-filter-op3 form-text" name="op3" type="text" value="" />';
-
-		html += '</td>';
-
-		html += '</tr>';
-
-		return html;
-	},
-
-	/**
-	 * buildQueryForm
-	 * 
-	 * using the current list of mappings, create and render a form for querying
-	 * Solr
-	 */
-	buildQueryForm : function(selector) {
-		if (!selector || $(selector).length == 0) {
-			return false;
-		}
-		Kendra.util.log('Kendra.service.buildQueryForm');
-
-		var html = '';
-
-		html += Kendra.service.buildQueryFormHeader(selector);
-
-		html += Kendra.service.buildQueryFormRow(selector);
-
-		html += Kendra.service.buildQueryFormFooter(selector);
-
-		return html;
-	},
-
-	/**
-	 * buildQueryFormPostProcess
-	 * 
-	 * @param $form
-	 *            JQuery object
-	 */
-	buildQueryFormPostProcess : function($form) {
-		/**
-		 * form onsubmit : serialize the form values into a portable filter
-		 */
-		$form.submit(function() {
-			var $filter = {}, filterVal = {};
-			$filter = $form.find('.kendra-filter-op1,.kendra-filter-op2,.kendra-filter-op3');
-			$filter.each(function() {
-				var key = $(this).attr('class').replace(/.*kendra-filter-(op\d).*/, '$1'), value = $(this).val();
-				filterVal[key] = value;
-			});
-
-			filterVal = JSON.stringify(filterVal);
-			Kendra.util.log(filterVal, 'serialized portable filter');
-			$form.find('textarea#edit-body').val(filterVal);
-
-			// testing -- return false to abort form submission
-				return false;
-				return true;
-			});
-
-		/**
-		 * // skip the next hack
-		 */
-		return;
-
-		/**
-		 * make the search form rows draggable
+		 * buildQueryForm
 		 * 
-		 * @hack this should probably be triggered via a sub-module?
+		 * using the current list of mappings, create and render a form for
+		 * querying Solr
 		 */
-		if (typeof Drupal.behaviors.draggableviewsLoad == 'function') {
-			Drupal.settings = $.extend(Drupal.settings, {
-				'draggableviews' : {
-					// table_id:
-					'kendra-portable-filters' : {
-						'parent' : null
+		buildQueryForm : function(selector) {
+			if (!selector || $(selector).length == 0) {
+				return false;
+			}
+			Kendra.util.log('Kendra.service.buildQueryForm');
+
+			var html = '';
+
+			html += Kendra.service.buildQueryFormHeader(selector);
+
+			html += Kendra.service.buildQueryFormRow(selector);
+
+			html += Kendra.service.buildQueryFormFooter(selector);
+
+			return html;
+		},
+
+		/**
+		 * buildQueryFormPostProcess
+		 * 
+		 * @param $form
+		 *            JQuery object
+		 */
+		buildQueryFormPostProcess : function($form) {
+			Kendra.service.buildQueryFormToggleRemoveLinks($form);
+
+			/**
+			 * form onsubmit : serialize the form values into a portable filter
+			 */
+			$form.submit(function() {
+				var filter = {
+					rules : []
+				}, $rule = {}, jsonFilter = '';
+
+				$form.find('tr.draggable').each(function() {
+					var temp = {};
+					$(this).find('.kendra-filter-op1,.kendra-filter-op2,.kendra-filter-op3').each(function() {
+						var $this = $(this), key = $this.attr('class').replace(/.*kendra-filter-(op\d).*/, '$1'), value = $this.val();
+						temp[key] = value;
+					});
+					filter.rules.push(temp);
+				});
+
+				jsonFilter = JSON.stringify(filter);
+				Kendra.util.log(jsonFilter, 'serialized portable filter');
+				$form.find('textarea#edit-body').val(jsonFilter);
+
+				// testing -- return false to abort form submission
+					// return false;
+					return true;
+				});
+
+			/**
+			 * // skip the next hack
+			 */
+			return;
+
+			/**
+			 * make the search form rows draggable
+			 * 
+			 * @hack this should probably be triggered via a sub-module?
+			 */
+			if (typeof Drupal.behaviors.draggableviewsLoad == 'function') {
+				Drupal.settings = $.extend(Drupal.settings, {
+					'draggableviews' : {
+						// table_id:
+						'kendra-portable-filters' : {
+							'parent' : null
+						}
+					}
+				});
+				Kendra.util.log(Drupal.settings.draggableviews, 'initializing draggableviews');
+				Drupal.behaviors.draggableviewsLoad();
+			}
+		},
+
+		/**
+		 * set up ApacheSolr query
+		 * 
+		 * @param query
+		 */
+		solrQuery : function(query, params) {
+			var params = params || {};
+			Kendra.Manager = new AjaxSolr.Manager( {
+				solrUrl : Kendra.search.solrUrl || '',
+
+				/**
+				 * override AbstractManager.handleResponse
+				 */
+				handleResponse : function(data) {
+					this.response = data;
+					Kendra.util.log(this.response, 'Kendra.service.solrQuery: got response: ' + data.response.numFound + ' records');
+
+					for ( var widgetId in this.widgets) {
+						this.widgets[widgetId].afterRequest();
 					}
 				}
 			});
-			Kendra.util.log(Drupal.settings.draggableviews, 'initializing draggableviews');
-			Drupal.behaviors.draggableviewsLoad();
-		}
-	},
+			Kendra.Manager.init();
+			Kendra.Manager.store.addByValue('q', query);
 
-	/**
-	 * set up ApacheSolr query
-	 * 
-	 * @param query
-	 */
-	solrQuery : function(query, params) {
-		var params = params || {};
-		Kendra.Manager = new AjaxSolr.Manager( {
-			solrUrl : Kendra.search.solrUrl || '',
-
-			/**
-			 * override AbstractManager.handleResponse
-			 */
-			handleResponse : function(data) {
-				this.response = data;
-				Kendra.util.log(this.response, 'Kendra.service.solrQuery: got response: ' + data.response.numFound + ' records');
-
-				for ( var widgetId in this.widgets) {
-					this.widgets[widgetId].afterRequest();
-				}
+			for ( var name in params) {
+				Kendra.Manager.store.addByValue(name, params[name]);
 			}
-		});
-		Kendra.Manager.init();
-		Kendra.Manager.store.addByValue('q', query);
-
-		for ( var name in params) {
-			Kendra.Manager.store.addByValue(name, params[name]);
+			Kendra.Manager.doRequest();
 		}
-		Kendra.Manager.doRequest();
-	}
 	}
 });
 

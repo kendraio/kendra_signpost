@@ -46,8 +46,38 @@
 	margin: 1em;
 }
 
+#kendra-query-builder table tr.draggable {
+	height: 2em;
+}
+
 #kendra-query-builder input,#kendra-query-builder select {
 	background-color: #FFFFFF;
 	margin-right: 1em;
+	margin-bottom: 0.5em;
 	padding: 0.5em;
+}
+
+#kendra-query-builder .kendra-filter-button-wrapper {
+	margin: 0;
+	text-align: center;
+	width: 100px;
+}
+
+#kendra-query-builder .kendra-filter-button-wrapper a,#kendra-query-builder .kendra-filter-button-wrapper a:visited,#kendra-query-builder .kendra-filter-button-wrapper a:link
+	{
+	color: #999999;
+	font-family: monospace;
+	font-size: 2em;
+	font-weight: 700;
+	line-height: 0.5em;
+	padding: 3px 6px;
+	text-decoration: none;
+	vertical-align: bottom;
+}
+
+#kendra-query-builder .kendra-filter-button-wrapper a:hover {
+	color: #1e7845;
+}
+#kendra-query-builder .kendra-filter-button-wrapper a.disabled {
+	color: #cccccc;
 }
