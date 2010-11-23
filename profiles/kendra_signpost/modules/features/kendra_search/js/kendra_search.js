@@ -244,8 +244,8 @@ jQuery.extend(Kendra, {
 			html += '<td>';
 			html += '<input type="hidden" class="hidden_nid" name="hidden_nid" value=""/>';
 			html += '<input type="hidden" class="field_filter_parent_nid" value="0" id="edit-field-field-filter-parent-nid" name="field_filter_parent_nid_3"/>';
-			// html += '<a class="tabledrag-handle" href="#" title="Drag to
-			// re-order"><div class="handle">&nbsp;</div></a>';
+			
+			html += '<a class="tabledrag-handle" href="#" title="Drag to re-order"><div class="handle">&nbsp;</div></a>';
 			html += '</td>';
 
 			/**
@@ -372,57 +372,56 @@ jQuery.extend(Kendra, {
 			/**
 			 * // skip the next hack
 			 */
-			return;
-
-			/**
-			 * make the search form rows draggable
-			 * 
-			 * @hack this should probably be triggered via a sub-module?
-			 */
-			if (typeof Drupal.behaviors.draggableviewsLoad == 'function') {
-				Drupal.settings = $.extend(Drupal.settings, {
-					'draggableviews' : {
-						// table_id:
-						'kendra-portable-filters' : {
-							'parent' : null
-						}
-					}
-				});
-				Kendra.util.log(Drupal.settings.draggableviews, 'initializing draggableviews');
-				Drupal.behaviors.draggableviewsLoad();
-			}
-		},
-
+			//return;
 		/**
-		 * set up ApacheSolr query
+		 * make the search form rows draggable
 		 * 
-		 * @param query
+		 * @hack this should probably be triggered via a sub-module?
 		 */
-		solrQuery : function(query, params) {
-			var params = params || {};
-			Kendra.Manager = new AjaxSolr.Manager( {
-				solrUrl : Kendra.search.solrUrl || '',
-
-				/**
-				 * override AbstractManager.handleResponse
-				 */
-				handleResponse : function(data) {
-					this.response = data;
-					Kendra.util.log(this.response, 'Kendra.service.solrQuery: got response: ' + data.response.numFound + ' records');
-
-					for ( var widgetId in this.widgets) {
-						this.widgets[widgetId].afterRequest();
+		if (typeof Drupal.behaviors.draggableviewsLoad == 'function') {
+			Drupal.settings = $.extend(Drupal.settings, {
+				'draggableviews' : {
+					// table_id:
+					'kendra-portable-filters' : {
+						'parent' : null
 					}
 				}
 			});
-			Kendra.Manager.init();
-			Kendra.Manager.store.addByValue('q', query);
-
-			for ( var name in params) {
-				Kendra.Manager.store.addByValue(name, params[name]);
-			}
-			Kendra.Manager.doRequest();
+			Kendra.util.log(Drupal.settings.draggableviews, 'initializing draggableviews');
+			Drupal.behaviors.draggableviewsLoad();
 		}
+	},
+
+	/**
+	 * set up ApacheSolr query
+	 * 
+	 * @param query
+	 */
+	solrQuery : function(query, params) {
+		var params = params || {};
+		Kendra.Manager = new AjaxSolr.Manager( {
+			solrUrl : Kendra.search.solrUrl || '',
+
+			/**
+			 * override AbstractManager.handleResponse
+			 */
+			handleResponse : function(data) {
+				this.response = data;
+				Kendra.util.log(this.response, 'Kendra.service.solrQuery: got response: ' + data.response.numFound + ' records');
+
+				for ( var widgetId in this.widgets) {
+					this.widgets[widgetId].afterRequest();
+				}
+			}
+		});
+		Kendra.Manager.init();
+		Kendra.Manager.store.addByValue('q', query);
+
+		for ( var name in params) {
+			Kendra.Manager.store.addByValue(name, params[name]);
+		}
+		Kendra.Manager.doRequest();
+	}
 	}
 });
 
