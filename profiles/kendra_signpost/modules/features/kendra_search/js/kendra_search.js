@@ -372,7 +372,7 @@ jQuery.extend(Kendra, {
 			/**
 			 * // skip the next hack
 			 */
-			//return;
+			// return;
 		/**
 		 * make the search form rows draggable
 		 * 
