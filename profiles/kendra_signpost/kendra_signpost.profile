@@ -123,7 +123,6 @@ function _kendra_signpost_configure() {
     'kendra_cat' => 0,
     'kendra_import' => 0,
   ));
-
 }
 
 function _kendra_signpost_check() {
@@ -138,6 +137,10 @@ function _kendra_signpost_check() {
     'kendra_upload' => array('user_permission', 'variable'),
   );
   features_revert($revert);
+  // remove search box so that tests will run
+  $theme_settings = variable_get('theme_settings', array());
+  $theme_settings['toggle_search'] = 0;
+  variable_set('theme_settings', $theme_settings);
 }
 
 function kendra_signpost_form_alter(&$form, $form_state, $form_id) {
