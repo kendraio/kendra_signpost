@@ -434,11 +434,22 @@ jQuery.extend(Kendra, {
 			$form.find('.body-field-wrapper').hide().before('<div id="kendra-query-builder"><h3>' + 'Loading&hellip;' + '</h3></div>');
 
 			var success = function(selector) {
-				var jsonFilter = $form.find('textarea#edit-body').val();
+				var jsonFilter = $form.find('textarea#edit-body').val(), query = '', params = {
+					facet : true,
+					'json.nl' : 'map'
+				};
 
 				if (jsonFilter != '') {
 					jsonFilter = JSON.parse(jsonFilter);
 					Kendra.util.log(jsonFilter, 'parsed JSON');
+
+					/**
+					 * run a test query
+					 */
+					if (jsonFilter && jsonFilter.rules && jsonFilter.rules.length > 0) {
+						query = jsonFilter.rules[0].op3;
+						Kendra.service.solrQuery(query, params);
+					}
 				}
 
 				/**
@@ -449,16 +460,6 @@ jQuery.extend(Kendra, {
 				$(selector).html(html);
 
 				Kendra.service.buildQueryFormPostProcess($form);
-
-				/**
-				 * run a test query
-				 */
-				var params = {
-					facet : true,
-					'json.nl' : 'map'
-				};
-
-				Kendra.service.solrQuery('*:*', params);
 
 			}, failure = function() {
 				$('#kendra-query-builder').html('No mappings were found. Please <a href="kendra-import">import a catalogue</a> first.');
