@@ -22,7 +22,7 @@ logfile = open("/tmp/solr_update_proxy_log_%0.5f" % time.time(), "w")
 print >> logfile, "environment"
 for k in os.environ:
     print >> logfile, k, os.environ.get(k)
-logfile.close()
+logfile.flush()
 
 if os.environ.get('HTTPS', '') == 'on':
     # Warning: proxied HTTPS requests will not attempt to validate the server certificate!
@@ -47,6 +47,10 @@ try:
 	content_length = os.environ['CONTENT_LENGTH']
 	content = sys.stdin.read()
 
+	print >> logfile, "indexing input data:"
+	print >> logfile, content
+	logfile.flush()
+
 	request = urllib2.Request(absolute_url, content, {'Content-Type': content_type})
 	urlobject = urllib2.urlopen(request)
 	results = urlobject.read()
@@ -59,6 +63,10 @@ except:
         tb = traceback.format_tb(exc_info[2])
 	results = "an exception happened: " + absolute_url + " " + repr(exc_info[0]) + "\n" + string.join(tb, "")
 	results_type = "text/plain"
+
+print >> logfile, "indexing output data:"
+print >> logfile, results
+logfile.close()
 
 sys.stdout.write("Content-Type: %s\r\n" % results_type)
 sys.stdout.write("Content-Length: %d\r\n\r\n" % len(results))
