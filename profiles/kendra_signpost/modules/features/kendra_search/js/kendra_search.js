@@ -256,7 +256,7 @@ jQuery.extend(Kendra, {
 			html += '<select class="kendra-filter-op1" name="op1">';
 			for ( var key in Kendra.mapping.mappings) {
 				html += '<option value="' + key + '"';
-				if (rule && typeof rule.op1 != 'undefined' && rule.op1 != '' && Kendra.mapping.mappings[key] == rule.op1)
+				if (rule && typeof rule.op1 != 'undefined' && rule.op1 != '' && key == rule.op1)
 					html += ' selected="selected"';
 				html += '>' + Kendra.mapping.mappings[key] + '</option>';
 			}
