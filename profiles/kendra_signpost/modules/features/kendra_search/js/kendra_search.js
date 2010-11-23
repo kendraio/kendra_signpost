@@ -141,7 +141,7 @@ jQuery.extend(Kendra, {
 		 * 
 		 * build the top of the portable filter editor
 		 */
-		buildQueryFormHeader : function(selector) {
+		buildQueryFormHeader : function() {
 			var html = '';
 			html += '<table id="kendra-portable-filters" class="kendra-filter-rule views-table">';
 			return html;
@@ -152,7 +152,7 @@ jQuery.extend(Kendra, {
 		 * 
 		 * build the bottom of the portable filter editor
 		 */
-		buildQueryFormFooter : function(selector) {
+		buildQueryFormFooter : function() {
 			var html = '';
 			html += '</table>';
 			return html;
@@ -219,8 +219,13 @@ jQuery.extend(Kendra, {
 
 		/**
 		 * buildQueryFormRow
+		 * 
+		 * builds one row of the portable filter form
+		 * 
+		 * @param rule
+		 *            Object
 		 */
-		buildQueryFormRow : function(selector) {
+		buildQueryFormRow : function(rule) {
 			var html = '', operands = {
 				'^=' : {
 					'label' : 'starts with'
@@ -250,7 +255,10 @@ jQuery.extend(Kendra, {
 			html += '<td class="kendra-filter-op1-wrapper">';
 			html += '<select class="kendra-filter-op1" name="op1">';
 			for ( var key in Kendra.mapping.mappings) {
-				html += '<option value="' + key + '">' + Kendra.mapping.mappings[key] + '</option>';
+				html += '<option value="' + key + '"';
+				if (rule && typeof rule.op1 != 'undefined' && rule.op1 != '' && Kendra.mapping.mappings[key] == rule.op1)
+					html += ' selected="selected"';
+				html += '>' + Kendra.mapping.mappings[key] + '</option>';
 			}
 			html += '</select>';
 			html += '</td>';
@@ -261,7 +269,15 @@ jQuery.extend(Kendra, {
 			html += '<td class="kendra-filter-op2-wrapper">';
 			html += '<select class="kendra-filter-op2" name="op2">';
 			for ( var key in operands) {
-				html += '<option value="' + key + (operands[key].selected ? '" selected="selected">' : '">') + operands[key].label + '</option>';
+				html += '<option value="' + key;
+				if (rule && typeof rule.op2 != 'undefined' && rule.op2 != '') {
+					if (operands[key] == rule.op2) {
+						html += ' selected="selected"';
+					}
+				} else if (operands[key].selected) {
+					html += ' selected="selected"';
+				}
+				html += '">' + operands[key].label + '</option>';
 			}
 			html += '</select>';
 			html += '</td>';
@@ -270,7 +286,10 @@ jQuery.extend(Kendra, {
 			 * operator 2: text field
 			 */
 			html += '<td class="kendra-filter-op3-wrapper">';
-			html += '<input class="kendra-filter-op3 form-text" name="op3" type="text" value="" />';
+			html += '<input class="kendra-filter-op3 form-text" name="op3" type="text" value="';
+			if (rule && typeof rule.op3 != 'undefined')
+				html += rule.op3;
+			html += '" />';
 			html += '</td>';
 
 			html += '<td class="kendra-filter-button-wrapper">';
@@ -289,19 +308,28 @@ jQuery.extend(Kendra, {
 		 * using the current list of mappings, create and render a form for
 		 * querying Solr
 		 */
-		buildQueryForm : function(selector) {
-			if (!selector || $(selector).length == 0) {
-				return false;
-			}
+		buildQueryForm : function(jsonFilter) {
+			var jsonFilter = jsonFilter ? jsonFilter : {
+				'rules' : [ {
+					'op1' : '',
+					'op2' : '',
+					'op3' : ''
+				} ]
+			};
 			Kendra.util.log('Kendra.service.buildQueryForm');
 
 			var html = '';
 
-			html += Kendra.service.buildQueryFormHeader(selector);
+			html += Kendra.service.buildQueryFormHeader();
 
-			html += Kendra.service.buildQueryFormRow(selector);
+			for ( var i in jsonFilter.rules) {
+				var rule = jsonFilter.rules[i];
+				if (rule.op1 || rule.op2 || rule.op3)
+					Kendra.util.log(rule, 'buildQueryForm:deserializing rule #' + (1 + i / 1));
+				html += Kendra.service.buildQueryFormRow(rule);
+			}
 
-			html += Kendra.service.buildQueryFormFooter(selector);
+			html += Kendra.service.buildQueryFormFooter();
 
 			return html;
 		},
@@ -407,20 +435,21 @@ jQuery.extend(Kendra, {
 			$form.find('.body-field-wrapper').hide().before('<div id="kendra-query-builder"><h3>' + 'Loading&hellip;' + '</h3></div>');
 
 			var success = function(selector) {
+				var jsonFilter = $form.find('textarea#edit-body').val();
+
+				if (jsonFilter != '') {
+					jsonFilter = JSON.parse(jsonFilter);
+					Kendra.util.log(jsonFilter, 'parsed JSON');
+				}
+
 				/**
 				 * build the query form
 				 */
-				html = Kendra.service.buildQueryForm(selector);
+				html = Kendra.service.buildQueryForm(jsonFilter);
 
 				$(selector).html(html);
 
 				Kendra.service.buildQueryFormPostProcess($form);
-
-				/**
-				 * test: do it again html =
-				 * Kendra.service.buildQueryFormRow(selector); $('table',
-				 * selector).append(html);
-				 */
 
 				/**
 				 * run a test query
