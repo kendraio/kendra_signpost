@@ -244,7 +244,7 @@ jQuery.extend(Kendra, {
 			html += '<td>';
 			html += '<input type="hidden" class="hidden_nid" name="hidden_nid" value=""/>';
 			html += '<input type="hidden" class="field_filter_parent_nid" value="0" id="edit-field-field-filter-parent-nid" name="field_filter_parent_nid_3"/>';
-			
+
 			html += '<a class="tabledrag-handle" href="#" title="Drag to re-order"><div class="handle">&nbsp;</div></a>';
 			html += '</td>';
 
@@ -269,7 +269,7 @@ jQuery.extend(Kendra, {
 			html += '<td class="kendra-filter-op2-wrapper">';
 			html += '<select class="kendra-filter-op2" name="op2">';
 			for ( var key in operands) {
-				html += '<option value="' + key;
+				html += '<option value="' + key + '"';
 				if (rule && typeof rule.op2 != 'undefined' && rule.op2 != '') {
 					if (key == rule.op2) {
 						html += ' selected="selected"';
@@ -277,7 +277,7 @@ jQuery.extend(Kendra, {
 				} else if (operands[key].selected) {
 					html += ' selected="selected"';
 				}
-				html += '">' + operands[key].label + '</option>';
+				html += '>' + operands[key].label + '</option>';
 			}
 			html += '</select>';
 			html += '</td>';
