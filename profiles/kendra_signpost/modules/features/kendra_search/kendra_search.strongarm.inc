@@ -30,7 +30,7 @@ function kendra_search_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'apachesolr_port';
-  $strongarm->value = '8983';
+  $strongarm->value = '80';
 
   $export['apachesolr_port'] = $strongarm;
   $strongarm = new stdClass;
