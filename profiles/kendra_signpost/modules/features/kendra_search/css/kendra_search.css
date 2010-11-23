@@ -1,5 +1,9 @@
 @CHARSET "UTF-8";
 
+ul.vertical-tabs-list {
+	margin-left:0;
+}
+
 #search-log {
 	-moz-border-radius-bottomleft: 10px;
 	-moz-border-radius-bottomright: 10px;
