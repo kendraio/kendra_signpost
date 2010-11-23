@@ -96,3 +96,10 @@
 #kendra-query-builder .kendra-filter-button-wrapper a.disabled {
 	color: #cccccc;
 }
+
+/**
+* add space at the bottom to fit the tall log window
+*/
+body.admin-menu {
+	padding-bottom:11em;
+}
