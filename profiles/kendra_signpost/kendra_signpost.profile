@@ -118,7 +118,6 @@ function _kendra_signpost_configure() {
     'kendra_map' => 'kendra_map',
     'kendra_map_item' => 'kendra_map_item',
     'portable_filter' => 'portable_filter',
-    'portable_filter_rule' => 'portable_filter_rule',
     'sparql' => 'sparql',
     'kendra_cat' => 0,
     'kendra_import' => 0,

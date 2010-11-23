@@ -39,9 +39,9 @@ jQuery.extend(Kendra, {
 					$msg.append( [ '&nbsp;', '<a href="#" class="toggle" onclick="', '$(this).hide().next().fadeIn();return false', '">show</a>', '<pre>', JSON.stringify(obj), '</pre>' ].join(''));
 
 				if ($('#search-log').length == 0) {
-					$('body').append( [ '<div id="search-log">', '<a class="close" href="#" onclick="', "$('#search-log').fadeOut();return false", '">[x]</a><h5>', 'log:', '</h5></div>' ].join(''));
+					$('body').append( [ '<div id="search-log">', '<div class="main"><div class="header">', '<a class="close" href="#" onclick="', "$('#search-log').fadeOut();return false", '">[x]</a><h5>', 'log:', '</h5>','</div></div></div>' ].join(''));
 				}
-				$('#search-log').append($msg).stop().animate( {
+				$('#search-log .main').append($msg).stop().animate( {
 					scrollTop : $('#search-log').attr("scrollHeight")
 				}, 2500);
 			}

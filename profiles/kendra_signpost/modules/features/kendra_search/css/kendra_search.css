@@ -1,26 +1,40 @@
 @CHARSET "UTF-8";
 
-ul.vertical-tabs-list {
-	margin-left:0;
-}
-
 #search-log {
 	-moz-border-radius-bottomleft: 10px;
 	-moz-border-radius-bottomright: 10px;
 	-moz-border-radius-topleft: 10px;
 	-moz-border-radius-topright: 10px;
+	-webkit-border-radius: 10px;
+	background-color: #EEEEEE;
 	border: 1px solid #CCCCCC;
+	border-radius: 10px;
 	bottom: 1em;
+	font-size: 0.9em;
 	left: 1em;
-	padding: 1em;
+	overflow: hidden;
+	max-height: 10em;
+	padding: 0 1em 1em;
 	position: fixed;
 	width: 400px;
 	z-index: 1000;
-	-webkit-border-radius: 10px;
-	border-radius: 10px;
-	max-height: 10em;
+	padding: 0 1em 1em;
+}
+
+#search-log .main {
+	max-height: 8em;
 	overflow: auto;
-	background-color: #eeeeee;
+	margin-top: 2.25em;
+	position: static;
+}
+
+#search-log .header {
+	height: 1.5em;
+	left: 0;
+	padding: 0.25em 1em;
+	position: absolute;
+	top: 0;
+	width: 94%;
 }
 
 #search-log .row {
@@ -29,10 +43,6 @@ ul.vertical-tabs-list {
 
 #search-log a.close {
 	float: right;
-}
-
-#search-log .row a.toggle {
-	
 }
 
 #search-log .row pre {
@@ -82,6 +92,7 @@ ul.vertical-tabs-list {
 #kendra-query-builder .kendra-filter-button-wrapper a:hover {
 	color: #1e7845;
 }
+
 #kendra-query-builder .kendra-filter-button-wrapper a.disabled {
 	color: #cccccc;
 }

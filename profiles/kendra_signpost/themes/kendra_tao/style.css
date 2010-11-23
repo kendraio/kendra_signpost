@@ -1,96 +1,119 @@
+#left {
+	width: 200px;
+	float: left;
+}
 
-#left { width: 200px; float: left; }
-#right { width: 200px; float: right; }
+#right {
+	width: 200px;
+	float: right;
+}
 
-.limiter { width: 950px; }
+.limiter {
+	width: 950px;
+}
 
 .site-name a {
-  background: transparent url(images/logo.png) no-repeat;
-  display: block;
-  width: 222px;
-  height: 82px;
-  margin: 10px 0;
-  text-indent: -9999px;
+	background: transparent url(images/logo.png) no-repeat;
+	display: block;
+	width: 222px;
+	height: 82px;
+	margin: 10px 0;
+	text-indent: -9999px;
 }
 
 #footer {
-  margin-top: 20px;
-  color: #666;
-  font-size: 0.8em;
+	margin-top: 20px;
+	color: #666;
+	font-size: 0.8em;
 }
 
-
-#console .limiter div { 
-  background: #fff;
-  border-radius: 5px;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px; 
-  margin: 10px 0;
-  padding: 5px 10px;
-}
-#console .messages.status { 
-  color:#687;
-  background:#ecf8f4;
-  border: 2px solid #f8fffc;
-}
-#console .messages.error { 
-  color:#965;
-  background:#ffe4e0;
-  border: 2px solid #fff8f4;
-}
-#console .messages.warning { 
-  color:#a84;
-  background:#fff4c0;
-  border: 2px solid #fffce4;
+#console .limiter div {
+	background: #fff;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	margin: 10px 0;
+	padding: 5px 10px;
 }
 
-input.form-submit { 
-  border: 1px solid #fff;
-  padding: 1px 5px 2px;
-  background: #F4F4F4 url(images/bleeds.png) repeat-x 0px -41px;
-  border-color: #DDD #DDD #CCC;
-  border-style: solid;
-  border-width: 1px;
-  border-radius: 5px;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px; 
-  -webkit-box-shadow: #DDD 0px 1px 1px;
-  box-shadow: #DDD 0px 1px 1px;
-  -moz-box-shadow: #DDD 0px 1px 1px;
+#console .messages.status {
+	color: #687;
+	background: #ecf8f4;
+	border: 2px solid #f8fffc;
+}
+
+#console .messages.error {
+	color: #965;
+	background: #ffe4e0;
+	border: 2px solid #fff8f4;
+}
+
+#console .messages.warning {
+	color: #a84;
+	background: #fff4c0;
+	border: 2px solid #fffce4;
+}
+
+input.form-text,select,textarea {
+	padding: 0.25em;
+}
+
+input.form-submit {
+	border: 1px solid #fff;
+	padding: 1px 5px 2px;
+	background: #F4F4F4 url(images/bleeds.png) repeat-x 0px -41px;
+	border-color: #DDD #DDD #CCC;
+	border-style: solid;
+	border-width: 1px;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-webkit-box-shadow: #DDD 0px 1px 1px;
+	box-shadow: #DDD 0px 1px 1px;
+	-moz-box-shadow: #DDD 0px 1px 1px;
 }
 
 input.form-submit:hover {
-  background: #eee;
+	background: #eee;
 }
+
 .form-item {
-  margin-bottom:10px;
+	margin-bottom: 10px;
 }
+
 .filefield-element {
-  margin:0;
+	margin: 0;
 }
-#content ul { list-style: circle; margin-left: 10px; }
-#content ol { list-style: decimal; margin-left: 10px; }
+
+#content ul {
+	list-style: circle;
+	margin-left: 10px;
+}
+
+#content ol {
+	list-style: decimal;
+	margin-left: 10px;
+}
 
 table.sparql th {
-  background: #666;
-  color: #fff;
+	background: #666;
+	color: #fff;
 }
+
 table.sparql td {
-  border:1px solid #666;
-  padding: 2px;
+	border: 1px solid #666666;
+	font-size: 0.9em;
+	padding: 4px;
 }
 
+div.vertical-tabs .vertical-tabs-panes fieldset.vertical-tabs-pane {
+	padding: 1em 2em !important;
+}
 
+ul.vertical-tabs-list {
+	margin-left: 0;
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
+ul.links li a {
+	margin-right: 1em;
+}

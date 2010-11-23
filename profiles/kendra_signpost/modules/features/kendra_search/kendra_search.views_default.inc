@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /**
  * Implementation of hook_views_default_views().
@@ -7,10 +6,10 @@
 function kendra_search_views_default_views() {
   $views = array();
 
-  // Exported view: portable_filter
+  // Exported view: Portable_Filters
   $view = new view;
-  $view->name = 'portable_filter';
-  $view->description = 'Portable Filter Demo';
+  $view->name = 'Portable_Filters';
+  $view->description = 'Portable Filters';
   $view->tag = '';
   $view->view_php = '';
   $view->base_table = 'node';
@@ -19,8 +18,8 @@ function kendra_search_views_default_views() {
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
   $handler = $view->new_display('default', 'Defaults', 'default');
   $handler->override_option('fields', array(
-    'title' => array(
-      'label' => 'Title',
+    'nid' => array(
+      'label' => '',
       'alter' => array(
         'alter_text' => 0,
         'text' => '',
@@ -36,8 +35,38 @@ function kendra_search_views_default_views() {
         'max_length' => '',
         'word_boundary' => 1,
         'ellipsis' => 1,
-        'strip_tags' => 0,
         'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 0,
+      'exclude' => 1,
+      'id' => 'nid',
+      'table' => 'node',
+      'field' => 'nid',
+      'relationship' => 'none',
+    ),
+    'title' => array(
+      'label' => 'Title',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 1,
+        'path' => 'node/[nid]/edit',
+        'link_class' => '',
+        'alt' => 'View/edit this filter',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
       ),
       'empty' => '',
       'hide_empty' => 0,
@@ -49,8 +78,8 @@ function kendra_search_views_default_views() {
       'field' => 'title',
       'relationship' => 'none',
     ),
-    'field_global_weight_value_1' => array(
-      'label' => 'CCK weight',
+    'created' => array(
+      'label' => 'Created',
       'alter' => array(
         'alter_text' => 0,
         'text' => '',
@@ -66,29 +95,22 @@ function kendra_search_views_default_views() {
         'max_length' => '',
         'word_boundary' => 1,
         'ellipsis' => 1,
-        'strip_tags' => 0,
         'html' => 0,
+        'strip_tags' => 0,
       ),
       'empty' => '',
       'hide_empty' => 0,
       'empty_zero' => 0,
-      'link_to_node' => 0,
-      'label_type' => 'widget',
-      'format' => 'default',
-      'multiple' => array(
-        'group' => TRUE,
-        'multiple_number' => '',
-        'multiple_from' => '',
-        'multiple_reversed' => FALSE,
-      ),
+      'date_format' => 'small',
+      'custom_date_format' => '',
       'exclude' => 0,
-      'id' => 'field_global_weight_value_1',
-      'table' => 'node_data_field_global_weight',
-      'field' => 'field_global_weight_value',
+      'id' => 'created',
+      'table' => 'node',
+      'field' => 'created',
       'relationship' => 'none',
     ),
-    'field_filter_parent_nid' => array(
-      'label' => 'Parent Filter',
+    'changed' => array(
+      'label' => 'Updated',
       'alter' => array(
         'alter_text' => 0,
         'text' => '',
@@ -104,29 +126,22 @@ function kendra_search_views_default_views() {
         'max_length' => '',
         'word_boundary' => 1,
         'ellipsis' => 1,
-        'strip_tags' => 0,
         'html' => 0,
+        'strip_tags' => 0,
       ),
       'empty' => '',
       'hide_empty' => 0,
       'empty_zero' => 0,
-      'link_to_node' => 0,
-      'label_type' => 'widget',
-      'format' => 'default',
-      'multiple' => array(
-        'group' => TRUE,
-        'multiple_number' => '',
-        'multiple_from' => '',
-        'multiple_reversed' => FALSE,
-      ),
+      'date_format' => 'small',
+      'custom_date_format' => '',
       'exclude' => 0,
-      'id' => 'field_filter_parent_nid',
-      'table' => 'node_data_field_filter_parent',
-      'field' => 'field_filter_parent_nid',
+      'id' => 'changed',
+      'table' => 'node',
+      'field' => 'changed',
       'relationship' => 'none',
     ),
-    'field_global_weight_value' => array(
-      'label' => 'CCK weight',
+    'delete_node' => array(
+      'label' => 'Delete',
       'alter' => array(
         'alter_text' => 0,
         'text' => '',
@@ -142,103 +157,26 @@ function kendra_search_views_default_views() {
         'max_length' => '',
         'word_boundary' => 1,
         'ellipsis' => 1,
-        'strip_tags' => 0,
         'html' => 0,
-      ),
-      'empty' => '',
-      'hide_empty' => 0,
-      'empty_zero' => 0,
-      'link_to_node' => 0,
-      'label_type' => 'widget',
-      'format' => 'default',
-      'multiple' => array(
-        'group' => TRUE,
-        'multiple_number' => '',
-        'multiple_from' => '',
-        'multiple_reversed' => FALSE,
-      ),
-      'exclude' => 0,
-      'id' => 'field_global_weight_value',
-      'table' => 'node_data_field_global_weight',
-      'field' => 'field_global_weight_value',
-      'relationship' => 'none',
-    ),
-    'field_filter_parent_nid_1' => array(
-      'label' => 'Parent Filter',
-      'alter' => array(
-        'alter_text' => 0,
-        'text' => '',
-        'make_link' => 0,
-        'path' => '',
-        'link_class' => '',
-        'alt' => '',
-        'prefix' => '',
-        'suffix' => '',
-        'target' => '',
-        'help' => '',
-        'trim' => 0,
-        'max_length' => '',
-        'word_boundary' => 1,
-        'ellipsis' => 1,
         'strip_tags' => 0,
-        'html' => 0,
-      ),
-      'empty' => '',
-      'hide_empty' => 0,
-      'empty_zero' => 0,
-      'link_to_node' => 0,
-      'label_type' => 'widget',
-      'format' => 'default',
-      'multiple' => array(
-        'group' => TRUE,
-        'multiple_number' => '',
-        'multiple_from' => '',
-        'multiple_reversed' => FALSE,
-      ),
-      'exclude' => 0,
-      'id' => 'field_filter_parent_nid_1',
-      'table' => 'node_data_field_filter_parent',
-      'field' => 'field_filter_parent_nid',
-      'relationship' => 'none',
-    ),
-    'edit_node' => array(
-      'label' => 'edit',
-      'alter' => array(
-        'alter_text' => 0,
-        'text' => '',
-        'make_link' => 0,
-        'path' => '',
-        'link_class' => '',
-        'alt' => '',
-        'prefix' => '',
-        'suffix' => '',
-        'target' => '',
-        'help' => '',
-        'trim' => 0,
-        'max_length' => '',
-        'word_boundary' => 1,
-        'ellipsis' => 1,
-        'strip_tags' => 0,
-        'html' => 0,
       ),
       'empty' => '',
       'hide_empty' => 0,
       'empty_zero' => 0,
       'text' => '',
       'exclude' => 0,
-      'id' => 'edit_node',
+      'id' => 'delete_node',
       'table' => 'node',
-      'field' => 'edit_node',
+      'field' => 'delete_node',
       'relationship' => 'none',
     ),
   ));
   $handler->override_option('sorts', array(
-    'field_global_weight_value' => array(
+    'title' => array(
       'order' => 'ASC',
-      'delta' => -1,
-      'id' => 'field_global_weight_value',
-      'table' => 'node_data_field_global_weight',
-      'field' => 'field_global_weight_value',
+      'id' => 'title',
+      'table' => 'node',
+      'field' => 'title',
       'relationship' => 'none',
     ),
   ));
@@ -246,7 +184,7 @@ function kendra_search_views_default_views() {
     'type' => array(
       'operator' => 'in',
       'value' => array(
-        'portable_filter_rule' => 'portable_filter_rule',
+        'portable_filter' => 'portable_filter',
       ),
       'group' => '0',
       'exposed' => FALSE,
@@ -259,6 +197,20 @@ function kendra_search_views_default_views() {
       'field' => 'type',
       'relationship' => 'none',
     ),
+    'status' => array(
+      'operator' => '=',
+      'value' => '1',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status',
+      'table' => 'node',
+      'field' => 'status',
+      'relationship' => 'none',
+    ),
   ));
   $handler->override_option('access', array(
     'type' => 'none',
@@ -266,86 +218,50 @@ function kendra_search_views_default_views() {
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
-  $handler->override_option('title', 'Portable Filter Demo');
-  $handler->override_option('footer', '<strong><a href="/node/add/portable-filter-rule" title="Add a new rule to this search filter">Add a new rule</a></strong>');
-  $handler->override_option('footer_format', '1');
-  $handler->override_option('footer_empty', 1);
-  $handler->override_option('style_plugin', 'draggabletable');
+  $handler->override_option('title', 'Portable Filters');
+  $handler->override_option('use_ajax', TRUE);
+  $handler->override_option('use_pager', 'mini');
+  $handler->override_option('style_plugin', 'table');
   $handler->override_option('style_options', array(
+    'grouping' => '',
     'override' => 1,
     'sticky' => 0,
     'order' => 'asc',
     'columns' => array(
+      'nid' => 'nid',
       'title' => 'title',
-      'field_global_weight_value_1' => 'field_global_weight_value_1',
-      'field_filter_parent_nid' => 'field_filter_parent_nid',
-      'field_global_weight_value' => 'field_global_weight_value',
-      'field_filter_parent_nid_1' => 'field_filter_parent_nid_1',
-      'edit_node' => 'edit_node',
+      'created' => 'created',
+      'changed' => 'changed',
+      'delete_node' => 'delete_node',
     ),
     'info' => array(
+      'nid' => array(
+        'sortable' => 0,
+        'separator' => '',
+      ),
       'title' => array(
-        'sortable' => 0,
+        'sortable' => 1,
         'separator' => '',
       ),
-      'field_global_weight_value_1' => array(
-        'sortable' => 0,
+      'created' => array(
+        'sortable' => 1,
         'separator' => '',
       ),
-      'field_filter_parent_nid' => array(
+      'changed' => array(
+        'sortable' => 1,
         'separator' => '',
       ),
-      'field_global_weight_value' => array(
-        'sortable' => 0,
-        'separator' => '',
-      ),
-      'field_filter_parent_nid_1' => array(
-        'separator' => '',
-      ),
-      'edit_node' => array(
+      'delete_node' => array(
         'separator' => '',
       ),
     ),
-    'default' => '-1',
-    'tabledrag_hierarchy' => array(
-      'field' => 'field_filter_parent_nid',
-      'handler' => 'cck',
-    ),
-    'tabledrag_order' => array(
-      'field' => 'field_global_weight_value_1',
-      'handler' => 'cck',
-    ),
-    'draggableviews_extensions' => array(
-      'extension_top' => '3',
-      'extension_bottom' => '3',
-    ),
-    'tabledrag_order_visible' => array(
-      'visible' => 0,
-    ),
-    'tabledrag_hierarchy_visible' => array(
-      'visible' => 0,
-    ),
-    'draggableviews_depth_limit' => '-1',
-    'draggableviews_repair' => array(
-      'repair' => 'repair',
-    ),
-    'tabledrag_types_add' => 'Add type',
-    'tabledrag_expand' => array(
-      'expand_links' => 'expand_links',
-      'collapsed' => 0,
-      'by_uid' => 0,
-    ),
-    'tabledrag_lock' => array(
-      'lock' => 0,
-    ),
-    'draggableviews_default_on_top' => '1',
-    'draggableviews_button_text' => 'Save order',
-    'draggableviews_arguments' => array(
-      'use_args' => 0,
-    ),
+    'default' => 'title',
   ));
+  $handler = $view->new_display('block', 'Block', 'block_1');
+  $handler->override_option('block_description', '');
+  $handler->override_option('block_caching', -1);
   $handler = $view->new_display('page', 'Page', 'page_1');
-  $handler->override_option('path', 'demo/portable_filters');
+  $handler->override_option('path', 'portable-filters');
   $handler->override_option('menu', array(
     'type' => 'none',
     'title' => '',
