@@ -49,7 +49,7 @@ function kendra_cat_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Album title',
-      'weight' => '1',
+      'weight' => '15',
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -99,7 +99,7 @@ function kendra_cat_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Artist',
-      'weight' => '-4',
+      'weight' => '10',
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -149,7 +149,7 @@ function kendra_cat_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Release date',
-      'weight' => 0,
+      'weight' => '14',
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -199,7 +199,7 @@ function kendra_cat_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'ISRC',
-      'weight' => '-1',
+      'weight' => '13',
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -249,7 +249,7 @@ function kendra_cat_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Label',
-      'weight' => '-3',
+      'weight' => '11',
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -299,7 +299,7 @@ function kendra_cat_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Catalogue number',
-      'weight' => '-2',
+      'weight' => '12',
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -349,7 +349,69 @@ function kendra_cat_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Publisher',
-      'weight' => '2',
+      'weight' => '16',
+      'description' => '',
+      'type' => 'text_textfield',
+      'module' => 'text',
+    ),
+  );
+
+  // Exported field: field_cat_rowuri
+  $fields['kendra_cat-field_cat_rowuri'] = array(
+    'field_name' => 'field_cat_rowuri',
+    'type_name' => 'kendra_cat',
+    'display_settings' => array(
+      'label' => array(
+        'format' => 'above',
+        'exclude' => 0,
+      ),
+      'teaser' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '4' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+    'widget_active' => '1',
+    'type' => 'text',
+    'required' => '0',
+    'multiple' => '0',
+    'module' => 'text',
+    'active' => '1',
+    'text_processing' => '0',
+    'max_length' => '255',
+    'allowed_values' => '',
+    'allowed_values_php' => '',
+    'widget' => array(
+      'rows' => 5,
+      'size' => '60',
+      'default_value' => array(
+        '0' => array(
+          'value' => '',
+          '_error_element' => 'default_value_widget][field_cat_rowuri][0][value',
+        ),
+      ),
+      'default_value_php' => NULL,
+      'label' => 'RowURI',
+      'weight' => '8',
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -365,6 +427,7 @@ function kendra_cat_content_default_fields() {
   t('Label');
   t('Publisher');
   t('Release date');
+  t('RowURI');
 
   return $fields;
 }

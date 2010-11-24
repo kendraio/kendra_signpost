@@ -10,12 +10,12 @@ function kendra_cat_strongarm() {
   $strongarm->api_version = 1;
   $strongarm->name = 'content_extra_weights_kendra_cat';
   $strongarm->value = array(
-    'title' => '-5',
-    'revision_information' => '5',
-    'author' => '4',
-    'options' => '6',
-    'menu' => '3',
-    'path' => '7',
+    'title' => '9',
+    'revision_information' => '19',
+    'author' => '18',
+    'options' => '20',
+    'menu' => '17',
+    'path' => '21',
   );
 
   $export['content_extra_weights_kendra_cat'] = $strongarm;
