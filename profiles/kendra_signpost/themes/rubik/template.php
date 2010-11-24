@@ -11,7 +11,7 @@ function rubik_theme() {
   $items['filter_form'] = array('arguments' => array('form' => array()));
 
   // theme('blocks') targeted override for content region.
-  $items['blocks_content'] = array('arguments' => array('doit' => FALSE));
+  $items['blocks_content'] = array('arguments' => array('doit' => TRUE));
 
   // Content theming.
   $items['help'] =
@@ -345,7 +345,7 @@ function rubik_preprocess_comment_wrapper(&$vars) {
  * to be split away from page content in page template. See tao_blocks()
  * for how this function is called.
  */
-function rubik_blocks_content($doit = FALSE) {
+function rubik_blocks_content($doit = TRUE) {
   static $blocks;
   if (!isset($blocks)) {
     $blocks = module_exists('context') && function_exists('context_blocks') ? context_blocks('content') : theme_blocks('content');
