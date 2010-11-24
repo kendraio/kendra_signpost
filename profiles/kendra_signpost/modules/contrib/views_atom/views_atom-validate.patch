@@ -1,0 +1,31 @@
+Index: views-atom-fields-item.tpl.php
+===================================================================
+RCS file: /cvs/drupal-contrib/contributions/modules/views_atom/views-atom-fields-item.tpl.php,v
+retrieving revision 1.1
+diff -u -p -r1.1 views-atom-fields-item.tpl.php
+--- views-atom-fields-item.tpl.php	21 Sep 2010 21:36:52 -0000	1.1
++++ views-atom-fields-item.tpl.php	4 Nov 2010 15:29:31 -0000
+@@ -9,7 +9,7 @@
+   <author>
+     <name><?php print $atom_author; ?></name>
+     <email><?php print $atom_author_email; ?></email>
+-    <url><?php print $atom_author_url; ?></url>
++    <uri><?php print $atom_author_url; ?></uri>
+   </author>
+   <content type="<?php echo $entry_type; ?>" xml:lang="<?php echo $language; ?>">
+     <?php print $content; ?>
+Index: views-view-views-atom-fields.tpl.php
+===================================================================
+RCS file: /cvs/drupal-contrib/contributions/modules/views_atom/views-view-views-atom-fields.tpl.php,v
+retrieving revision 1.1
+diff -u -p -r1.1 views-view-views-atom-fields.tpl.php
+--- views-view-views-atom-fields.tpl.php	21 Sep 2010 21:36:52 -0000	1.1
++++ views-view-views-atom-fields.tpl.php	4 Nov 2010 15:29:31 -0000
+@@ -3,6 +3,7 @@
+ <feed xmlns="http://www.w3.org/2005/Atom">
+   <title><?php print $view_title; ?></title>
+   <link href="<?php print $link ?>"/>
++  <id><?php print $link ?></id>
+   <?php if ($use_push) : ?>
+     <link rel="hub" href="<?php echo $hub_url; ?>" />
+     <link rel="self" href="<?php echo $feed_url; ?>" />
