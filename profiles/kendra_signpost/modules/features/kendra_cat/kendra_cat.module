@@ -51,6 +51,7 @@ function kendra_cat_apachesolr_cck_fields_alter(&$mappings) {
     'indexing_callback' => 'kendra_cat_textfield_callback',
     'display_callback' => 'kendra_cat_textfield_display_callback',
   );
+  watchdog('kendra_cat_mappings', 'mappings: '. print_r($mappings, TRUE));
 }
 
 /**
@@ -60,7 +61,7 @@ function kendra_cat_apachesolr_cck_fields_alter(&$mappings) {
 *
 * @return an array of arrays. Each inner array is a value, and must be
 * keyed 'safe' => $value
-*/
+*
 function kendra_cat_textfield_callback($node, $fieldname) {
   $fields = array();
   foreach ($node->$fieldname as $field) {
@@ -68,7 +69,26 @@ function kendra_cat_textfield_callback($node, $fieldname) {
   }
   return $fields;
 }
-
+*/
+function kendra_cat_textfield_callback($node, $field_name, $cck_info) {
+  // $fields is an array because we send back a key => value pair for every
+  // value of the field.
+  $fields = array();
+  // Don't do anything if this node doesn't have this field.
+  if (isset($node->$field_name)) {
+    // Get the index key based on the $cck_info.
+    $index_key = apachesolr_index_key($cck_info);
+    foreach ($node->$field_name as $field) {
+      // For every field, add a key => value pair to the $fields array.
+      $fields[] = array(
+        'key' => $index_key,
+        'value' => check_plain($field['value']),
+      );
+    }
+  }
+  watchdog('kendra_cat_field', 'indexing field: '. print_r($fields, TRUE));
+  return $fields;
+}
 
 /**
 * Determines what to display in facet links for this field.
