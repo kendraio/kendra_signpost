@@ -70,7 +70,7 @@ function kendra_cat_textfield_callback($node, $fieldname) {
   return $fields;
 }
 */
-function kendra_cat_textfield_callback($node, $field_name, $cck_info) {
+function kendra_cat_textfield_callback($node, $field_name, $cck_info = '') {
   // $fields is an array because we send back a key => value pair for every
   // value of the field.
   $fields = array();
