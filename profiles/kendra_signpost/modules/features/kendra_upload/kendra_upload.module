@@ -95,7 +95,9 @@ function _kendra_uploads_add_cat_node($headers, $data) {
 /**
  * tell Solr to index imported content
  * see http://www.forumone.com/blogs/post/getting-real-search-apache-solr-drupal
- */
+ * Implementing a different hook! but I'm putting this in kendra_cat.module 
+ * because that is where the content type is defined.
+ *
 function kendra_upload_apachesolr_update_index(&$doc, $node) {
 	if (!empty($node->content['field_cat_album_value'])) {
 		$doc->sm_field_cat_album_value = $node->content['field_cat_album_value'];
@@ -107,3 +109,5 @@ function kendra_upload_apachesolr_update_index(&$doc, $node) {
 		$doc->sm_field_cat_publisher_value = $node->content['field_cat_publisher_value'];
 	}
 }
+*/
+

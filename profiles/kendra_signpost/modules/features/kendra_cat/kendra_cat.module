@@ -39,3 +39,48 @@ function kendra_cat_add_node($headers, $data) {
   node_save($node);  
 }
 
+/*
+ * Make rowuri available to solr
+ */
+function kendra_cat_apachesolr_cck_field_mappings() {
+  $mappings = array();
+  // 'text' is the CCK field_type. Correlates to $field['field_type']
+  $mappings['text'] = array(
+    // The callback function gets called at indexing time to get the values.
+    'callback' => 'kendra_cat_textfield_callback',
+    // Common types are 'text', 'string', 'integer', 'double', 'float', 'date', 'boolean'
+    'index_type' => 'string',
+    // These are the CCK formatting widgets for which this mapping applies.
+    // If we wanted to target images but not generic files, for example,
+    // we could say 'filefield_widget' => FALSE
+    'widget_types' => array('text_textfield' => TRUE, 'text_textarea' => FALSE),
+  );
+  return $mappings;
+}
+
+/**
+* A function that gets called during indexing.
+* @node The current node being indexed
+* @fieldname The current field being indexed
+*
+* @return an array of arrays. Each inner array is a value, and must be
+* keyed 'safe' => $value
+*/
+function example_callback($node, $fieldname) {
+  $fields = array();
+  foreach ($node->$fieldname as $field) {
+    $fields[] = array('safe' => check_plain($field['value']));
+  }
+  return $fields;
+}
+
+
+
+
+
+
+
+
+
+
+
