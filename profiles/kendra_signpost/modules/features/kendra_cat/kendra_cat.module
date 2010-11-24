@@ -34,6 +34,8 @@ function kendra_cat_add_node($headers, $data) {
       }
     }
   }
+  $node->field_cat_rowuri[0]['value'] = url("node/{$data['source_nid']}", array('absolute' => TRUE)) 
+    ."/rows#{$data['source_row']}";
   node_save($node);  
 }
 
