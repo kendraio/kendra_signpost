@@ -3,6 +3,12 @@ input,
 textarea,
 select { font-family:"Lucida","Lucida Grande","Trebuchet MS",Tahoma,Verdana,sans-serif; }
 
+h1.page-title {
+  margin-top: 10px;
+  background: url(logo.png) no-repeat;
+  padding-left: 150px !important;
+}
+
 .links.inline .kendra_map_item_field_map_node a:hover {
   background: #eee;
 }

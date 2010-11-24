@@ -127,7 +127,7 @@ function _kendra_signpost_configure() {
 function _kendra_signpost_check() {
   // Perform any final installation tasks
   drupal_flush_all_caches();
-  variable_set('theme_default', 'kendra_tao');
+  variable_set('theme_default', 'rubik');
 
   // As a final step of the install process force a revert of the features
   // to change settings that may have been altered by other steps
