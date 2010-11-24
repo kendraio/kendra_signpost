@@ -3,6 +3,28 @@ input,
 textarea,
 select { font-family:"Lucida","Lucida Grande","Trebuchet MS",Tahoma,Verdana,sans-serif; }
 
+.links.inline .kendra_map_item_field_map_node a:hover {
+  background: #eee;
+}
+.links.inline .kendra_map_item_field_map_node a {
+  display: block;
+  font-size: 12px;
+  font-weight: bold;
+  width: 100px;
+  height: 35px;
+  line-height: 35px;  
+  text-align: center; 
+  background: #F4F4F4 url(images/bleeds.png) repeat-x 0px -41px;
+
+  -moz-border-radius: 10px;  
+  -webkit-border-radius: 10px;  
+  border-radius: 10px;  
+  
+  -moz-box-shadow: 0 1px 3px black;  
+  -webkit-box-shadow: 0 1px 3px black;  
+  box-shadow: 0 1px 3px black;  
+}
+
 body.rubik {
   color:#333;
   background:#ccc url(images/bleeds.png) 0px -80px repeat-x;
