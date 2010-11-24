@@ -61,6 +61,8 @@ function _kendra_upload_process_csv($nid) {
 			}
 
 			// creation of cat nodes for solr testing
+			$data['source_nid'] = $nid;
+			$data['source_row'] = $row;
 			_kendra_uploads_add_cat_node($headers, $data);
 
 			$row++;
