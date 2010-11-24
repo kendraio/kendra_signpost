@@ -42,20 +42,15 @@ function kendra_cat_add_node($headers, $data) {
 /*
  * Make rowuri available to solr
  */
-function kendra_cat_apachesolr_cck_field_mappings() {
-  $mappings = array();
-  // 'text' is the CCK field_type. Correlates to $field['field_type']
-  $mappings['text'] = array(
-    // The callback function gets called at indexing time to get the values.
+function kendra_cat_apachesolr_cck_fields_alter(&$mappings) {
+  $mappings['text']['text_textfield'] = array(
     'callback' => 'kendra_cat_textfield_callback',
-    // Common types are 'text', 'string', 'integer', 'double', 'float', 'date', 'boolean'
     'index_type' => 'string',
-    // These are the CCK formatting widgets for which this mapping applies.
-    // If we wanted to target images but not generic files, for example,
-    // we could say 'filefield_widget' => FALSE
-    'widget_types' => array('text_textfield' => TRUE, 'text_textarea' => FALSE),
+    // This callback seems to keep changing. Here some code 
+    // in prepration for changes in apachesolr.module v2
+    'indexing_callback' => 'kendra_cat_textfield_callback',
+    'display_callback' => 'kendra_cat_textfield_display_callback',
   );
-  return $mappings;
 }
 
 /**
@@ -75,6 +70,19 @@ function kendra_cat_textfield_callback($node, $fieldname) {
 }
 
 
+/**
+* Determines what to display in facet links for this field.
+*
+* @param $facet
+*   The raw value (from the index) of this facet field. This corresponds to
+*   'value' from the indexing callback.
+* @param $options
+*   CCK info. In this example it will be an array with a "delta" key with either a
+*   "filefile" or "imagefield" value. Here we ignore it and just return the $facet.
+*/
+function kendra_cat_textfield_display_callback($facet, $options) {
+  return $facet;
+}
 
 
 
