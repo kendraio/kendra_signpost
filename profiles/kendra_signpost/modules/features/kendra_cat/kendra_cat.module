@@ -51,7 +51,7 @@ function kendra_cat_apachesolr_cck_fields_alter(&$mappings) {
     'indexing_callback' => 'kendra_cat_textfield_callback',
     'display_callback' => 'kendra_cat_textfield_display_callback',
   );
-  watchdog('kendra_cat_mappings', 'mappings: '. print_r($mappings, TRUE));
+  //watchdog('kendra_cat_mappings', 'mappings: '. print_r($mappings, TRUE));
 }
 
 /**
@@ -86,7 +86,7 @@ function kendra_cat_textfield_callback($node, $field_name, $cck_info = '') {
       );
     }
   }
-  watchdog('kendra_cat_field', 'indexing field: '. print_r($fields, TRUE));
+  //watchdog('kendra_cat_field', 'indexing field: '. print_r($fields, TRUE));
   return $fields;
 }
 
