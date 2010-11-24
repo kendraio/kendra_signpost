@@ -2,6 +2,16 @@
 
 include_once('kendra_mapping.features.inc');
 
+function kendra_mapping_allowed_values_types() {
+  $values = kendra_mapping_allowed_values();
+  $type = array(
+    'kendra:number' => 'kendra:number',
+    'kendra:string' => 'kendra:string',
+    'kendra:datetime' => 'kendra:datetime',
+  );
+  return array_merge($values, $type);
+}
+
 function kendra_mapping_allowed_values() {
   static $maps = NULL;
   if ($cache = cache_get('kendra_mapping_allowed_values')) {

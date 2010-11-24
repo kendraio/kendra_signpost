@@ -152,7 +152,7 @@ function kendra_mapping_content_default_fields() {
     'text_processing' => '0',
     'max_length' => '',
     'allowed_values' => '',
-    'allowed_values_php' => 'return kendra_mapping_allowed_values();',
+    'allowed_values_php' => 'return kendra_mapping_allowed_values_types();',
     'widget' => array(
       'rows' => 5,
       'size' => '60',
