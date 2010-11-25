@@ -18,6 +18,9 @@ def is_bad_request():
     if not os.environ.get("HTTP_HOST", None): return "no HTTP_HOST specified"
     return 0
 
+def rewrite_content(text):
+   return text
+
 logfile = open("/tmp/solr_update_proxy_log_%0.5f" % time.time(), "w")
 print >> logfile, "environment"
 for k in os.environ:
@@ -47,7 +50,13 @@ try:
 	content_length = os.environ['CONTENT_LENGTH']
 	content = sys.stdin.read()
 
-	print >> logfile, "indexing input data:"
+	print >> logfile, "-------- indexing input data:"
+	print >> logfile, content
+	logfile.flush()
+
+        content = rewrite_content(content)
+
+	print >> logfile, "-------- rewritten input data:"
 	print >> logfile, content
 	logfile.flush()
 
@@ -64,7 +73,7 @@ except:
 	results = "an exception happened: " + absolute_url + " " + repr(exc_info[0]) + "\n" + string.join(tb, "")
 	results_type = "text/plain"
 
-print >> logfile, "indexing output data:"
+print >> logfile, "-------- indexing output data:"
 print >> logfile, results
 logfile.close()
 
