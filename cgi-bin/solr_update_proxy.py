@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
-# File: solr_search_proxy.py
-# Description: Rewrites Solr searches and results to use added semantic tags
+# File: solr_update_proxy.py
+# Description: Rewrites Solr updates to add semantic tags
 # Created: 2010-11-12
 # Author: Neil Harris
 
