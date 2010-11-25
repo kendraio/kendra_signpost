@@ -6,6 +6,7 @@
 # Author: Neil Harris
 
 import cgitb, cgi, sys, urllib, urllib2, string, re, os, time, traceback
+import urllib
 
 def urlquote(x):
     return urllib.quote_plus(x)
@@ -17,6 +18,16 @@ def is_bad_request():
     if os.environ.get("REQUEST_METHOD", None) != "POST": return "not a POST command"
     if not os.environ.get("HTTP_HOST", None): return "no HTTP_HOST specified"
     return 0
+
+# Make a query to Virtuoso to get metadata for this object
+def strip_result_fields(x):
+    return re.findall(r'(?s)<binding name="[^>]+"><[^<>]*>(.*?)<[^<>]*></binding>', x)
+
+# TODO: Note: assumes that URI is valid: need sanity check here to prevent XSS attacks on SPARQL DB, or assurance this is valid at all callers
+def get_property_list(row_uri):
+	query = "SELECT ?property ?object WHERE {<%s> ?property ?object}" % row_uri
+	query_url = "http://dev.kendra.org.uk:8890/sparql?default-graph-uri=&query=%s&format=text%%2Frdf+n3&debug=on&timeout=" % urllib.quote_plus(query)
+	return map(strip_result_fields, re.findall(r"(?s)<result>.*?</result>", urllib.urlopen(url).read()))
 
 # Mangles a URI into something that can be a valid facet name
 def mangle_uri(uri):
@@ -32,8 +43,16 @@ def rewrite_stanza(text):
     if not row_uri:
        return text
     row_uri = row_uri[0]
-    # And make some sample metadata fields
-    return string.replace(text, "</doc>", '<field name="foo">foobar</field><field name="%s">%s</field></doc>' % (mangle_uri(row_uri), row_uri))
+
+    # Get the property list for this row from SPARQL endpoint
+    property_list = get_property_list(row_uri)
+
+    # Bash these metadata fields in, very inefficiently
+    # TO DO: make more efficient
+    for name, value in property_list:
+        text = string.replace(text, "</doc>", '<field name="%s">%s</field></doc>' % (mangle_uri(name), value))
+
+    return text
 
 # Break the input XML down into segments, process, then reassemble
 def rewrite_content(text):
