@@ -105,7 +105,7 @@ table.sparql td {
 	font-size: 0.9em;
 	padding: 4px;
 }
-
+/*
 div.vertical-tabs .vertical-tabs-panes fieldset.vertical-tabs-pane {
 	padding: 1em 2em !important;
 }
@@ -113,7 +113,10 @@ div.vertical-tabs .vertical-tabs-panes fieldset.vertical-tabs-pane {
 ul.vertical-tabs-list {
 	margin-left: 0;
 }
-
+*/
+div.vertical-tabs .vertical-tabs-panes fieldset.vertical-tabs-pane {
+	padding:0 !important;
+}
 ul.links li a {
 	margin-right: 1em;
 }
