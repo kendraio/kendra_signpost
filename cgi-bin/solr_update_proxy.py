@@ -18,8 +18,15 @@ def is_bad_request():
     if not os.environ.get("HTTP_HOST", None): return "no HTTP_HOST specified"
     return 0
 
+# Process a single XML segment
+def rewrite_stanza(text):
+    if text[:5] != "<doc>":
+        return text
+    return string.replace(text, "</doc>", '<field name="foo">foobar</field></doc>')
+
+# Break the input XML down into segments, process, then reassemble
 def rewrite_content(text):
-   return text
+   return string.join(map(rewrite_stanza, re.findall(r"(?s)<doc>.*?</doc>|<.*?>|[^<]+", data)), "")
 
 logfile = open("/tmp/solr_update_proxy_log_%0.5f" % time.time(), "w")
 print >> logfile, "environment"
