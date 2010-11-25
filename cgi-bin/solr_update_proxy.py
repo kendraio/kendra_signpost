@@ -26,7 +26,7 @@ def rewrite_stanza(text):
 
 # Break the input XML down into segments, process, then reassemble
 def rewrite_content(text):
-   return string.join(map(rewrite_stanza, re.findall(r"(?s)<doc>.*?</doc>|<.*?>|[^<]+", data)), "")
+   return string.join(map(rewrite_stanza, re.findall(r"(?s)<doc>.*?</doc>|<.*?>|[^<]+", text)), "")
 
 logfile = open("/tmp/solr_update_proxy_log_%0.5f" % time.time(), "w")
 print >> logfile, "environment"
