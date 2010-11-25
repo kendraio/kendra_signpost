@@ -18,11 +18,22 @@ def is_bad_request():
     if not os.environ.get("HTTP_HOST", None): return "no HTTP_HOST specified"
     return 0
 
+# Mangles a URI into something that can be a valid facet name
+def mangle_uri(uri):
+    ok_chars = string.uppercase + string.lowercase + string.digits
+    ok_dict = dict(zip(ok_chars, ok_chars))
+    return "mu_" + string.join([ok_dict.get(x, "_") for x in uri], '')
+
 # Process a single XML segment
 def rewrite_stanza(text):
     if text[:5] != "<doc>":
         return text
-    return string.replace(text, "</doc>", '<field name="foo">foobar</field></doc>')
+    row_uri = re.findall(r'<field name="ss_cck_field_cat_rowuri">(.*?)</field>', text)
+    if not row_uri:
+       return text
+    row_uri = row_uri[0]
+    # And make some sample metadata fields
+    return string.replace(text, "</doc>", '<field name="foo">foobar</field><field name="%s">%s</field></doc>' % (mangle_uri(row_uri), row_uri))
 
 # Break the input XML down into segments, process, then reassemble
 def rewrite_content(text):
