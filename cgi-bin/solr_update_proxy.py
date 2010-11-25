@@ -5,7 +5,7 @@
 # Created: 2010-11-12
 # Author: Neil Harris
 
-import cgitb, cgi, sys, urllib, urllib2, string, os, time, traceback
+import cgitb, cgi, sys, urllib, urllib2, string, re, os, time, traceback
 
 def urlquote(x):
     return urllib.quote_plus(x)
