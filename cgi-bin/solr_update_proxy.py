@@ -26,14 +26,14 @@ def strip_result_fields(x):
 # TODO: Note: assumes that URI is valid: need sanity check here to prevent XSS attacks on SPARQL DB, or assurance this is valid at all callers
 def get_property_list(row_uri):
 	query = "SELECT ?property ?object WHERE {<%s> ?property ?object}" % row_uri
-	query_url = "http://dev.kendra.org.uk:8890/sparql?default-graph-uri=&query=%s&format=text%%2Frdf+n3&debug=on&timeout=" % urllib.quote_plus(query)
+	query_url = "http://%s:8890/sparql?default-graph-uri=&query=%s&format=text%%2Frdf+n3&debug=on&timeout=" % (os.environ['HTTP_HOST'], urllib.quote_plus(query))
 	return map(strip_result_fields, re.findall(r"(?s)<result>.*?</result>", urllib.urlopen(query_url).read()))
 
 # Mangles a URI into something that can be a valid facet name
 def mangle_uri(uri):
     ok_chars = string.uppercase + string.lowercase + string.digits
     ok_dict = dict(zip(ok_chars, ok_chars))
-    return "mu_" + string.join([ok_dict.get(x, "_") for x in uri], '')
+    return "mu_" + string.join([ok_dict.get(x, "_%02X" % ord(x)) for x in uri], '')
 
 # Process a single XML segment
 def rewrite_stanza(text):
