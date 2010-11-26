@@ -259,7 +259,9 @@ jQuery.extend(Kendra, {
 			html += '<input type="hidden" class="hidden_nid" name="hidden_nid" value=""/>';
 			html += '<input type="hidden" class="field_filter_parent_nid" value="0" id="edit-field-field-filter-parent-nid" name="field_filter_parent_nid_3"/>';
 
-			html += '<a class="tabledrag-handle" href="#" title="Drag to re-order"><div class="handle">&nbsp;</div></a>';
+			// html += '<a class="tabledrag-handle" href="#" title="Drag to re-order"><div class="handle">&nbsp;</div></a>';
+			//
+
 			html += '</td>';
 
 			/**
@@ -386,54 +388,54 @@ jQuery.extend(Kendra, {
 			/**
 			 * // skip the next hack
 			 */
-			// return;
+			return;
+			/**
+			 * make the search form rows draggable
+			 * 
+			 * @hack this should probably be triggered via a sub-module?
+			 */
+			if (typeof Drupal.behaviors.draggableviewsLoad == 'function') {
+				Drupal.settings = $.extend(Drupal.settings, {
+					'draggableviews' : {
+						// table_id:
+						'kendra-portable-filters' : {
+							'parent' : null
+						}
+					}
+				});
+				Kendra.util.log(Drupal.settings.draggableviews, 'initializing draggableviews');
+				Drupal.behaviors.draggableviewsLoad();
+			}
+		},
+
 		/**
-		 * make the search form rows draggable
+		 * set up ApacheSolr query
 		 * 
-		 * @hack this should probably be triggered via a sub-module?
+		 * @param query
+		 *            Object hash of query facets => values
+		 * @param params
+		 *            Object hash of Solr parameters
 		 */
-		if (typeof Drupal.behaviors.draggableviewsLoad == 'function') {
-			Drupal.settings = $.extend(Drupal.settings, {
-				'draggableviews' : {
-					// table_id:
-					'kendra-portable-filters' : {
-						'parent' : null
+		solrQuery : function(query, params) {
+			var query = query || {}, params = params || {};
+			Kendra.Manager = new AjaxSolr.Manager( {
+				solrUrl : Kendra.search.solrUrl || '',
+
+				/**
+				 * override AbstractManager.handleResponse
+				 */
+				handleResponse : function(data) {
+					this.response = data;
+					Kendra.util.log(this.response, 'Kendra.service.solrQuery: got response: ' + data.response.numFound + ' records');
+
+					for ( var widgetId in this.widgets) {
+						this.widgets[widgetId].afterRequest();
 					}
 				}
 			});
-			Kendra.util.log(Drupal.settings.draggableviews, 'initializing draggableviews');
-			Drupal.behaviors.draggableviewsLoad();
-		}
-	},
+			Kendra.Manager.init();
 
-	/**
-	 * set up ApacheSolr query
-	 * 
-	 * @param query
-	 *            Object hash of query facets => values
-	 * @param params
-	 *            Object hash of Solr parameters
-	 */
-	solrQuery : function(query, params) {
-		var query = query || {}, params = params || {};
-		Kendra.Manager = new AjaxSolr.Manager( {
-			solrUrl : Kendra.search.solrUrl || '',
-
-			/**
-			 * override AbstractManager.handleResponse
-			 */
-			handleResponse : function(data) {
-				this.response = data;
-				Kendra.util.log(this.response, 'Kendra.service.solrQuery: got response: ' + data.response.numFound + ' records');
-
-				for ( var widgetId in this.widgets) {
-					this.widgets[widgetId].afterRequest();
-				}
-			}
-		});
-		Kendra.Manager.init();
-
-		// set the solr query here
+			// set the solr query here
 		// Kendra.Manager.store.addByValue('q', '*:*');
 		Kendra.Manager.store.addByValue('q.alt', '*:*');
 
