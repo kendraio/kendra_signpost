@@ -40,7 +40,7 @@ jQuery.extend(Kendra,
 							$msg.append( [ '&nbsp;', '<a href="#" class="toggle" onclick="', '$(this).hide().next().fadeIn();return false', '">show</a>', '<pre>', JSON.stringify(obj), '</pre>' ].join(''));
 
 						if ($('#search-log').length == 0) {
-							$('body').append(
+							$('body').addClass('big-bottom').append(
 									[ '<div id="search-log">', '<div class="main"><div class="header">', '<a class="close" href="#" onclick="', "$('#search-log').fadeOut();return false", '">[x]</a><h5>', 'log:', '</h5>', '</div></div></div>' ].join(''));
 						}
 						$('#search-log .main').append($msg).stop().animate( {

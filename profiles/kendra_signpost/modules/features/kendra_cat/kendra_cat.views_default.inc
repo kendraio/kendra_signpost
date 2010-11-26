@@ -400,6 +400,8 @@ function kendra_cat_views_default_views() {
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
+  $handler->override_option('use_ajax', TRUE);
+  $handler->override_option('use_pager', 'mini');
   $handler->override_option('style_plugin', 'table');
   $handler = $view->new_display('page', 'Page', 'page_1');
   $handler->override_option('path', 'cat_nodes');
