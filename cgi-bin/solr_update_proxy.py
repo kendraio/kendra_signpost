@@ -33,7 +33,8 @@ def get_property_list(row_uri):
 def mangle_uri(uri):
     ok_chars = string.uppercase + string.lowercase + string.digits
     ok_dict = dict(zip(ok_chars, ok_chars))
-    return "mu_" + string.join([ok_dict.get(x, "_%02X" % ord(x)) for x in uri], '')
+    prefix = '' # "mu_"
+    return prefix + string.join([ok_dict.get(x, "_%02X" % ord(x)) for x in uri], '')
 
 # Process a single XML segment
 def rewrite_stanza(text):
@@ -58,10 +59,18 @@ def rewrite_stanza(text):
 def rewrite_content(text):
    return string.join(map(rewrite_stanza, re.findall(r"(?s)<doc>.*?</doc>|<.*?>|[^<]+", text)), "")
 
-logfile = open("/tmp/solr_update_proxy_log_%0.5f" % time.time(), "w")
-print >> logfile, "environment"
+# format a comment, suitable for XML
+def format_comment(text):
+   return '<!-- %s -->' % text
+
+# main
+current_time = time.time()
+logfile = open("/tmp/solr_update_proxy_log_%0.5f" % current_time, "w")
+print >> logfile, '<log datetime="%s">' % current_time
+print >> logfile, "<environment>"
 for k in os.environ:
     print >> logfile, k, os.environ.get(k)
+print >> logfile, "</environment>"
 logfile.flush()
 
 if os.environ.get('HTTPS', '') == 'on':
@@ -87,13 +96,13 @@ try:
 	content_length = os.environ['CONTENT_LENGTH']
 	content = sys.stdin.read()
 
-	print >> logfile, "-------- indexing input data:"
+	print >> logfile, format_comment("indexing input data:")
 	print >> logfile, content
 	logfile.flush()
 
         content = rewrite_content(content)
 
-	print >> logfile, "-------- rewritten input data:"
+	print >> logfile, format_comment("rewritten input data:")
 	print >> logfile, content
 	logfile.flush()
 
@@ -110,8 +119,9 @@ except:
 	results = "an exception happened: " + absolute_url + " " + repr(exc_info[0]) + "\n" + string.join(tb, "")
 	results_type = "text/plain"
 
-print >> logfile, "-------- indexing output data:"
+print >> logfile, format_comment("indexing output data:")
 print >> logfile, results
+print >> logfile, '</log>'
 logfile.close()
 
 sys.stdout.write("Content-Type: %s\r\n" % results_type)
