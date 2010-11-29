@@ -153,18 +153,18 @@ jQuery.extend(Kendra, {
 		/**
 		 * buildQueryFormHeader
 		 * 
-		 * build the top of the portable filter editor
+		 * build the top of the smart filter editor
 		 */
 		buildQueryFormHeader : function() {
 			var html = '';
-			html += '<table id="kendra-portable-filters" class="kendra-filter-rule views-table">';
+			html += '<table id="kendra-smart-filters" class="kendra-filter-rule views-table">';
 			return html;
 		},
 
 		/**
 		 * buildQueryFormFooter
 		 * 
-		 * build the bottom of the portable filter editor
+		 * build the bottom of the smart filter editor
 		 */
 		buildQueryFormFooter : function() {
 			var html = '';
@@ -175,7 +175,7 @@ jQuery.extend(Kendra, {
 		/**
 		 * buildQueryFormAddRule
 		 * 
-		 * add a new row to the portable filter editor
+		 * add a new row to the smart filter editor
 		 * 
 		 * @param el
 		 *            calling link
@@ -197,7 +197,7 @@ jQuery.extend(Kendra, {
 		/**
 		 * buildQueryFormRemoveRule
 		 * 
-		 * remove the selected row to the portable filter editor
+		 * remove the selected row to the smart filter editor
 		 * 
 		 * @param el
 		 *            calling link
@@ -222,7 +222,7 @@ jQuery.extend(Kendra, {
 		 * enable all 'remove rule' links unless there's only one rule
 		 */
 		buildQueryFormToggleRemoveLinks : function($el) {
-			var $links = $('a.portable-filter-remove-rule', ($el ? $el : '#kendra-portable-filters'));
+			var $links = $('a.smart-filter-remove-rule', ($el ? $el : '#kendra-smart-filters'));
 
 			if ($links.length > 1) {
 				$links.removeClass('disabled');
@@ -234,7 +234,7 @@ jQuery.extend(Kendra, {
 		/**
 		 * buildQueryFormRow
 		 * 
-		 * builds one row of the portable filter form
+		 * builds one row of the smart filter form
 		 * 
 		 * @TODO get datatype from mappings and use it to determine op2
 		 * @param rule
@@ -347,8 +347,8 @@ jQuery.extend(Kendra, {
 		html += '</td>';
 
 		html += '<td class="kendra-filter-button-wrapper">';
-		html += '<div class="portable-filter-add-rule-wrapper">' + '<a class="portable-filter-add-rule" title="Add a rule" href="#" onclick="' + "return !Kendra.service.buildQueryFormAddRule(this);" + '">' + '+' + '</a>'
-				+ '<a class="portable-filter-remove-rule" title="Remove this rule" href="#" onclick="' + "return !Kendra.service.buildQueryFormRemoveRule(this);" + '">' + '-' + '</a>' + '</div>';
+		html += '<div class="smart-filter-add-rule-wrapper">' + '<a class="smart-filter-add-rule" title="Add a rule" href="#" onclick="' + "return !Kendra.service.buildQueryFormAddRule(this);" + '">' + '+' + '</a>'
+				+ '<a class="smart-filter-remove-rule" title="Remove this rule" href="#" onclick="' + "return !Kendra.service.buildQueryFormRemoveRule(this);" + '">' + '-' + '</a>' + '</div>';
 		html += '</td>';
 
 		html += '</tr>';
@@ -398,7 +398,7 @@ jQuery.extend(Kendra, {
 		Kendra.service.buildQueryFormToggleRemoveLinks($form);
 
 		/**
-		 * form onsubmit : serialize the form values into a portable filter
+		 * form onsubmit : serialize the form values into a smart filter
 		 */
 		$form.submit(function() {
 			var filter = {
@@ -415,7 +415,7 @@ jQuery.extend(Kendra, {
 			});
 
 			jsonFilter = JSON.stringify(filter);
-			Kendra.util.log(jsonFilter, 'serialized portable filter');
+			Kendra.util.log(jsonFilter, 'serialized smart filter');
 			$form.find('textarea#edit-body').val(jsonFilter);
 
 			// testing -- return false to abort form submission
@@ -436,7 +436,7 @@ jQuery.extend(Kendra, {
 			Drupal.settings = $.extend(Drupal.settings, {
 				'draggableviews' : {
 					// table_id:
-					'kendra-portable-filters' : {
+					'kendra-smart-filters' : {
 						'parent' : null
 					}
 				}
@@ -498,7 +498,7 @@ jQuery.extend(Kendra, {
 	$(function() {
 		var $form = $('form#node-form'), html = '';
 
-		if ($form.length > 0 && $form.find('input[name=form_id]#edit-portable-filter-node-form').length > 0) {
+		if ($form.length > 0 && $form.find('input[name=form_id]#edit-smart-filter-node-form').length > 0) {
 			$form.find('.body-field-wrapper').hide().before('<div id="kendra-query-builder"><h3>' + 'Loading&hellip;' + '</h3></div>');
 
 			var success = function(selector) {

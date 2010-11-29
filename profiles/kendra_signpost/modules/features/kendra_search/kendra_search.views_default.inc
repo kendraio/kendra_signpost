@@ -6,10 +6,10 @@
 function kendra_search_views_default_views() {
   $views = array();
 
-  // Exported view: Portable_Filters
+  // Exported view: Smart_Filters
   $view = new view;
-  $view->name = 'Portable_Filters';
-  $view->description = 'Portable Filters';
+  $view->name = 'smart_filters';
+  $view->description = 'Smart Filters';
   $view->tag = '';
   $view->view_php = '';
   $view->base_table = 'node';
@@ -184,7 +184,7 @@ function kendra_search_views_default_views() {
     'type' => array(
       'operator' => 'in',
       'value' => array(
-        'portable_filter' => 'portable_filter',
+        'smart_filter' => 'smart_filter',
       ),
       'group' => '0',
       'exposed' => FALSE,
@@ -218,7 +218,7 @@ function kendra_search_views_default_views() {
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
-  $handler->override_option('title', 'Portable Filters');
+  $handler->override_option('title', 'Smart Filters');
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('use_pager', 'mini');
   $handler->override_option('style_plugin', 'table');
@@ -261,7 +261,7 @@ function kendra_search_views_default_views() {
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
   $handler = $view->new_display('page', 'Page', 'page_1');
-  $handler->override_option('path', 'portable-filters');
+  $handler->override_option('path', 'smart-filters');
   $handler->override_option('menu', array(
     'type' => 'none',
     'title' => '',

@@ -117,7 +117,7 @@ function _kendra_signpost_configure() {
   variable_set('apachesolr_search_excluded_types', array(
     'kendra_map' => 'kendra_map',
     'kendra_map_item' => 'kendra_map_item',
-    'portable_filter' => 'portable_filter',
+    'smart_filter' => 'smart_filter',
     'sparql' => 'sparql',
     'kendra_cat' => 0,
     'kendra_import' => 0,
