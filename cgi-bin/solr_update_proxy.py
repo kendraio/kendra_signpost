@@ -8,6 +8,8 @@
 import cgitb, cgi, sys, urllib, urllib2, string, re, os, time, traceback
 import urllib
 
+from kendra_signpost_utils import mangle_uri
+
 def urlquote(x):
     return urllib.quote_plus(x)
 
@@ -28,14 +30,6 @@ def get_property_list(row_uri):
 	query = "SELECT ?property ?object WHERE {<%s> ?property ?object}" % row_uri
 	query_url = "http://%s:8890/sparql?default-graph-uri=&query=%s&format=text%%2Frdf+n3&debug=on&timeout=" % (os.environ['HTTP_HOST'], urllib.quote_plus(query))
 	return map(strip_result_fields, re.findall(r"(?s)<result>.*?</result>", urllib.urlopen(query_url).read()))
-
-# Mangles a URI into something that can be a valid facet name
-def mangle_uri(uri):
-    ok_chars = string.uppercase + string.lowercase + string.digits
-    ok_dict = dict(zip(ok_chars, ok_chars))
-    # prefix = "mu_"
-    prefix = "ss_kendra_"
-    return prefix + string.join([ok_dict.get(x, "_%02X" % ord(x)) for x in uri], '')
 
 # Process a single XML segment
 def rewrite_stanza(text):
