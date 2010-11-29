@@ -48,15 +48,19 @@ function _kendra_upload_process_csv($nid) {
 		$row = 1;
 		$graph = url("node/{$nid}", array('absolute' => TRUE));
 		$query = "";
-		$triples = "";
-
+		$triples = array();
+    $triple_no = 0;
+    $triples[$triple_no] = "";
 		while (($data = fgetcsv($handle, 1000, ',', '"')) !== FALSE) {
 			foreach ($data as $key => $value) {
 				if (!empty($value)) {
 					$row_uri = $graph ."/rows#{$row}";
 					$relation = $graph .'/relation#'. urlencode($headers[$key]);
 					// Encode value as a string
-					$triples .= "\n<{$row_uri}> <{$relation}> \"". addslashes($value) ."\" .\n";
+					$triples[$triple_no] .= "\n<{$row_uri}> <{$relation}> \"". addslashes($value) ."\" .\n";
+					if (mb_strlen($triples[$triple_no]) > 4000) {
+            $triple_no++;
+          }
 				}
 			}
 
@@ -64,22 +68,28 @@ function _kendra_upload_process_csv($nid) {
 			$data['source_nid'] = $nid;
 			$data['source_row'] = $row;
 			_kendra_uploads_add_cat_node($headers, $data);
+			//watchdog('kendra_upload', 'data: '. print_r($data, TRUE));
+			//watchdog('kendra_upload', 'headers: '. print_r($headers, TRUE));
 
 			$row++;
+			//Temp limit of 5 rows for debugging: if ($row > 5) break;
 		}
 
-		if ($triples != "") {
+		if (!empty($triples)) {
 			//$response = kendra_rdf_send("DROP GRAPH <{$graph}> ");
 			$response = kendra_rdf_send("CLEAR GRAPH <{$graph}> ");
 			$response = kendra_rdf_send("CREATE GRAPH <{$graph}> ");
-			$query = "INSERT DATA INTO GRAPH <{$graph}> \n{ {$triples} }";
-			
-			$response = kendra_rdf_insert($graph, $triples);
+			foreach ($triples as $triple_s) {
+  			//$query = "INSERT DATA INTO GRAPH <{$graph}> \n{ {$triple_s} }";
+			  //watchdog('kendra_upload', 'length: '. mb_strlen($query));
+			  //watchdog('kendra_upload', 'query: '. print_r($query, TRUE));
+  			//$response = kendra_rdf_insert($graph, $triple_s);
+  			job_queue_add('kendra_rdf_insert', "insert for graph {$graph}", array($graph, $triple_s), '', TRUE);
+			}
 		}
 	}
 	fclose($handle);
 }
-
 
 function _kendra_uploads_add_cat_node($headers, $data) {
 	// Check for kendra_cat module, and if it exists pass the data
@@ -91,23 +101,4 @@ function _kendra_uploads_add_cat_node($headers, $data) {
 		// kendra_cat module not enabled, do nothing.
 	}
 }
-
-/**
- * tell Solr to index imported content
- * see http://www.forumone.com/blogs/post/getting-real-search-apache-solr-drupal
- * Implementing a different hook! but I'm putting this in kendra_cat.module 
- * because that is where the content type is defined.
- *
-function kendra_upload_apachesolr_update_index(&$doc, $node) {
-	if (!empty($node->content['field_cat_album_value'])) {
-		$doc->sm_field_cat_album_value = $node->content['field_cat_album_value'];
-		$doc->sm_field_cat_artist_value = $node->content['field_cat_artist_value'];
-		$doc->sm_field_cat_date_value = $node->content['field_cat_date_value'];
-		$doc->sm_field_cat_isrc_value = $node->content['field_cat_isrc_value'];
-		$doc->sm_field_cat_label_value = $node->content['field_cat_label_value'];
-		$doc->sm_field_cat_no_value = $node->content['field_cat_no_value'];
-		$doc->sm_field_cat_publisher_value = $node->content['field_cat_publisher_value'];
-	}
-}
-*/
 
