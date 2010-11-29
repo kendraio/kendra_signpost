@@ -236,58 +236,11 @@ jQuery.extend(Kendra, {
 		 * 
 		 * builds one row of the smart filter form
 		 * 
-		 * @TODO get datatype from mappings and use it to determine op2
 		 * @param rule
 		 *            Object
 		 */
 		buildQueryFormRow : function(rule) {
-			var html = '', datatype = 'default', operands = {
-				'default' : {
-					'==' : {
-						'label' : 'is'
-					}
-				},
-				'string' : {
-					'==' : {
-						'label' : 'is'
-					},
-					'^=' : {
-						'label' : 'starts with'
-					},
-					'*=' : {
-						'label' : 'contains',
-						'selected' : 'selected'
-					},
-					'$=' : {
-						'label' : 'ends with'
-					}
-
-				},
-				'number' : {
-					'<' : {
-						'label' : 'less than'
-					},
-					'==' : {
-						'label' : 'is',
-						'selected' : 'selected'
-					},
-					'>' : {
-						'label' : 'greater than'
-					}
-				},
-				'datetime' : {
-					'<' : {
-						'label' : 'before'
-					},
-					'==' : {
-						'label' : 'on',
-						'selected' : 'selected'
-					},
-					'>' : {
-						'label' : 'after'
-					}
-				}
-			};
+			var html = '';
 
 			html += '<tr class="draggable">';
 
@@ -311,7 +264,7 @@ jQuery.extend(Kendra, {
 			html += '<option value="' + key + '"';
 			if (rule && typeof rule.op1 != 'undefined' && rule.op1 != '' && key == rule.op1)
 				html += ' selected="selected"';
-			html += '>' + Kendra.mapping.mappings[key] + '</option>';
+			html += '>' + Kendra.mapping.mappings[key].label + '</option>';
 		}
 		html += '</select>';
 		html += '</td>';
@@ -322,17 +275,8 @@ jQuery.extend(Kendra, {
 		html += '<td class="kendra-filter-op2-wrapper">';
 		html += '<select class="kendra-filter-op2" name="op2">';
 
-		for ( var key in operands[datatype]) {
-			html += '<option value="' + key + '"';
-			if (rule && typeof rule.op2 != 'undefined' && rule.op2 != '') {
-				if (key == rule.op2) {
-					html += ' selected="selected"';
-				}
-			} else if (operands[datatype][key].selected) {
-				html += ' selected="selected"';
-			}
-			html += '>' + operands[datatype][key].label + '</option>';
-		}
+		html += Kendra.service.buildQueryMappingTypes('default', rule);
+
 		html += '</select>';
 		html += '</td>';
 
@@ -353,6 +297,78 @@ jQuery.extend(Kendra, {
 
 		html += '</tr>';
 
+		return html;
+	},
+
+	/**
+	 * buildQueryMappingTypes
+	 * 
+	 * @param datatype
+	 *            String optional
+	 * @param rule
+	 *            Object optional returns an HTML string with a list of search
+	 *            options depending on the data type provided
+	 */
+	buildQueryMappingTypes : function(datatype, rule) {
+		var html = '', datatype = datatype ? datatype : 'default', operands = {
+			'default' : {
+				'==' : {
+					'label' : 'is'
+				}
+			},
+			'string' : {
+				'==' : {
+					'label' : 'is'
+				},
+				'^=' : {
+					'label' : 'starts with'
+				},
+				'*=' : {
+					'label' : 'contains',
+					'selected' : 'selected'
+				},
+				'$=' : {
+					'label' : 'ends with'
+				}
+
+			},
+			'number' : {
+				'&lt;' : {
+					'label' : 'less than'
+				},
+				'==' : {
+					'label' : 'is',
+					'selected' : 'selected'
+				},
+				'&gt;' : {
+					'label' : 'greater than'
+				}
+			},
+			'datetime' : {
+				'&lt;' : {
+					'label' : 'before'
+				},
+				'==' : {
+					'label' : 'on',
+					'selected' : 'selected'
+				},
+				'&gt;' : {
+					'label' : 'after'
+				}
+			}
+		};
+
+		for ( var key in operands[datatype]) {
+			html += '<option value="' + key + '"';
+			if (typeof rule != 'undefined' && typeof rule.op2 != 'undefined' && rule.op2 != '') {
+				if (key == rule.op2) {
+					html += ' selected="selected"';
+				}
+			} else if (operands[datatype][key].selected) {
+				html += ' selected="selected"';
+			}
+			html += '>' + operands[datatype][key].label + '</option>';
+		}
 		return html;
 	},
 
@@ -407,9 +423,20 @@ jQuery.extend(Kendra, {
 
 			$form.find('tr.draggable').each(function() {
 				var temp = {};
-				$(this).find('.kendra-filter-op1,.kendra-filter-op2,.kendra-filter-op3').each(function() {
+				$fields = $(this).find('.kendra-filter-op1,.kendra-filter-op2,.kendra-filter-op3');
+
+				$fields.each(function() {
 					var $this = $(this), key = $this.attr('class').replace(/.*kendra-filter-(op\d).*/, '$1'), value = $this.val();
 					temp[key] = value;
+				}).filter('.kendra-filter-op1').change(function() {
+					var $this = $(this), key = $this.val();
+
+					if (typeof Kendra.mapping.mappings[key] != 'undefined' && Kendra.mapping.mappings[key].type) {
+						var options = Kendra.service.buildQueryMappingTypes(Kendra.mapping.mappings[key].type);
+						$fields.filter('.kendra-filter-op2').html(options);
+					}
+					Kendra.util.log(Kendra.mapping.mappings[key].type, 'new option:' + key);
+					return true;
 				});
 				filter.rules.push(temp);
 			});
@@ -478,13 +505,14 @@ jQuery.extend(Kendra, {
 		Kendra.Manager.store.addByValue('q.alt', '*:*');
 
 		for ( var i in query) {
-			//var fq = Kendra.util.mungeString(query[i].op1) + ':' + encodeURIComponent('"' + query[i].op3 + '"');
+			// var fq = Kendra.util.mungeString(query[i].op1) + ':' +
+		// encodeURIComponent('"' + query[i].op3 + '"');
 		var fq = query[i].op1 + ':' + encodeURIComponent('"' + query[i].op3 + '"');
 		Kendra.Manager.store.addByValue('fq', fq);
 	}
 
 	// select which fields we want returned
-	//Kendra.Manager.store.addByValue('fl', "title,url,path");
+	// Kendra.Manager.store.addByValue('fl', "title,url,path");
 
 	for ( var name in params) {
 		Kendra.Manager.store.addByValue(name, params[name]);

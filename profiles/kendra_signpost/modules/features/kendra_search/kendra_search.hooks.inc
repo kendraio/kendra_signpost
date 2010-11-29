@@ -49,13 +49,26 @@ function kendra_search_get_array() {
 		$maps = array();
 		while ($node = db_fetch_object($result)) {
 			$graph = url("node/{$node->nid}", array('absolute' => TRUE));
+
+			// fetch mappings for column headings
 			$map = kendra_rdf_send("SELECT DISTINCT ?p FROM <{$graph}> WHERE {?s ?p ?o}", 'application/sparql-results+json');
 			$result_list = json_decode($map->data);
 			if (!empty($result_list->results->bindings)) {
 				foreach ($result_list->results->bindings as $binding) {
 					$label = $node->title . ': ' . kendra_search_map_alter_value($binding->p->value);
 					$key = kendra_search_map_alter_key($binding->p->value);
-					$maps[$key] = $label;
+					$maps[$key] = array('label'=>$label);
+				}
+			}
+
+			// fetch mappings for data types
+			$map = kendra_rdf_send("SELECT DISTINCT ?s, ?o WHERE {?s <http://kendra.org.uk/#kendra:hasType> ?o}", 'application/sparql-results+json');
+			$result_list = json_decode($map->data);
+			if (!empty($result_list->results->bindings)) {
+				foreach ($result_list->results->bindings as $binding) {
+					$key = kendra_search_map_alter_key($binding->s->value);
+					$value = $binding->o->value;
+					$maps[$key] = array_merge( $maps[$key], array('type'=>$value));
 				}
 			}
 		}
