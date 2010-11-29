@@ -23,7 +23,7 @@ ErrorDocument 404 /index.php
 </Files>
 
 # Set the default handler.
-DirectoryIndex index.php
+DirectoryIndex index.html index.php
 
 # Override PHP settings. More in sites/default/settings.php
 # but the following cannot be changed at runtime.
@@ -79,6 +79,10 @@ DirectoryIndex index.php
 # Various rewrite rules.
 <IfModule mod_rewrite.c>
   RewriteEngine on
+
+  # Rewrite signpost.kendra.org.uk to live.signpost.kendra.org.uk
+  RewriteCond %{HTTP_HOST} ^signpost\.kendra\.org\.uk$ [NC]
+  RewriteRule ^(.*)$ http://live.signpost.kendra.org.uk/$1 [L,R=301]
 
   # If your site can be accessed both with and without the 'www.' prefix, you
   # can use one of the following settings to redirect users to your preferred
