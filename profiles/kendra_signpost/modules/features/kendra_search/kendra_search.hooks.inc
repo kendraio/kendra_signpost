@@ -59,7 +59,7 @@ function kendra_search_get_array() {
 				}
 			}
 		}
-
+		sort($maps);
 		cache_set('kendra_search_mappings', $maps);
 	}
 
