@@ -1,5 +1,8 @@
 import string
 
+def get_sparql_endpoint_uri():
+    return string.strip(open("sparql_endpoint.conf").read())
+
 # Mangles a URI into something that can be a valid facet name
 def mangle_uri(uri):
     ok_chars = string.uppercase + string.lowercase + string.digits
