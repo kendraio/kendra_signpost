@@ -28,7 +28,7 @@ def strip_result_fields(x):
 # TODO: Note: assumes that URI is valid: need sanity check here to prevent XSS attacks on SPARQL DB, or assurance this is valid at all callers
 def get_property_list(row_uri):
 	query = "SELECT ?property ?object WHERE {<%s> ?property ?object}" % row_uri
-	query_url = "http://%s:8890/sparql?default-graph-uri=&query=%s&format=text%%2Frdf+n3&debug=on&timeout=" % (os.environ['HTTP_HOST'], urllib.quote_plus(query))
+	query_url = "%s?default-graph-uri=&query=%s&format=text%%2Frdf+n3&debug=on&timeout=" % (kendra_signpost_utils.get_sparql_endpoint_uri(), urllib.quote_plus(query))
 	return map(strip_result_fields, re.findall(r"(?s)<result>.*?</result>", urllib.urlopen(query_url).read()))
 
 # Process a single XML segment
