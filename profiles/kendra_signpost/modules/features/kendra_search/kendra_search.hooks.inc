@@ -2,7 +2,7 @@
 // $Id$
 /**
  * @file
- * Kendra Search provides an API for creating and using portable search filters.
+ * Kendra Search provides an API for creating and using smart search filters.
  */
 /**
  * translate map values by simple string unencoding, removing the URI prefix
@@ -18,7 +18,7 @@ function kendra_search_map_alter(&$item, $key) {
  * @returns the printable version of a mapping term
  */
 function kendra_search_map_alter_value($item) {
-	return t(urldecode(end(split('#', $item))));
+	return t(str_replace('_', ' ', urldecode(end(split('#', $item)))));
 }
 
 /**
@@ -126,8 +126,8 @@ function kendra_search_init() {
 	drupal_add_js($inline_script, 'inline');
 
 	/**
-	 * make the portable filter rules draggable
+	 * make the smart filter rules draggable
 	 */
-	drupal_add_tabledrag('kendra-portable-filter-editor', 'order', 'sibling', 'filter-weight');
+	drupal_add_tabledrag('kendra-smart-filter-editor', 'order', 'sibling', 'filter-weight');
 }
 

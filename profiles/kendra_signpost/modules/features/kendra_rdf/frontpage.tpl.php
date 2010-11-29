@@ -8,6 +8,6 @@
 <li><?php print l('List', 'cat_nodes'); ?> all catalogue node items.</li>
 <li><?php print l('Create a mapping node', 'node/add/kendra-map'); ?> and then add mapping items to it.</li>
 <li><?php print l('View all mappings', 'mappings'); ?>.</li>
-<li><?php print l('View all portable filters', 'portable-filters'); ?> and use them to search uploaded content via the mappings.</li>
-<li><?php print l('Create a portable filter', 'node/add/portable-filter'); ?> using the mappings.</li>
+<li><?php print l('View all smart filters', 'smart-filters'); ?> and use them to search uploaded content via the mappings.</li>
+<li><?php print l('Create a smart filter', 'node/add/smart-filter'); ?> using the mappings.</li>
 </ol>

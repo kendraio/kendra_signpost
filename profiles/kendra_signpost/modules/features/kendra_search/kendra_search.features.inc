@@ -14,8 +14,8 @@ function kendra_search_ctools_plugin_api() {
  */
 function kendra_search_node_info() {
 	$items = array(
-    'portable_filter' => array(
-      'name' => t('Portable Filter'),
+    'smart_filter' => array(
+      'name' => t('Smart Filter'),
       'module' => 'features',
       'description' => t('User-generated smart content filter'),
       'has_title' => '1',

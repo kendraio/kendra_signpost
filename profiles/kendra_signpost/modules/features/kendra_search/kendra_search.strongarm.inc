@@ -8,10 +8,10 @@ function kendra_search_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
-  $strongarm->name = 'ant_pattern_portable_filter';
+  $strongarm->name = 'ant_pattern_smart_filter';
   $strongarm->value = '';
 
-  $export['ant_pattern_portable_filter'] = $strongarm;
+  $export['ant_pattern_smart_filter'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
@@ -50,12 +50,12 @@ function kendra_search_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
-  $strongarm->name = 'node_options_portable_filter';
+  $strongarm->name = 'node_options_smart_filter';
   $strongarm->value = array(
     0 => 'status',
   );
 
-  $export['node_options_portable_filter'] = $strongarm;
+  $export['node_options_smart_filter'] = $strongarm;
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
