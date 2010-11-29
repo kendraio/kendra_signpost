@@ -74,6 +74,8 @@ if os.environ.get('HTTPS', '') == 'on':
 else:
     protocol = 'http'
 
+request_uri_path = string.split(os.environ.get('REQUEST_URI', ''), '?')[0]
+
 # Do some sanity checking before actually dispatching: we are not a general-purpose proxy
 if is_bad_request():
     print "Status: 403 Forbidden"
@@ -85,7 +87,7 @@ if is_bad_request():
 
 try:
 	# Redirect to call update interface of local installation of Solr search
-	absolute_url = '%s://%s:%d/solr/update/' % (protocol, os.environ['HTTP_HOST'], 8983)
+	absolute_url = '%s://%s:%d%s' % (protocol, os.environ['HTTP_HOST'], 8983, request_uri_path)
 
 	content_type = os.environ['CONTENT_TYPE']
 	content_length = os.environ['CONTENT_LENGTH']
