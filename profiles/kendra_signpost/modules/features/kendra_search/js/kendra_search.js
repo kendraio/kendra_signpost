@@ -264,13 +264,27 @@ jQuery.extend(Kendra, {
 
 				},
 				'number' : {
+					'<' : {
+						'label' : 'less than'
+					},
 					'==' : {
-						'label' : 'is'
+						'label' : 'is',
+						'selected' : 'selected'
+					},
+					'>' : {
+						'label' : 'greater than'
 					}
 				},
 				'datetime' : {
+					'<' : {
+						'label' : 'before'
+					},
 					'==' : {
-						'label' : 'is'
+						'label' : 'on',
+						'selected' : 'selected'
+					},
+					'>' : {
+						'label' : 'after'
 					}
 				}
 			};
@@ -517,7 +531,7 @@ jQuery.extend(Kendra, {
 				Kendra.service.buildQueryFormPostProcess($form);
 
 			}, failure = function() {
-				$('#kendra-query-builder').html('No mappings were found. Please <a href="kendra-import">import a catalogue</a> first.');
+				$('#kendra-query-builder').html('No mappings were found. Please <a href="/node/add/kendra-import">import a catalogue</a> first.');
 			};
 
 			Kendra.service.getMappings(function() {

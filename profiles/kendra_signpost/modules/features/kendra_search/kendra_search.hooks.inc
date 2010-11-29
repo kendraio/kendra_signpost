@@ -8,7 +8,28 @@
  * translate map values by simple string unencoding, removing the URI prefix
  */
 function kendra_search_map_alter(&$item, $key) {
-	$item = urldecode(end(split('#', $item)));
+	$item = kendra_search_map_alter_value($item);
+}
+
+/**
+ * kendra_search_map_alter_value
+ *
+ * @param string $item URI containing a mapping term
+ * @returns the printable version of a mapping term
+ */
+function kendra_search_map_alter_value($item) {
+	return t(urldecode(end(split('#', $item))));
+}
+
+/**
+ * kendra_search_map_alter_key
+ *
+ * @param string $text URI corresponding to a mapping term
+ * @returns a munged URI suitable for usage as a search facet for Apache Solr
+ */
+function kendra_search_map_alter_key($text) {
+	$munged_text = "ss_kendra_" . str_replace('%', '_', urlencode($text));
+	return $munged_text ;
 }
 
 /**
@@ -18,11 +39,31 @@ function kendra_search_map_alter(&$item, $key) {
  *  An associative array based on arguments
  **/
 function kendra_search_get_array() {
-	$mappings = kendra_mapping_allowed_values();
-	//die(print_r($mappings));
-	if (is_array($mappings)) array_walk($mappings, 'kendra_search_map_alter');
+	static $maps = NULL;
+	if ($cache = cache_get('kendra_search_mappings')) {
+		$maps = $cache->data;
+	}
+	if ($maps == NULL) {
+		// only retrieve mappings on first call of this function
+		$result = db_query("SELECT nid, title FROM node WHERE type = '%s'", 'kendra_import');
+		$maps = array();
+		while ($node = db_fetch_object($result)) {
+			$graph = url("node/{$node->nid}", array('absolute' => TRUE));
+			$map = kendra_rdf_send("SELECT DISTINCT ?p FROM <{$graph}> WHERE {?s ?p ?o}", 'application/sparql-results+json');
+			$result_list = json_decode($map->data);
+			if (!empty($result_list->results->bindings)) {
+				foreach ($result_list->results->bindings as $binding) {
+					$label = $node->title . ': ' . kendra_search_map_alter_value($binding->p->value);
+					$key = kendra_search_map_alter_key($binding->p->value);
+					$maps[$key] = $label;
+				}
+			}
+		}
+		asort($maps);
+		cache_set('kendra_search_mappings', $maps);
+	}
 
-	return $mappings;
+	return $maps;
 }
 
 /**
