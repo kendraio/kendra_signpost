@@ -23,7 +23,7 @@ ErrorDocument 404 /index.php
 </Files>
 
 # Set the default handler.
-DirectoryIndex index.php
+DirectoryIndex index.html index.php
 
 # Override PHP settings. More in sites/default/settings.php
 # but the following cannot be changed at runtime.
