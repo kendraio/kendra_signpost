@@ -5,9 +5,9 @@ include_once('kendra_mapping.features.inc');
 function kendra_mapping_allowed_values_types() {
   $values = kendra_mapping_allowed_values();
   $type = array(
-    'kendra:number' => 'kendra:number',
-    'kendra:string' => 'kendra:string',
-    'kendra:datetime' => 'kendra:datetime',
+    'kendra:number' => 'number',
+    'kendra:string' => 'string',
+    'kendra:datetime' => 'datetime',
   );
   return array_merge($values, $type);
 }
