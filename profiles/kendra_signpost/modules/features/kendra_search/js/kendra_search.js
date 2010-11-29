@@ -478,18 +478,19 @@ jQuery.extend(Kendra, {
 		Kendra.Manager.store.addByValue('q.alt', '*:*');
 
 		for ( var i in query) {
-			var fq = Kendra.util.mungeString(query[i].op1) + ':' + encodeURIComponent('"' + query[i].op3 + '"');
-			Kendra.Manager.store.addByValue('fq', fq);
-		}
-
-		// select which fields we want returned
-		Kendra.Manager.store.addByValue('fl', "ss_cck_field_cat_rowuri,ss_cck_field_cat_artist,ss_cck_field_cat_date,ss_cck_field_cat_album,title,url,path");
-
-		for ( var name in params) {
-			Kendra.Manager.store.addByValue(name, params[name]);
-		}
-		Kendra.Manager.doRequest();
+			//var fq = Kendra.util.mungeString(query[i].op1) + ':' + encodeURIComponent('"' + query[i].op3 + '"');
+		var fq = query[i].op1 + ':' + encodeURIComponent('"' + query[i].op3 + '"');
+		Kendra.Manager.store.addByValue('fq', fq);
 	}
+
+	// select which fields we want returned
+	//Kendra.Manager.store.addByValue('fl', "title,url,path");
+
+	for ( var name in params) {
+		Kendra.Manager.store.addByValue(name, params[name]);
+	}
+	Kendra.Manager.doRequest();
+}
 	}
 });
 
