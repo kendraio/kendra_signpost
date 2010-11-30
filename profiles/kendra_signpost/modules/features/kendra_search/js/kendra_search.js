@@ -532,9 +532,10 @@ jQuery.extend(Kendra, {
 
 			var success = function(selector) {
 				var jsonFilter = $form.find('textarea#edit-body').val(), params = {
-					facet : true,
+					// 'indent' : true,// debugging only
+					'facet' : true,
 					'facet.missing' : true,
-					'indent' : true,// debugging only
+					'type' : 'kendra_cat',
 					'json.nl' : 'map'
 				};
 
