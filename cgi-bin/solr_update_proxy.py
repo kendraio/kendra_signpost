@@ -8,7 +8,11 @@
 import cgitb, cgi, sys, urllib, urllib2, string, re, os, time, traceback
 import urllib
 
+import kendra_signpost_utils
 from kendra_signpost_utils import mangle_uri
+
+def uniq(x):
+    return {}.fromkeys(x).keys()
 
 def urlquote(x):
     return urllib.quote_plus(x)
@@ -36,6 +40,19 @@ def get_same_as_list():
 	query = "SELECT ?subject ?object WHERE {?subject <http://www.w3.org/2002/07/owl#sameAs> ?object}"
 	query_url = "%s?default-graph-uri=&query=%s&format=text%%2Frdf+n3&debug=on&timeout=" % (kendra_signpost_utils.get_sparql_endpoint_uri(), urllib.quote_plus(query))
 	return map(strip_result_fields, re.findall(r"(?s)<result>.*?</result>", urllib.urlopen(query_url).read()))
+
+# equivalence sets of labels
+item_synset = {}
+
+def make_mapping(a, b):
+    ab_synset = uniq(item_synset.get(a, [a]) + item_synset.get(b, [b]))
+    for x in ab_synset:
+       item_synset[x] = ab_synset
+
+# now build equivalence classes
+same_as_mappings = get_same_as_list()
+for a, b in same_as_mappings:
+    make_mapping(a, b)
 
 # Process a single XML segment
 def rewrite_stanza(text):
