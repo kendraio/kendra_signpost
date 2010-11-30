@@ -1,6 +1,6 @@
 <h2>Welcome to your new Kendra Signpost Trial website</h2>
 <p>Here are some tasks you can do on this site:</p>
-<ol>
+<ol style="margin: 1em 0pt;">
 <?php if ( !$user->uid ) { ?><li style="font-weight:700"><?php print l('Login', 'user'); ?> using your Kendra Account</li><?php } ?>
 <li><?php print l('Configure', 'admin/settings/kendra-rdf'); ?> the Virtuoso connection details</li>
 <li><?php print l('Create an upload node', 'node/add/kendra-import'); ?> to import a CSV spreadsheet catalogue</li>
