@@ -113,7 +113,8 @@ request_uri_path = string.split(os.environ.get('REQUEST_URI', ''), '?')[0]
 
 # Do some sanity checking before actually dispatching: we are not a general-purpose proxy
 if is_bad_request():
-    print "Status: 403 Forbidden"
+#    print "Status: 403 Forbidden"
+    print "Status: 407 AArgh"
     print "Content-type: text/plain"
     print 
     print "I'm sorry Dave, I can't do that:", is_bad_request()
