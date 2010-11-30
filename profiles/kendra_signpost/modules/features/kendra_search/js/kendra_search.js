@@ -542,7 +542,7 @@ jQuery.extend(Kendra, {
 		/**
 		 * now, build the actual query strings
 		 */
-		Kendra.service.buildSolrQuery(query);
+		params = $.extend(params, Kendra.service.buildSolrQuery(query));
 
 		for ( var name in params) {
 			var val = params[name];
