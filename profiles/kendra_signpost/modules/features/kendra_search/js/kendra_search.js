@@ -310,7 +310,7 @@ jQuery.extend(Kendra, {
 	 *            options depending on the data type provided
 	 */
 	buildQueryMappingTypes : function(datatype, rule) {
-		var html = '', datatype = datatype ? datatype : 'default', operands = {
+		var html = '', datatype = datatype ? datatype.toLowerCase() : 'default', operands = {
 			'default' : {
 				'==' : {
 					'label' : 'is'
@@ -432,7 +432,7 @@ jQuery.extend(Kendra, {
 					var $this = $(this), key = $this.val();
 
 					if (typeof Kendra.mapping.mappings[key] != 'undefined' && Kendra.mapping.mappings[key].dataType) {
-						var options = Kendra.service.buildQueryMappingTypes(Kendra.mapping.mappings[key].dataType);
+						var dataType = Kendra.mapping.mappings[key].dataType.split('#').pop(), options = Kendra.service.buildQueryMappingTypes(dataType);
 						$fields.filter('.kendra-filter-op2').html(options);
 					}
 					Kendra.util.log(Kendra.mapping.mappings[key].dataType, 'new option:' + key);
