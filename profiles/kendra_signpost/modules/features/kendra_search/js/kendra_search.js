@@ -542,7 +542,7 @@ jQuery.extend(Kendra, {
 
 		for ( var i in query) {
 			// var fq = Kendra.util.mungeString(query[i].op1) + ':' +
-		var fq = query[i].op1.replace(/\./g, '_2E') + ':' + encodeURIComponent('"' + query[i].op3 + '"');
+		var fq = query[i].op1.replace(/\./g, '_2E') + ':' + encodeURIComponent(query[i].op3);
 		Kendra.Manager.store.addByValue('fq', fq);
 	}
 
