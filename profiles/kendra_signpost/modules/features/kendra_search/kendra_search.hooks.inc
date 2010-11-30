@@ -68,7 +68,7 @@ function kendra_search_get_array() {
 				foreach ($result_list->results->bindings as $binding) {
 					$key = kendra_search_map_alter_key($binding->s->value);
 					$value = $binding->o->value;
-					$maps = array_merge( $maps, array($key => array("dataType"=>$value)));
+					$maps = array_merge_recursive( $maps, array($key => array("dataType"=>$value)));
 				}
 			}
 		}
