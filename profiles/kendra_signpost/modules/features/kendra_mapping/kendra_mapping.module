@@ -3,75 +3,81 @@
 include_once('kendra_mapping.features.inc');
 
 function kendra_mapping_allowed_values_types() {
-  $values = kendra_mapping_allowed_values();
-  $type = array(
+	$values = kendra_mapping_allowed_values();
+	$type = array(
     'http://kendra.org.uk/#number' => 'number',
     'http://kendra.org.uk/#string' => 'string',
     'http://kendra.org.uk/#datetime' => 'datetime',
-  );
-  return array_merge($values, $type);
+	);
+	return array_merge($values, $type);
 }
 
 function kendra_mapping_allowed_values() {
-  static $maps = NULL;
-  if ($cache = cache_get('kendra_mapping_allowed_values')) {
-    $maps = $cache->data;
-  } 
-  if ($maps == NULL) {
-    // only retrieve mappings on first call of this function
-    $result = db_query("SELECT nid FROM node WHERE type = '%s'", 'kendra_import');
-    $maps = array();
-    while ($node = db_fetch_object($result)) {
-      $graph = url("node/{$node->nid}", array('absolute' => TRUE));
-      $map = kendra_rdf_send("SELECT DISTINCT ?p FROM <{$graph}> WHERE {?s ?p ?o}", 'application/sparql-results+json');
-      $result_list = json_decode($map->data);
-      if (!empty($result_list->results->bindings)) {
-	      foreach ($result_list->results->bindings as $binding) {
-	        $maps[$binding->p->value] = $binding->p->value;
-	      }
-      }
-    }
-    //drupal_set_message(print_r($maps, TRUE));
-    cache_set('kendra_mapping_allowed_values', $maps);
-  }
-  return $maps;
+	static $maps = NULL;
+	if ($cache = cache_get('kendra_mapping_allowed_values')) {
+		$maps = $cache->data;
+	}
+	if ($maps == NULL) {
+		// only retrieve mappings on first call of this function
+		$result = db_query("SELECT nid FROM node WHERE type = '%s'", 'kendra_import');
+		$maps = array();
+		while ($node = db_fetch_object($result)) {
+			$graph = url("node/{$node->nid}", array('absolute' => TRUE));
+			$map = kendra_rdf_send("SELECT DISTINCT ?p FROM <{$graph}> WHERE {?s ?p ?o}", 'application/sparql-results+json');
+			$result_list = json_decode($map->data);
+			if (!empty($result_list->results->bindings)) {
+				foreach ($result_list->results->bindings as $binding) {
+					$maps[$binding->p->value] = $binding->p->value;
+				}
+			}
+		}
+		//drupal_set_message(print_r($maps, TRUE));
+		cache_set('kendra_mapping_allowed_values', $maps);
+	}
+	return $maps;
 }
 
 // Send mappings to virtuoso
 function kendra_mapping_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
-  switch ($op) {
-    case 'insert':
-    case 'update':
-      // drupal_set_message(print_r($node, TRUE));
-      if ($node->type == 'kendra_map_item') {
-        job_queue_add('_kendra_mapping_send_rdf', 
+	switch ($op) {
+		case 'insert':
+		case 'update':
+			// drupal_set_message(print_r($node, TRUE));
+			if ($node->type == 'kendra_map_item') {
+				job_queue_add('_kendra_mapping_send_rdf',
           "Send the mapping rdf for node {$node->nid}",
-          array($node->nid, $node->field_map_node[0]['nid']), 
+				array($node->nid, $node->field_map_node[0]['nid']),
           '', TRUE);
-      }
-      break;
-    case 'view': 
-      if ($node->type == 'kendra_map') {
-        $graph = url("node/{$node->nid}", array('absolute' => TRUE));
-        $result = kendra_rdf_send("SELECT * FROM <{$graph}> WHERE {?s ?p ?o}");
-        $node->content['sparql_result'] = array(
+			}
+			break;
+		case 'view':
+			if ($node->type == 'kendra_map') {
+				$graph = url("node/{$node->nid}", array('absolute' => TRUE));
+				$result = kendra_rdf_send("SELECT * FROM <{$graph}> WHERE {?s ?p ?o}");
+				$node->content['sparql_result'] = array(
           '#prefix' => "<a href='#' onclick='$(\".rdfhide\").toggle();'>toggle rdf display</a><div class='rdfhide' style='display:none;'>",
           '#suffix' => "</div>",
           '#value' => $result->data,
-        );
-      }   
-      break;
-  }
+				);
+			}
+			break;
+		case 'delete':
+		case 'delete revision':
+			cache_clear_all('kendra_search_mappings');
+			break;
+	}
 }
 
 function _kendra_mapping_send_rdf($nid, $mapnid) {
-  $map_item = node_load($nid);
-  $graph = url("node/{$mapnid}", array('absolute' => TRUE));
-  $source = $map_item->field_map_source[0]['value'];
-  $type = $map_item->field_map_type[0]['value'];
-  $dest = $map_item->field_map_dest[0]['value'];
-  $item = "\n<{$source}> <{$type}> <{$dest}> .\n";
-  $response = kendra_rdf_send("INSERT IN GRAPH <{$graph}> \n{ {$item} }");
+	$map_item = node_load($nid);
+	$graph = url("node/{$mapnid}", array('absolute' => TRUE));
+	$source = $map_item->field_map_source[0]['value'];
+	$type = $map_item->field_map_type[0]['value'];
+	$dest = $map_item->field_map_dest[0]['value'];
+	$item = "\n<{$source}> <{$type}> <{$dest}> .\n";
+	$response = kendra_rdf_send("INSERT IN GRAPH <{$graph}> \n{ {$item} }");
+
+	cache_clear_all('kendra_search_mappings');
 }
 
 
