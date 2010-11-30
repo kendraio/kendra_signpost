@@ -240,7 +240,7 @@ jQuery.extend(Kendra, {
 		 *            Object
 		 */
 		buildQueryFormRow : function(rule) {
-			var html = '';
+			var html = '', dataType = 'default';
 
 			html += '<tr class="draggable">';
 
@@ -275,7 +275,10 @@ jQuery.extend(Kendra, {
 		html += '<td class="kendra-filter-op2-wrapper">';
 		html += '<select class="kendra-filter-op2" name="op2">';
 
-		html += Kendra.service.buildQueryMappingTypes('default', rule);
+		if (rule && rule.op2 && rule.op2.dataType) {
+			dataType = rule.op2.dataType;
+		}
+		html += Kendra.service.buildQueryMappingTypes(dataType, rule);
 
 		html += '</select>';
 		html += '</td>';
@@ -444,8 +447,9 @@ jQuery.extend(Kendra, {
 			if (typeof Kendra.mapping.mappings[key] != 'undefined' && Kendra.mapping.mappings[key].dataType) {
 				var dataType = Kendra.mapping.mappings[key].dataType.split('#').pop(), options = Kendra.service.buildQueryMappingTypes(dataType);
 				$this.parents('tr.draggable:eq(0)').find('.kendra-filter-op2').html(options);
+				Kendra.util.log(Kendra.mapping.mappings[key].dataType, Kendra.mapping.mappings[key].dataType.split('#').pop());
 			}
-			Kendra.util.log(Kendra.mapping.mappings[key].dataType, Kendra.mapping.mappings[key].dataType.split('#').pop());
+
 			return true;
 		});
 
