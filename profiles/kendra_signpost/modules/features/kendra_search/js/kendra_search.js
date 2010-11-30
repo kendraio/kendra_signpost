@@ -431,11 +431,11 @@ jQuery.extend(Kendra, {
 				}).filter('.kendra-filter-op1').change(function() {
 					var $this = $(this), key = $this.val();
 
-					if (typeof Kendra.mapping.mappings[key] != 'undefined' && Kendra.mapping.mappings[key].type) {
-						var options = Kendra.service.buildQueryMappingTypes(Kendra.mapping.mappings[key].type);
+					if (typeof Kendra.mapping.mappings[key] != 'undefined' && Kendra.mapping.mappings[key].dataType) {
+						var options = Kendra.service.buildQueryMappingTypes(Kendra.mapping.mappings[key].dataType);
 						$fields.filter('.kendra-filter-op2').html(options);
 					}
-					Kendra.util.log(Kendra.mapping.mappings[key].type, 'new option:' + key);
+					Kendra.util.log(Kendra.mapping.mappings[key].dataType, 'new option:' + key);
 					return true;
 				});
 				filter.rules.push(temp);
