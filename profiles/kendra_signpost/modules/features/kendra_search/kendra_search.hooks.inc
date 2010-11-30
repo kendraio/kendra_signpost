@@ -69,7 +69,7 @@ function kendra_search_get_array() {
 				foreach ($result_list->results->bindings as $binding) {
 					$label = $node->title . ': ' . kendra_search_map_alter_value($binding->p->value);
 					$key = kendra_search_map_alter_key($binding->p->value);
-					
+
 					if (!isset($maps[$key])) $maps[$key] = array();
 					$maps [$key]['label'] = $label;
 				}
@@ -116,11 +116,25 @@ function kendra_search_init() {
 
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/json2.js');
 
+	// AjaxSolr core
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/core/Core.js');
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/core/AbstractManager.js');
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/managers/Manager.jquery.js');
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/core/Parameter.js');
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/core/ParameterStore.js');
+
+	// AjaxSolr widget support
+	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/core/AbstractWidget.js');
+	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/core/AbstractFacetWidget.js');
+	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/core/AbstractTextWidget.js');
+
+	// AjaxSolr UI widgets
+	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/widgets/ResultWidget.js');
+
+	// AjaxSolr theme support
+	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/helpers/ajaxsolr.support.js');
+	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/helpers/ajaxsolr.theme.js');
+
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/kendra_search.js');
 
 	drupal_add_css(drupal_get_path('module', 'kendra_search') . "/css/kendra_search.css", "module");
@@ -133,17 +147,17 @@ function kendra_search_init() {
 	//'solrUrl' => 'http://dev.signpost.kendra.org.uk/solr/'
 	//'solrUrl' => '/solr/'
 	 'solrUrl' => 'http://' . variable_get('apachesolr_host', 'dev.signpost.kendra.org.uk') . ':' . variable_get('apachesolr_port', '8983') . variable_get('apachesolr_path', '/solr/dev') . '/'
-	)
-	,'mapping'=> array('mappings'=>array())
-	);
+	 )
+	 ,'mapping'=> array('mappings'=>array())
+	 );
 
-	$inline_script = 'var Kendra=Kendra || {};jQuery.extend(Kendra,' . drupal_to_js( $jsonContainer ) . ');';
+	 $inline_script = 'var Kendra=Kendra || {};jQuery.extend(Kendra,' . drupal_to_js( $jsonContainer ) . ');';
 
-	drupal_add_js($inline_script, 'inline');
+	 drupal_add_js($inline_script, 'inline');
 
-	/**
-	 * make the smart filter rules draggable
-	 */
-	drupal_add_tabledrag('kendra-smart-filter-editor', 'order', 'sibling', 'filter-weight');
+	 /**
+	  * make the smart filter rules draggable
+	  */
+	 drupal_add_tabledrag('kendra-smart-filter-editor', 'order', 'sibling', 'filter-weight');
 }
 

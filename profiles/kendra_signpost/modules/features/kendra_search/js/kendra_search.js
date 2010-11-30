@@ -264,7 +264,7 @@ jQuery.extend(Kendra, {
 			html += '<option value="' + key + '"';
 			if (rule && typeof rule.op1 != 'undefined' && rule.op1 != '' && key == rule.op1)
 				html += ' selected="selected"';
-			html += '>' + Kendra.mapping.mappings[key].label + '</option>';
+			html += '>' + (typeof Kendra.mapping.mappings[key].label != 'undefined' ? Kendra.mapping.mappings[key].label : key) + '</option>';
 		}
 		html += '</select>';
 		html += '</td>';
@@ -370,7 +370,7 @@ jQuery.extend(Kendra, {
 			} else if (operands[datatype][key].selected) {
 				html += ' selected="selected"';
 			}
-			html += '>' + operands[datatype][key].label + '</option>';
+			html += '>' + (typeof operands[datatype][key].label != 'undefined' ? operands[datatype][key].label : key) + '</option>';
 		}
 		return html;
 	},
