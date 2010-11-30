@@ -428,15 +428,6 @@ jQuery.extend(Kendra, {
 				$fields.each(function() {
 					var $this = $(this), key = $this.attr('class').replace(/.*kendra-filter-(op\d).*/, '$1'), value = $this.val();
 					temp[key] = value;
-				}).filter('.kendra-filter-op1').change(function() {
-					var $this = $(this), key = $this.val();
-
-					if (typeof Kendra.mapping.mappings[key] != 'undefined' && Kendra.mapping.mappings[key].dataType) {
-						var dataType = Kendra.mapping.mappings[key].dataType.split('#').pop(), options = Kendra.service.buildQueryMappingTypes(dataType);
-						$fields.filter('.kendra-filter-op2').html(options);
-					}
-					Kendra.util.log(Kendra.mapping.mappings[key].dataType, 'new option:' + key);
-					return true;
 				});
 				filter.rules.push(temp);
 			});
@@ -445,21 +436,26 @@ jQuery.extend(Kendra, {
 			Kendra.util.log(jsonFilter, 'serialized smart filter');
 			$form.find('textarea#edit-body').val(jsonFilter);
 
-			// testing -- return false to abort form submission
-				// return false;
-				return true;
-			});
+			return true;
+
+		}).find('.kendra-filter-op1').change(function() {
+			var $this = $(this), key = $this.val();
+
+			if (typeof Kendra.mapping.mappings[key] != 'undefined' && Kendra.mapping.mappings[key].dataType) {
+				var dataType = Kendra.mapping.mappings[key].dataType.split('#').pop(), options = Kendra.service.buildQueryMappingTypes(dataType);
+				$fields.filter('.kendra-filter-op2').html(options);
+			}
+			Kendra.util.log(Kendra.mapping.mappings[key].dataType, 'new option:' + key);
+			return true;
+		});
 
 		/**
-		 * // skip the next hack
-		 */
-		return;
-		/**
 		 * make the search form rows draggable
+		 * // skip the next hack
 		 * 
 		 * @hack this should probably be triggered via a sub-module?
 		 */
-		if (typeof Drupal.behaviors.draggableviewsLoad == 'function') {
+		if (false && typeof Drupal.behaviors.draggableviewsLoad == 'function') {
 			Drupal.settings = $.extend(Drupal.settings, {
 				'draggableviews' : {
 					// table_id:
