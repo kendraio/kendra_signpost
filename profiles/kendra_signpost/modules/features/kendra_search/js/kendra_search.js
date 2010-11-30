@@ -72,8 +72,9 @@ jQuery.extend(Kendra, {
 		 *            String
 		 */
 		mungeString : function(str) {
-			return 'ss_kendra_' + encodeURIComponent(str).replace(/\./g, '_2E').replace(/%/g, '_');
-		}
+			//str = 'ss_kendra_' + str;
+		return encodeURIComponent(str).replace(/\./g, '_2E').replace(/%/g, '_');
+	}
 	},
 
 	/**
@@ -582,27 +583,27 @@ jQuery.extend(Kendra, {
 		};
 		for ( var i in query) {
 			key = query[i].op1;
-			val = encodeURIComponent(query[i].op3);
+			val = query[i].op3; // encodeURIComponent(query[i].op3);
 
-			/**
-			 * format the operand according to data type
-			 */
-			if (typeof Kendra.mapping.mappings[key] != 'undefined' && Kendra.mapping.mappings[key].dataType) {
-				dataType = Kendra.mapping.mappings[key].dataType.split('#').pop();
-				switch (dataType) {
-				case 'number':
-				case 'datetime':
-					break;
-				case 'string':
-				default:
-					val = '"' + val + '"';
-				}
+		/**
+		 * format the operand according to data type
+		 */
+		if (typeof Kendra.mapping.mappings[key] != 'undefined' && Kendra.mapping.mappings[key].dataType) {
+			dataType = Kendra.mapping.mappings[key].dataType.split('#').pop();
+			switch (dataType) {
+			case 'number':
+			case 'datetime':
+				break;
+			case 'string':
+			default:
+				val = '"' + val + '"';
 			}
-
-			params.fq.push(Kendra.util.mungeString(key) + ':' + val);
 		}
-		return params;
+
+		params.fq.push(Kendra.util.mungeString(key) + ':' + val);
 	}
+	return params;
+}
 	}
 });
 
