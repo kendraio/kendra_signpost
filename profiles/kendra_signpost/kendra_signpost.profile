@@ -6,7 +6,7 @@ function kendra_signpost_profile_modules() {
     'help', 'menu', 'dblog', 'path',
     
     // views modules
-    'views', 'views_ui',
+    'views', 'views_ui', 'views_atom', 
     
     // features modules
     'ctools', 'features', 'strongarm', 'diff', 'fieldgroup',
