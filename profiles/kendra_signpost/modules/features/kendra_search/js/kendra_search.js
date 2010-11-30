@@ -445,7 +445,7 @@ jQuery.extend(Kendra, {
 				var dataType = Kendra.mapping.mappings[key].dataType.split('#').pop(), options = Kendra.service.buildQueryMappingTypes(dataType);
 				$fields.filter('.kendra-filter-op2').html(options);
 			}
-			Kendra.util.log(Kendra.mapping.mappings[key].dataType, 'new option:' + key);
+			Kendra.util.log(Kendra.mapping.mappings[key].dataType, 'new option: ' + key);
 			return true;
 		});
 
