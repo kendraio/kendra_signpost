@@ -49,7 +49,7 @@ function kendra_cat_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Album title',
-      'weight' => '15',
+      'weight' => '30',
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -99,7 +99,7 @@ function kendra_cat_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Artist',
-      'weight' => '10',
+      'weight' => '25',
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -149,10 +149,81 @@ function kendra_cat_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Release date',
-      'weight' => '14',
+      'weight' => '29',
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
+    ),
+  );
+
+  // Exported field: field_cat_importnode
+  $fields['kendra_cat-field_cat_importnode'] = array(
+    'field_name' => 'field_cat_importnode',
+    'type_name' => 'kendra_cat',
+    'display_settings' => array(
+      'label' => array(
+        'format' => 'above',
+        'exclude' => 0,
+      ),
+      'teaser' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '4' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+    'widget_active' => '1',
+    'type' => 'nodereference',
+    'required' => '0',
+    'multiple' => '0',
+    'module' => 'nodereference',
+    'active' => '1',
+    'referenceable_types' => array(
+      'kendra_import' => 'kendra_import',
+      'kendra_cat' => 0,
+      'kendra_map' => 0,
+      'kendra_map_item' => 0,
+      'sparql' => 0,
+      'smart_filter' => 0,
+    ),
+    'advanced_view' => '--',
+    'advanced_view_args' => '',
+    'widget' => array(
+      'node_link' => NULL,
+      'fallback' => NULL,
+      'edit_fallback' => NULL,
+      'default_value' => array(
+        '0' => array(
+          'nid' => NULL,
+          '_error_element' => 'default_value_widget][field_cat_importnode][0][nid][nid',
+        ),
+      ),
+      'default_value_php' => NULL,
+      'autocomplete_match' => 'contains',
+      'size' => '60',
+      'label' => 'Imported from',
+      'weight' => '22',
+      'description' => '',
+      'type' => 'nodereference_autocomplete',
+      'module' => 'nodereference',
     ),
   );
 
@@ -199,7 +270,7 @@ function kendra_cat_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'ISRC',
-      'weight' => '13',
+      'weight' => '28',
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -249,7 +320,7 @@ function kendra_cat_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Label',
-      'weight' => '11',
+      'weight' => '26',
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -299,7 +370,7 @@ function kendra_cat_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Catalogue number',
-      'weight' => '12',
+      'weight' => '27',
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -349,7 +420,7 @@ function kendra_cat_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Publisher',
-      'weight' => '16',
+      'weight' => '31',
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -411,7 +482,7 @@ function kendra_cat_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'RowURI',
-      'weight' => '8',
+      'weight' => '23',
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -424,6 +495,7 @@ function kendra_cat_content_default_fields() {
   t('Artist');
   t('Catalogue number');
   t('ISRC');
+  t('Imported from');
   t('Label');
   t('Publisher');
   t('Release date');
