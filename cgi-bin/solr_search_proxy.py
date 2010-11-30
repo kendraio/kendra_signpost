@@ -34,6 +34,7 @@ else:
 logfile = open("/tmp/solr_search_proxy_log_%f" % time.time(), "w")
 print >> logfile, "recreated_query", recreated_query
 print >> logfile, "request_uri_path", request_uri_path
+print >> logfile, "recreated_url", '%s://%s:%d%s?%s' % (protocol, 'HTTP_HOST', 8983,  request_uri_path, recreated_query)
 print >> logfile, "environment"
 for k in os.environ:
     print >> logfile, k, os.environ.get(k)
