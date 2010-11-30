@@ -450,8 +450,7 @@ jQuery.extend(Kendra, {
 		});
 
 		/**
-		 * make the search form rows draggable
-		 * // skip the next hack
+		 * make the search form rows draggable // skip the next hack
 		 * 
 		 * @hack this should probably be triggered via a sub-module?
 		 */
@@ -499,22 +498,22 @@ jQuery.extend(Kendra, {
 		// set the solr query here
 		// Kendra.Manager.store.addByValue('q', '*:*');
 		Kendra.Manager.store.addByValue('q.alt', '*:*');
+		Kendra.Manager.store.addByValue('fq', 'type:kendra_cat');
 
 		for ( var i in query) {
 			// var fq = Kendra.util.mungeString(query[i].op1) + ':' +
-		// encodeURIComponent('"' + query[i].op3 + '"');
-		var fq = query[i].op1 + ':' + encodeURIComponent('"' + query[i].op3 + '"');
+		var fq = query[i].op1.replace(/\./g, '_2E') + ':' + encodeURIComponent('"' + query[i].op3 + '"');
 		Kendra.Manager.store.addByValue('fq', fq);
 	}
 
 	// select which fields we want returned
-	// Kendra.Manager.store.addByValue('fl', "title,url,path");
+		// Kendra.Manager.store.addByValue('fl', "title,url,path");
 
-	for ( var name in params) {
-		Kendra.Manager.store.addByValue(name, params[name]);
+		for ( var name in params) {
+			Kendra.Manager.store.addByValue(name, params[name]);
+		}
+		Kendra.Manager.doRequest();
 	}
-	Kendra.Manager.doRequest();
-}
 	}
 });
 
@@ -531,7 +530,6 @@ jQuery.extend(Kendra, {
 					// 'indent' : true,// debugging only
 					'facet' : true,
 					'facet.missing' : true,
-					'type' : 'kendra_cat',
 					'json.nl' : 'map'
 				};
 
