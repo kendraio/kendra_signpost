@@ -408,6 +408,26 @@ jQuery.extend(Kendra, {
 	},
 
 	/**
+	 * buildQueryResponseContainer
+	 * 
+	 * returns HTML for the AjaxSolr response widgets
+	 */
+	buildQueryResponseContainer : function() {
+		var html = '';
+		html += '<div class="right">';
+		html += '<div id="result">';
+		html += '<div id="navigation">';
+		html += '<ul id="pager"></ul>';
+		html += '<div id="pager-header"></div>';
+		html += '</div>';
+		html += '<div id="docs"></div>';
+		html += '</div>';
+		html += '</div>';
+
+		return html;
+	},
+
+	/**
 	 * buildQueryFormPostProcess
 	 * 
 	 * @param $form
@@ -497,6 +517,22 @@ jQuery.extend(Kendra, {
 				}
 			}
 		});
+
+		Kendra.Manager.addWidget(new AjaxSolr.ResultWidget( {
+			id : 'result',
+			target : '#docs'
+		}));
+		Kendra.Manager.addWidget(new AjaxSolr.PagerWidget( {
+			id : 'pager',
+			target : '#pager',
+			prevLabel : '&lt;',
+			nextLabel : '&gt;',
+			innerWindow : 1,
+			renderHeader : function(perPage, offset, total) {
+				$('#pager-header').html($('<span/>').text('displaying ' + Math.min(total, offset + 1) + ' to ' + Math.min(total, offset + perPage) + ' of ' + total));
+			}
+		}));
+
 		Kendra.Manager.init();
 
 		// set the solr query here
@@ -553,6 +589,7 @@ jQuery.extend(Kendra, {
 				 * build the query form
 				 */
 				html = Kendra.service.buildQueryForm(jsonFilter);
+				html += Kendra.service.buildQueryResponseContainer();
 
 				$(selector).html(html);
 
