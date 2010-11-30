@@ -389,7 +389,6 @@ jQuery.extend(Kendra, {
 				'op3' : ''
 			} ]
 		};
-		Kendra.util.log('Kendra.service.buildQueryForm');
 
 		var html = '';
 
@@ -540,15 +539,51 @@ jQuery.extend(Kendra, {
 		Kendra.Manager.store.addByValue('q.alt', '*:*');
 		Kendra.Manager.store.addByValue('fq', 'type:kendra_cat');
 
-		for ( var i in query) {
-			var fq = Kendra.util.mungeString(query[i].op1) + ':' + encodeURIComponent(query[i].op3);
-			Kendra.Manager.store.addByValue('fq', fq);
-		}
+		/**
+		 * now, build the actual query strings
+		 */
+		Kendra.service.buildSolrQuery(query);
 
 		for ( var name in params) {
-			Kendra.Manager.store.addByValue(name, params[name]);
+			var val = params[name];
+
+			if (typeof val == 'object') {
+				if (val.length > 0) {
+					val = val.join(',');
+				} else {
+					Kendra.util.log(val, "Kendra.service.solrQuery: skipping object parameter");
+					continue;
+				}
+			}
+
+			Kendra.Manager.store.addByValue(name, val);
 		}
 		Kendra.Manager.doRequest();
+	},
+
+	/**
+	 * buildSolrQuery
+	 * 
+	 * group together the parameters necessary for doing a faceted search
+	 * against Apache Solr
+	 * 
+	 * @param query
+	 *            Object
+	 * @returns Object
+	 * 
+	 * @TODO add cases for number & datetime
+	 * @TODO add query grouping
+	 * @TODO add support for AND vs OR subqueries
+	 */
+	buildSolrQuery : function(query) {
+		var i = {}, params = {
+			'q' : [],
+			'fq' : []
+		};
+		for ( var i in query) {
+			params.fq.push(Kendra.util.mungeString(query[i].op1) + ':' + encodeURIComponent(query[i].op3));
+		}
+		return params;
 	}
 	}
 });

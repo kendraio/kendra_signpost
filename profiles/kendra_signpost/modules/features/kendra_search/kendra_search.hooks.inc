@@ -135,6 +135,7 @@ function kendra_search_init() {
 	// AjaxSolr theme support
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/helpers/ajaxsolr.support.js');
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/helpers/ajaxsolr.theme.js');
+	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/helpers/jquery/ajaxsolr.theme.js');
 
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/kendra_search.js');
 
