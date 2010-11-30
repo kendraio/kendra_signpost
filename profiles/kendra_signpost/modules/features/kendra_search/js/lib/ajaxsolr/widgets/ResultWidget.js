@@ -40,21 +40,19 @@
 		},
 
 		init : function() {
-			return true;
-			//////////////////
-		//////////////
-		$('a.more').live('click', function() {
-			$(this).toggle(function() {
-				$(this).parent().find('span').show();
-				$(this).text('less');
-				return false;
-			}, function() {
-				$(this).parent().find('span').hide();
-				$(this).text('more');
-				return false;
+
+			$('a.more').live('click', function() {
+				$(this).toggle(function() {
+					$(this).parent().find('span').show();
+					$(this).text('less');
+					return false;
+				}, function() {
+					$(this).parent().find('span').hide();
+					$(this).text('more');
+					return false;
+				});
 			});
-		});
-	}
+		}
 	});
 
 })(jQuery);

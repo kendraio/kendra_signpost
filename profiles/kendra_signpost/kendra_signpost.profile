@@ -26,6 +26,9 @@ function kendra_signpost_profile_modules() {
 
   	// services + json backend
   	'services', 'json_server', 'node_service', 'services_keyauth', 'system_service',
+
+  	// jquery
+  	'jquery_update',
   
   	// rdf / sparql
   	'rdfdb',
