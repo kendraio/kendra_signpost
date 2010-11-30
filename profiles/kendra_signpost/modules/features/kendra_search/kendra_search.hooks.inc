@@ -132,7 +132,7 @@ function kendra_search_init() {
 		'search' => array(
 	//'solrUrl' => 'http://dev.signpost.kendra.org.uk/solr/'
 	//'solrUrl' => '/solr/'
-	 'solrUrl' => 'http://' . variable_get('apachesolr_host', 'dev.signpost.kendra.org.uk') . ':' . variable_get('apachesolr_port', '8983') . variable_get('apachesolr_path', '/solr/dev/')
+	 'solrUrl' => 'http://' . variable_get('apachesolr_host', 'dev.signpost.kendra.org.uk') . ':' . variable_get('apachesolr_port', '8983') . variable_get('apachesolr_path', '/solr/dev') . '/'
 	)
 	,'mapping'=> array('mappings'=>array())
 	);
