@@ -66,9 +66,18 @@ def rewrite_stanza(text):
     # Get the property list for this row from SPARQL endpoint
     property_list = get_property_list(row_uri)
 
+    # now modifiy property list to include inferred properties from metadata equivalences
+    mangled_properties = {}
+    for name, value in property_list:
+        for other_name in item_synset.get(name, []):
+            mangled_properties[other_name] = value
+    # exact names override inferred properties, for now, because we don't yet handle multiple values
+    for name, value in property_list:
+        mangled_properties[name] = value
+
     # Bash these metadata fields in, very inefficiently
     # TO DO: make more efficient
-    for name, value in property_list:
+    for name, value in mangled_properties.items():
         text = string.replace(text, "</doc>", '<field name="%s">%s</field></doc>' % (mangle_uri(name), value))
 
     return text
