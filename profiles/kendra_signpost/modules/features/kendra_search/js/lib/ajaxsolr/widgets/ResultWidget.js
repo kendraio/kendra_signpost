@@ -34,6 +34,7 @@
 				var items = [];
 
 				for ( var key in [ 'ss_cck_field_cat_album', 'ss_cck_field_cat_artist', 'ss_cck_field_cat_date' ]) {
+
 					if (typeof doc[key] != 'undefined') {
 						items = items.concat(this.facetLinks(key, doc[key]));
 					}
