@@ -349,7 +349,7 @@ jQuery.extend(Kendra, {
 					'label' : 'before'
 				},
 				'==' : {
-					'label' : 'on',
+					'label' : 'is',
 					'selected' : 'selected'
 				},
 				'&gt;' : {
