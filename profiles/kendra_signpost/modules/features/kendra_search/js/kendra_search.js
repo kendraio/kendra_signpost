@@ -519,17 +519,17 @@ jQuery.extend(Kendra, {
 		});
 
 		Kendra.Manager.addWidget(new AjaxSolr.ResultWidget( {
-			id : 'result',
-			target : '#docs'
+			id : 'kendra-search-result',
+			target : '#kendra-search-docs'
 		}));
 		Kendra.Manager.addWidget(new AjaxSolr.PagerWidget( {
-			id : 'pager',
-			target : '#pager',
+			id : 'kendra-search-pager',
+			target : '#kendra-search-pager',
 			prevLabel : '&lt;',
 			nextLabel : '&gt;',
 			innerWindow : 1,
 			renderHeader : function(perPage, offset, total) {
-				$('#pager-header').html($('<span/>').text('displaying ' + Math.min(total, offset + 1) + ' to ' + Math.min(total, offset + perPage) + ' of ' + total));
+				$('#kendra-search-pager-header').html($('<span/>').text('displaying ' + Math.min(total, offset + 1) + ' to ' + Math.min(total, offset + perPage) + ' of ' + total));
 			}
 		}));
 
