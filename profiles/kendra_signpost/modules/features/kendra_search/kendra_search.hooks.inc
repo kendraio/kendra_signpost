@@ -51,7 +51,7 @@ function kendra_search_get_array() {
 			$graph = url("node/{$node->nid}", array('absolute' => TRUE));
 
 			// fetch mappings for column headings
-			$map = kendra_rdf_send("SELECT DISTINCT ?p FROM <{$graph}> WHERE {?s ?p ?o}", 'application/sparql-results+json');
+			$map = kendra_rdf_send("SELECT DISTINCT ?p FROM <{$graph}> WHERE {?s ?p ?o}", "application/sparql-results+json");
 			$result_list = json_decode($map->data);
 			if (!empty($result_list->results->bindings)) {
 				foreach ($result_list->results->bindings as $binding) {
@@ -62,13 +62,13 @@ function kendra_search_get_array() {
 			}
 
 			// fetch mappings for data types
-			$map = kendra_rdf_send("SELECT DISTINCT ?s, ?o WHERE {?s <http://kendra.org.uk/#hasType> ?o}", 'application/sparql-results+json');
+			$map = kendra_rdf_send("SELECT DISTINCT ?s, ?o WHERE {?s <http://kendra.org.uk/#hasType> ?o}", "application/sparql-results+json");
 			$result_list = json_decode($map->data);
 			if (!empty($result_list->results->bindings)) {
 				foreach ($result_list->results->bindings as $binding) {
 					$key = kendra_search_map_alter_key($binding->s->value);
 					$value = $binding->o->value;
-					$maps[$key] = array_merge( $maps[$key], array('dataType'=>$value));
+					$maps = array_merge( $maps, array($key => array("dataType"=>$value)));
 				}
 			}
 		}
