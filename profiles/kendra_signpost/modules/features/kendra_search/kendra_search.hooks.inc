@@ -75,7 +75,7 @@ function kendra_search_get_array() {
 				}
 			}
 		}
-		asort($maps);
+		ksort($maps);
 		cache_set('kendra_search_mappings', $maps);
 	}
 
