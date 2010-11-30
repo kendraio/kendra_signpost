@@ -41,19 +41,6 @@ def get_same_as_list():
 	query_url = "%s?default-graph-uri=&query=%s&format=text%%2Frdf+n3&debug=on&timeout=" % (kendra_signpost_utils.get_sparql_endpoint_uri(), urllib.quote_plus(query))
 	return map(strip_result_fields, re.findall(r"(?s)<result>.*?</result>", urllib.urlopen(query_url).read()))
 
-# equivalence sets of labels
-item_synset = {}
-
-def make_mapping(a, b):
-    ab_synset = uniq(item_synset.get(a, [a]) + item_synset.get(b, [b]))
-    for x in ab_synset:
-       item_synset[x] = ab_synset
-
-# now build equivalence classes
-same_as_mappings = get_same_as_list()
-for a, b in same_as_mappings:
-    make_mapping(a, b)
-
 # Process a single XML segment
 def rewrite_stanza(text):
     if text[:5] != "<doc>":
@@ -94,6 +81,20 @@ def format_comment(text):
 current_time = time.time()
 logfile = open("/tmp/solr_update_proxy_log_%0.5f" % current_time, "w")
 print >> logfile, '<log datetime="%s">' % current_time
+
+# equivalence sets of labels
+item_synset = {}
+
+def make_mapping(a, b):
+    ab_synset = uniq(item_synset.get(a, [a]) + item_synset.get(b, [b]))
+    for x in ab_synset:
+       item_synset[x] = ab_synset
+
+# now build equivalence classes
+same_as_mappings = get_same_as_list()
+for a, b in same_as_mappings:
+    make_mapping(a, b)
+
 print >> logfile, "<environment>"
 for k in os.environ:
     print >> logfile, k, os.environ.get(k)
