@@ -29,14 +29,16 @@
 			$(this.target).empty();
 			for ( var i = 0, l = this.manager.response.response.docs.length; i < l; i++) {
 				var doc = this.manager.response.response.docs[i];
-				//$(this.target).append(AjaxSolr.theme('result', doc, AjaxSolr.theme('snippet', doc)));
+				$(this.target).append(AjaxSolr.theme('result', doc, AjaxSolr.theme('snippet', doc)));
 
 				var items = [];
-				/*
-				items = items.concat(this.facetLinks('topics', doc.topics));
-				items = items.concat(this.facetLinks('organisations', doc.organisations));
-				items = items.concat(this.facetLinks('exchanges', doc.exchanges));
-				*/
+
+				for ( var key in [ 'ss_cck_field_cat_album', 'ss_cck_field_cat_artist', 'ss_cck_field_cat_date' ]) {
+					if (typeof doc[key] != 'undefined') {
+						items = items.concat(this.facetLinks(key, doc[key]));
+					}
+				}
+
 				AjaxSolr.theme('list_items', '#links_' + doc.id, items);
 			}
 		},
