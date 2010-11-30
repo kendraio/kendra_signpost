@@ -11,7 +11,7 @@ Drupal.behaviors.draggableviewsLoad = function() {
   $("table.views-table").each( function(i) {
     var table_id = $(this).attr('id');
 
-    if (!Drupal.settings.draggableviews[table_id]) return;
+    if (!Drupal.settings.draggableviews || Drupal.settings.draggableviews[table_id]) return;
 
     $(this).find("tr.draggable").each( function(i) {
       $(this).find('.draggableviews-collapse,.draggableviews-expand').remove();

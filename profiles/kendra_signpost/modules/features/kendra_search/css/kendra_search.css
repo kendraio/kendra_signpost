@@ -53,15 +53,15 @@
 #kendra-query-builder {
 	background-color: #EEEEEE;
 	border: 1px solid #CCCCCC;
-	padding:1em;
+	padding: 1em;
 }
+
 /*
 #kendra-query-builder table,#kendra-query-builder h3,#kendra-query-builder>*
 	{
 	margin: 1em;
 }
 */
-
 #kendra-query-builder table tr.draggable {
 	height: 2em;
 }
@@ -81,12 +81,14 @@
 
 #kendra-query-builder .kendra-filter-button-wrapper a,#kendra-query-builder .kendra-filter-button-wrapper a:visited,#kendra-query-builder .kendra-filter-button-wrapper a:link
 	{
-	color: #999999;
+	color: #AAAAAA;
+	display: block;
+	float: left;
 	font-family: monospace;
-	font-size: 2em;
+	font-size: 3em;
 	font-weight: 700;
-	line-height: 0.5em;
-	padding: 3px 6px;
+	line-height: 1em;
+	padding: 3px 9px;
 	text-decoration: none;
 	vertical-align: bottom;
 }
@@ -103,5 +105,5 @@
 * add space at the bottom to fit the tall log window
 */
 body.big-bottom {
-	padding-bottom:11em;
+	padding-bottom: 11em;
 }

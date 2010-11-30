@@ -47,19 +47,35 @@ function kendra_search_get_array() {
 		// only retrieve mappings on first call of this function
 		$result = db_query("SELECT nid, title FROM node WHERE type = '%s'", 'kendra_import');
 		$maps = array();
+
+		// fetch mappings for data types
+		$map = kendra_rdf_send("SELECT DISTINCT ?s, ?o WHERE {?s <http://kendra.org.uk/#hasType> ?o}", "application/sparql-results+json");
+		$result_list = json_decode($map->data);
+		if (!empty($result_list->results->bindings)) {
+			foreach ($result_list->results->bindings as $binding) {
+				$key = kendra_search_map_alter_key($binding->s->value);
+				$value = $binding->o->value;
+				$maps [$key] = array('dataType' => $value);
+			}
+		}
+
 		while ($node = db_fetch_object($result)) {
 			$graph = url("node/{$node->nid}", array('absolute' => TRUE));
-			$map = kendra_rdf_send("SELECT DISTINCT ?p FROM <{$graph}> WHERE {?s ?p ?o}", 'application/sparql-results+json');
+
+			// fetch mappings for column headings
+			$map = kendra_rdf_send("SELECT DISTINCT ?p FROM <{$graph}> WHERE {?s ?p ?o}", "application/sparql-results+json");
 			$result_list = json_decode($map->data);
 			if (!empty($result_list->results->bindings)) {
 				foreach ($result_list->results->bindings as $binding) {
 					$label = $node->title . ': ' . kendra_search_map_alter_value($binding->p->value);
 					$key = kendra_search_map_alter_key($binding->p->value);
-					$maps[$key] = $label;
+					
+					if (!isset($maps[$key])) $maps[$key] = array();
+					$maps [$key]['label'] = $label;
 				}
 			}
 		}
-		asort($maps);
+		ksort($maps);
 		cache_set('kendra_search_mappings', $maps);
 	}
 
@@ -114,9 +130,9 @@ function kendra_search_init() {
 	 */
 	$jsonContainer = array(
 		'search' => array(
-	'solrUrl' => 'http://dev.signpost.kendra.org.uk/solr/'
-	//'solrUrl' => '/cgi-bin/solr_search_proxy.py'
-	// 'solrUrl' => 'http://' . variable_get('apachesolr_host', 'localhost') . ':' . variable_get('apachesolr_port', '8983') . variable_get('apachesolr_path', '/solr')
+	//'solrUrl' => 'http://dev.signpost.kendra.org.uk/solr/'
+	//'solrUrl' => '/solr/'
+	 'solrUrl' => 'http://' . variable_get('apachesolr_host', 'dev.signpost.kendra.org.uk') . ':' . variable_get('apachesolr_port', '8983') . variable_get('apachesolr_path', '/solr/dev/')
 	)
 	,'mapping'=> array('mappings'=>array())
 	);
