@@ -22,7 +22,7 @@ function kendra_rdf_menu() {
       'access arguments' => array('administer kendra rdf'),
 	),
     'kendra-front' => array(
-      'title' => 'Kendra Signpost Trial',
+      'title' => variable_get('site_name', 'Kendra Signpost Trial'),
       'page callback' => '_kendra_rdf_frontpage',
       'access arguments' => array('access content'),
 	),
