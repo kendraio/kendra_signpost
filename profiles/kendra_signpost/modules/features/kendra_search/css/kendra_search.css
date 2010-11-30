@@ -102,6 +102,33 @@
 }
 
 /**
+* results
+*/
+#kendra-search-result {
+	
+}
+
+#kendra-search-navigation {
+	
+}
+
+#kendra-search-pager {
+	
+}
+
+#kendra-search-pager li {
+	float: left;
+}
+
+#kendra-search-pager-header {
+	
+}
+
+#kendra-search-docs {
+	
+}
+
+/**
 * add space at the bottom to fit the tall log window
 */
 body.big-bottom {

@@ -414,12 +414,12 @@ jQuery.extend(Kendra, {
 	buildQueryResponseContainer : function() {
 		var html = '';
 		html += '<div class="right">';
-		html += '<div id="result">';
-		html += '<div id="navigation">';
-		html += '<ul id="pager"></ul>';
-		html += '<div id="pager-header"></div>';
+		html += '<div id="kendra-search-result">';
+		html += '<div id="kendra-search-navigation">';
+		html += '<ul id="kendra-search-pager"></ul>';
+		html += '<div id="kendra-search-pager-header"></div>';
 		html += '</div>';
-		html += '<div id="docs"></div>';
+		html += '<div id="kendra-search-docs"></div>';
 		html += '</div>';
 		html += '</div>';
 
@@ -576,12 +576,30 @@ jQuery.extend(Kendra, {
 	 * @TODO add support for AND vs OR subqueries
 	 */
 	buildSolrQuery : function(query) {
-		var i = {}, params = {
+		var i = {}, key = '', val = '', dataType = '', params = {
 			'q' : [],
 			'fq' : []
 		};
 		for ( var i in query) {
-			params.fq.push(Kendra.util.mungeString(query[i].op1) + ':' + encodeURIComponent(query[i].op3));
+			key = query[i].op1;
+			val = encodeURIComponent(query[i].op3);
+
+			/**
+			 * format the operand according to data type
+			 */
+			if (typeof Kendra.mapping.mappings[key] != 'undefined' && Kendra.mapping.mappings[key].dataType) {
+				dataType = Kendra.mapping.mappings[key].dataType.split('#').pop();
+				switch (dataType) {
+				case 'number':
+				case 'datetime':
+					break;
+				case 'string':
+				default:
+					val = '"' + val + '"';
+				}
+			}
+
+			params.fq.push(Kendra.util.mungeString(key) + ':' + val);
 		}
 		return params;
 	}
