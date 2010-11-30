@@ -72,7 +72,7 @@ jQuery.extend(Kendra, {
 		 *            String
 		 */
 		mungeString : function(str) {
-			return 'ss_kendra_' + encodeURIComponent(str).replace(/%/g, '_');
+			return 'ss_kendra_' + encodeURIComponent(str).replace(/\./g, '_2E').replace(/%/g, '_');
 		}
 	},
 
@@ -541,13 +541,9 @@ jQuery.extend(Kendra, {
 		Kendra.Manager.store.addByValue('fq', 'type:kendra_cat');
 
 		for ( var i in query) {
-			// var fq = Kendra.util.mungeString(query[i].op1) + ':' +
-		var fq = query[i].op1.replace(/\./g, '_2E') + ':' + encodeURIComponent(query[i].op3);
-		Kendra.Manager.store.addByValue('fq', fq);
-	}
-
-	// select which fields we want returned
-		// Kendra.Manager.store.addByValue('fl', "title,url,path");
+			var fq = Kendra.util.mungeString(query[i].op1) + ':' + encodeURIComponent(query[i].op3);
+			Kendra.Manager.store.addByValue('fq', fq);
+		}
 
 		for ( var name in params) {
 			Kendra.Manager.store.addByValue(name, params[name]);
@@ -567,7 +563,6 @@ jQuery.extend(Kendra, {
 
 			var success = function(selector) {
 				var jsonFilter = $form.find('textarea#edit-body').val(), params = {
-					// 'indent' : true,// debugging only
 					'facet' : true,
 					'facet.missing' : true,
 					'json.nl' : 'map'
