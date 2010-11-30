@@ -8,17 +8,7 @@
 import cgitb, cgi, sys, urllib, urllib2, string, re, os, time, traceback
 import urllib
 
-import kendra_signpost_utils
 from kendra_signpost_utils import mangle_uri
-
-# start logging early
-current_time = time.time()
-logfile = open("/tmp/solr_update_proxy_log_%0.5f" % current_time, "w")
-print >> logfile, '<log datetime="%s">' % current_time
-logfile.flush()
-
-def uniq(x):
-    return {}.fromkeys(x).keys()
 
 def urlquote(x):
     return urllib.quote_plus(x)
@@ -41,12 +31,6 @@ def get_property_list(row_uri):
 	query_url = "%s?default-graph-uri=&query=%s&format=text%%2Frdf+n3&debug=on&timeout=" % (kendra_signpost_utils.get_sparql_endpoint_uri(), urllib.quote_plus(query))
 	return map(strip_result_fields, re.findall(r"(?s)<result>.*?</result>", urllib.urlopen(query_url).read()))
 
-# TODO: Note: assumes that URI is valid: need sanity check here to prevent XSS attacks on SPARQL DB, or assurance this is valid at all callers
-def get_same_as_list():
-	query = "SELECT ?subject ?object WHERE {?subject <http://www.w3.org/2002/07/owl#sameAs> ?object}"
-	query_url = "%s?default-graph-uri=&query=%s&format=text%%2Frdf+n3&debug=on&timeout=" % (kendra_signpost_utils.get_sparql_endpoint_uri(), urllib.quote_plus(query))
-	return map(strip_result_fields, re.findall(r"(?s)<result>.*?</result>", urllib.urlopen(query_url).read()))
-
 # Process a single XML segment
 def rewrite_stanza(text):
     if text[:5] != "<doc>":
@@ -59,18 +43,9 @@ def rewrite_stanza(text):
     # Get the property list for this row from SPARQL endpoint
     property_list = get_property_list(row_uri)
 
-    # now modifiy property list to include inferred properties from metadata equivalences
-    mangled_properties = {}
-    for name, value in property_list:
-        for other_name in item_synset.get(name, []):
-            mangled_properties[other_name] = value
-    # exact names override inferred properties, for now, because we don't yet handle multiple values
-    for name, value in property_list:
-        mangled_properties[name] = value
-
     # Bash these metadata fields in, very inefficiently
     # TO DO: make more efficient
-    for name, value in mangled_properties.items():
+    for name, value in property_list:
         text = string.replace(text, "</doc>", '<field name="%s">%s</field></doc>' % (mangle_uri(name), value))
 
     return text
@@ -84,19 +59,9 @@ def format_comment(text):
    return '<!-- %s -->' % text
 
 # main
-# equivalence sets of labels
-item_synset = {}
-
-def make_mapping(a, b):
-    ab_synset = uniq(item_synset.get(a, [a]) + item_synset.get(b, [b]))
-    for x in ab_synset:
-       item_synset[x] = ab_synset
-
-# now build equivalence classes
-same_as_mappings = get_same_as_list()
-for a, b in same_as_mappings:
-    make_mapping(a, b)
-
+current_time = time.time()
+logfile = open("/tmp/solr_update_proxy_log_%0.5f" % current_time, "w")
+print >> logfile, '<log datetime="%s">' % current_time
 print >> logfile, "<environment>"
 for k in os.environ:
     print >> logfile, k, os.environ.get(k)
@@ -113,8 +78,7 @@ request_uri_path = string.split(os.environ.get('REQUEST_URI', ''), '?')[0]
 
 # Do some sanity checking before actually dispatching: we are not a general-purpose proxy
 if is_bad_request():
-#    print "Status: 403 Forbidden"
-    print "Status: 407 AArgh"
+    print "Status: 403 Forbidden"
     print "Content-type: text/plain"
     print 
     print "I'm sorry Dave, I can't do that:", is_bad_request()
