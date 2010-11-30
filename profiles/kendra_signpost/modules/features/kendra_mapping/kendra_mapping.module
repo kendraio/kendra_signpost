@@ -63,7 +63,9 @@ function kendra_mapping_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 			break;
 		case 'delete':
 		case 'delete revision':
-			cache_clear_all('kendra_search_mappings');
+			if ($node->type == 'kendra_map') {
+				cache_clear_all('kendra_search_mappings');
+			}
 			break;
 	}
 }
