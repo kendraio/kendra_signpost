@@ -11,6 +11,12 @@ import urllib
 import kendra_signpost_utils
 from kendra_signpost_utils import mangle_uri
 
+# start logging early
+current_time = time.time()
+logfile = open("/tmp/solr_update_proxy_log_%0.5f" % current_time, "w")
+print >> logfile, '<log datetime="%s">' % current_time
+logfile.flush()
+
 def uniq(x):
     return {}.fromkeys(x).keys()
 
@@ -78,10 +84,6 @@ def format_comment(text):
    return '<!-- %s -->' % text
 
 # main
-current_time = time.time()
-logfile = open("/tmp/solr_update_proxy_log_%0.5f" % current_time, "w")
-print >> logfile, '<log datetime="%s">' % current_time
-
 # equivalence sets of labels
 item_synset = {}
 
