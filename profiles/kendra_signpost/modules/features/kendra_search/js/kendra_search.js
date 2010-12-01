@@ -28,9 +28,8 @@ jQuery.extend(Kendra, {
 		log : function(obj, label) {
 			if (typeof console != 'undefined') {
 				console.log(obj);
-			} else {
-				return;
 			}
+			return;
 
 			if (typeof label == 'undefined' && (typeof obj).toLowerCase() == 'string') {
 				label = obj;
