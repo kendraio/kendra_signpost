@@ -573,7 +573,7 @@ jQuery.extend(Kendra, {
 			var val = params[name], multivariate_facets = [ 'fq', 'facet.field', 'facet.query' ];
 
 			if (typeof val == 'object') {
-				if ($.inArray(name, multivariate_facets)) {
+				if ($.inArray(name, multivariate_facets) >= 0) {
 					for ( var i in val) {
 						Kendra.Manager.store.addByValue(name, val[i]);
 					}
@@ -605,9 +605,7 @@ jQuery.extend(Kendra, {
 	 * @TODO add support for AND vs OR subqueries
 	 */
 	buildSolrQuery : function(query) {
-		var i = {}, key = '', val = '', dataType = '', params = {
-			'fq' : []
-		};
+		var i = {}, key = '', val = '', dataType = '', params = {};
 		for ( var i in query) {
 			key = query[i].op1;
 			val = query[i].op3;
@@ -622,54 +620,55 @@ jQuery.extend(Kendra, {
 				case 'number':
 					switch (condition) {
 					case '&lt;':
-						if (!params['facet.range']) {
-							params['facet.range'] = [];
-							params[key + '.facet.range.end'] = [];
-						}
-						params[key + '.facet.range.end'].push(val);
-						params['facet.range'].push(key);
+						var objKey = key + '.facet.range.end';
+						params = $.extend(true, params, {
+							objKey : val,
+							'facet.range' : key
+						});
 						break;
 					case '&gt;':
-						if (!params['facet.range']) {
-							params['facet.range'] = [];
-							params[key + '.facet.range.start'] = [];
-						}
-						params[key + '.facet.range.start'].push(val);
-						params['facet.range'].push(key);
+						var objKey = key + '.facet.range.start';
+						params = $.extend(true, params, {
+							objKey : val,
+							'facet.range' : key
+						});
 						break;
 					case '==':
-						params['fq'].push(Kendra.util.mungeString(key) + ':' + val);
+						params = $.extend(true, params, {
+							'fq' : Kendra.util.mungeString(key) + ':' + val
+						});
 						break;
 					}
 					break;
 				case 'datetime':
 					switch (condition) {
 					case '&lt;':
-						if (!params['facet.date']) {
-							params['facet.date'] = [];
-							params[key + '.facet.date.end'] = [];
-						}
-						params[key + '.facet.date.end'].push(val);
-						params['facet.date'].push(key);
+						var objKey = key + '.facet.date.end';
+						params = $.extend(true, params, {
+							objKey : val,
+							'facet.date' : key
+						});
 						break;
 					case '&gt;':
-						if (!params['facet.date']) {
-							params['facet.date'] = [];
-							params[key + '.facet.date.start'] = [];
-						}
-						params[key + '.facet.date.start'].push(val);
-						params['facet.date'].push(key);
+						var objKey = key + '.facet.date.start';
+						params = $.extend(true, params, {
+							objKey : val,
+							'facet.date' : key
+						});
 						break;
 					case '==':
-						params['fq'].push(Kendra.util.mungeString(key) + ':' + val);
+						params = $.extend(true, params, {
+							'fq' : Kendra.util.mungeString(key) + ':' + val
+						});
 						break;
 					}
-					params['fq'].push(Kendra.util.mungeString(key) + ':' + val);
 					break;
 				case 'string':
 				default:
 					val = '"' + val + '"';
-					params['fq'].push(Kendra.util.mungeString(key) + ':' + val);
+					params = $.extend(true, params, {
+						'fq' : Kendra.util.mungeString(key) + ':' + val
+					});
 				}
 			}
 		}
