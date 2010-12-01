@@ -632,13 +632,13 @@ jQuery.extend(Kendra, {
 // document ready:
 (function($) {
 	$(function() {
-		var $form = $('form#node-form'), html = '';
+		if ($('body.node-type-smart-filter').length > 0) {
+			var $form = $('form#node-form'), html = '';
 
-		if ($form.length > 0 && $form.find('input[name=form_id]#edit-smart-filter-node-form').length > 0) {
 			$form.find('.body-field-wrapper').hide().before('<div id="kendra-query-builder"><h3>' + 'Loading&hellip;' + '</h3></div>');
 
 			var success = function(selector) {
-				var jsonFilter = $form.find('textarea#edit-body').val();
+				var jsonFilter = $form.find('textarea#edit-body').val() || $('.node-smart_filter .node-content').text();
 
 				if (jsonFilter != '') {
 					jsonFilter = JSON.parse(jsonFilter);
@@ -652,16 +652,17 @@ jQuery.extend(Kendra, {
 					}
 				}
 
-				/**
-				 * build the query form
-				 */
-				html = Kendra.service.buildQueryForm(jsonFilter);
-				html += Kendra.service.buildQueryResponseContainer();
-
-				$(selector).html(html);
-
-				Kendra.service.buildQueryFormPostProcess($form);
-
+				if ($form.length > 0) {
+					/**
+					 * build the query form
+					 */
+					html = Kendra.service.buildQueryForm(jsonFilter);
+					html += Kendra.service.buildQueryResponseContainer();
+	
+					$(selector).html(html);
+	
+					Kendra.service.buildQueryFormPostProcess($form);
+				}
 			}, failure = function() {
 				$('#kendra-query-builder').html('No mappings were found. Please <a href="/node/add/kendra-import">import a catalogue</a> first.');
 			};
