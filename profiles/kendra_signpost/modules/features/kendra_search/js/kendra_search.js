@@ -72,7 +72,7 @@ jQuery.extend(Kendra, {
 		 *            String
 		 */
 		mungeString : function(str) {
-			//str = 'ss_kendra_' + str;
+			// str = 'ss_kendra_' + str;
 		return encodeURIComponent(str).replace(/\./g, '_2E').replace(/%/g, '_');
 	}
 	},
@@ -428,40 +428,55 @@ jQuery.extend(Kendra, {
 	},
 
 	/**
+	 * buildQueryFormSerialize
+	 */
+	buildQueryFormSerialize : function($form) {
+		var filter = {
+			rules : []
+		}, $rule = {}, jsonFilter = '';
+
+		$form.find('tr.draggable').each(function() {
+			var temp = {};
+			$fields = $(this).find('.kendra-filter-op1,.kendra-filter-op2,.kendra-filter-op3');
+
+			$fields.each(function() {
+				var $this = $(this), key = $this.attr('class').replace(/.*kendra-filter-(op\d).*/, '$1'), value = $this.val();
+				temp[key] = value;
+			});
+			filter.rules.push(temp);
+		});
+
+		jsonFilter = JSON.stringify(filter);
+		Kendra.util.log(jsonFilter, 'serialized smart filter');
+		$form.find('textarea#edit-body').val(jsonFilter);
+		return filter;
+	},
+
+	/**
 	 * buildQueryFormPostProcess
 	 * 
 	 * @param $form
 	 *            JQuery object
 	 */
 	buildQueryFormPostProcess : function($form) {
+		if ($form.length == 0)
+			return;
+
 		Kendra.service.buildQueryFormToggleRemoveLinks($form);
 
 		/**
 		 * form onsubmit : serialize the form values into a smart filter
 		 */
 		$form.submit(function() {
-			var filter = {
-				rules : []
-			}, $rule = {}, jsonFilter = '';
-
-			$form.find('tr.draggable').each(function() {
-				var temp = {};
-				$fields = $(this).find('.kendra-filter-op1,.kendra-filter-op2,.kendra-filter-op3');
-
-				$fields.each(function() {
-					var $this = $(this), key = $this.attr('class').replace(/.*kendra-filter-(op\d).*/, '$1'), value = $this.val();
-					temp[key] = value;
-				});
-				filter.rules.push(temp);
-			});
-
-			jsonFilter = JSON.stringify(filter);
-			Kendra.util.log(jsonFilter, 'serialized smart filter');
-			$form.find('textarea#edit-body').val(jsonFilter);
-
+			Kendra.service.buildQueryFormSerialize($form);
 			return true;
 
-		}).find('.kendra-filter-op1').change(function() {
+		}).find('.kendra-filter-op1,.kendra-filter-op2,.kendra-filter-op3').change(function() {
+			var filter = Kendra.service.buildQueryFormSerialize($form);
+			Kendra.service.solrQuery(filter.rules);
+			return true;
+
+		}).filter('.kendra-filter-op1').change(function() {
 			var $this = $(this), key = $this.val();
 
 			if (typeof Kendra.mapping.mappings[key] != 'undefined' && Kendra.mapping.mappings[key].dataType) {
@@ -500,8 +515,12 @@ jQuery.extend(Kendra, {
 	 * @param params
 	 *            Object hash of Solr parameters
 	 */
-	solrQuery : function(query, params) {
-		var query = query || {}, params = params || {};
+	solrQuery : function(query) {
+		var query = query || {}, params = {
+			'facet' : true,
+			'facet.missing' : true,
+			'json.nl' : 'map'
+		};
 		Kendra.Manager = new AjaxSolr.Manager( {
 			solrUrl : Kendra.search.solrUrl || '',
 
@@ -529,7 +548,13 @@ jQuery.extend(Kendra, {
 			nextLabel : '&gt;',
 			innerWindow : 1,
 			renderHeader : function(perPage, offset, total) {
-				$('#kendra-search-pager-header').html($('<span/>').text('displaying ' + Math.min(total, offset + 1) + ' to ' + Math.min(total, offset + perPage) + ' of ' + total));
+				var text = '';
+				if (total > 0) {
+					text = 'displaying ' + Math.min(total, offset + 1) + ' to ' + Math.min(total, offset + perPage) + ' of ' + total;
+				} else {
+					text = 'no results match your query';
+				}
+				$('#kendra-search-pager-header').html($('<span/>').text(text));
 			}
 		}));
 
@@ -610,17 +635,17 @@ jQuery.extend(Kendra, {
 // document ready:
 (function($) {
 	$(function() {
-		var $form = $('form#node-form'), html = '';
+		if ($('body.node-type-smart-filter').length > 0) {
+			var $form = $('form#node-form'), html = '', container = '<div id="kendra-query-builder"><h3>' + 'Loading&hellip;' + '</h3></div>';
 
-		if ($form.length > 0 && $form.find('input[name=form_id]#edit-smart-filter-node-form').length > 0) {
-			$form.find('.body-field-wrapper').hide().before('<div id="kendra-query-builder"><h3>' + 'Loading&hellip;' + '</h3></div>');
+			if ($form.length > 0) {
+				$form.find('.body-field-wrapper').hide().before(container);
+			} else {
+				$('.node-smart_filter .node-content').append(container);
+			}
 
 			var success = function(selector) {
-				var jsonFilter = $form.find('textarea#edit-body').val(), params = {
-					'facet' : true,
-					'facet.missing' : true,
-					'json.nl' : 'map'
-				};
+				var jsonFilter = $form.find('textarea#edit-body').val() || $('.node-smart_filter .node-content p').text();
 
 				if (jsonFilter != '') {
 					jsonFilter = JSON.parse(jsonFilter);
@@ -630,14 +655,17 @@ jQuery.extend(Kendra, {
 					 * run a test query
 					 */
 					if (jsonFilter && jsonFilter.rules && jsonFilter.rules.length > 0) {
-						Kendra.service.solrQuery(jsonFilter.rules, params);
+						Kendra.service.solrQuery(jsonFilter.rules);
 					}
 				}
 
-				/**
-				 * build the query form
-				 */
-				html = Kendra.service.buildQueryForm(jsonFilter);
+				if ($form.length > 0) {
+					/**
+					 * build the query form
+					 */
+					html += Kendra.service.buildQueryForm(jsonFilter);
+				}
+
 				html += Kendra.service.buildQueryResponseContainer();
 
 				$(selector).html(html);

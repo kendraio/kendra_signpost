@@ -2,7 +2,7 @@
 
 	AjaxSolr.ResultWidget = AjaxSolr.AbstractWidget.extend( {
 		beforeRequest : function() {
-			$(this.target).html($('<img/>').attr('src', 'images/ajax-loader.gif'));
+			$(this.target).html($('<img/>').attr('src', '/profiles/kendra_signpost/themes/kendra_tao/images/ajax-loader.gif'));
 		},
 
 		facetLinks : function(facet_field, facet_values) {
@@ -34,6 +34,7 @@
 				var items = [];
 
 				for ( var key in [ 'ss_cck_field_cat_album', 'ss_cck_field_cat_artist', 'ss_cck_field_cat_date' ]) {
+
 					if (typeof doc[key] != 'undefined') {
 						items = items.concat(this.facetLinks(key, doc[key]));
 					}

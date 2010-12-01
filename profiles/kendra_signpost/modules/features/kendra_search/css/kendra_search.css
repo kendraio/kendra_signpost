@@ -118,6 +118,9 @@
 
 #kendra-search-pager li {
 	float: left;
+	list-style-type: none;
+	margin: 0;
+	padding-right: 1em;
 }
 
 #kendra-search-pager-header {
