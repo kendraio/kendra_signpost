@@ -47,8 +47,21 @@ def get_same_as_list():
 	query_url = "%s?default-graph-uri=&query=%s&format=text%%2Frdf+n3&debug=on&timeout=" % (kendra_signpost_utils.get_sparql_endpoint_uri(), urllib.quote_plus(query))
 	return map(strip_result_fields, re.findall(r"(?s)<result>.*?</result>", urllib.urlopen(query_url).read()))
 
+# TODO: Note: assumes that URI is valid: need sanity check here to prevent XSS attacks on SPARQL DB, or assurance this is valid at all callers
+def get_type_list():
+	query = "SELECT ?subject ?object WHERE {?subject <http://kendra.org.uk/#hasType> ?object}"
+	query_url = "%s?default-graph-uri=&query=%s&format=text%%2Frdf+n3&debug=on&timeout=" % (kendra_signpost_utils.get_sparql_endpoint_uri(), urllib.quote_plus(query))
+	return map(strip_result_fields, re.findall(r"(?s)<result>.*?</result>", urllib.urlopen(query_url).read()))
+
+def type_uri_to_prefix(name_uri):
+   return {
+       'http://kendra.org.uk/#number': 'kendra_fs_',
+       'http://kendra.org.uk/#datetime': 'kendra_ds_'
+          }.get(name_uri, 'kendra_ss_')
+
 # Process a single XML segment
 def rewrite_stanza(text):
+    global name_uri_to_type_uri
     if text[:5] != "<doc>":
         return text
     row_uri = re.findall(r'<field name="ss_cck_field_cat_rowuri">(.*?)</field>', text)
@@ -64,6 +77,7 @@ def rewrite_stanza(text):
     for name, value in property_list:
         for other_name in item_synset.get(name, []):
             mangled_properties[other_name] = value
+
     # exact names override inferred properties, for now, because we don't yet handle multiple values
     for name, value in property_list:
         mangled_properties[name] = value
@@ -71,7 +85,8 @@ def rewrite_stanza(text):
     # Bash these metadata fields in, very inefficiently
     # TO DO: make more efficient
     for name, value in mangled_properties.items():
-        text = string.replace(text, "</doc>", '<field name="%s">%s</field></doc>' % (mangle_uri(name), value))
+        type_prefix = get_type_prefix(name_uri_to_type_uri.get(name, None))
+        text = string.replace(text, "</doc>", '<field name="%s">%s</field></doc>' % (mangle_uri(type_prefix, name), value))
 
     return text
 
@@ -96,6 +111,13 @@ def make_mapping(a, b):
 same_as_mappings = get_same_as_list()
 for a, b in same_as_mappings:
     make_mapping(a, b)
+
+name_uri_to_type_uri = dict(get_type_list())
+
+print >> logfile, "<mappings>"
+print >> logfile, "same_as_mappings:", same_as_mappings
+print >> logfile, "item_synset:", item_synset
+print >> logfile, "</mappings>"
 
 print >> logfile, "<environment>"
 for k in os.environ:
