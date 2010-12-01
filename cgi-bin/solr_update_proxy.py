@@ -55,9 +55,9 @@ def get_type_list():
 
 def type_uri_to_prefix(name_uri):
    return {
-       'http://kendra.org.uk/#number': 'kendra_fs_',
-       'http://kendra.org.uk/#datetime': 'kendra_ds_'
-          }.get(name_uri, 'kendra_ss_')
+       'http://kendra.org.uk/#number': 'fs_kendra_',
+       'http://kendra.org.uk/#datetime': 'ds_kendra_'
+          }.get(name_uri, 'ss_kendra_')
 
 # Process a single XML segment
 def rewrite_stanza(text):
