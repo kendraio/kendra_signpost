@@ -15,6 +15,17 @@ function kendra_upload_ctools_plugin_api() {
  */
 function kendra_upload_node_info() {
   $items = array(
+    'kendra_format' => array(
+      'name' => t('Kendra Format'),
+      'module' => 'features',
+      'description' => '',
+      'has_title' => '1',
+      'title_label' => t('Title'),
+      'has_body' => '0',
+      'body_label' => '',
+      'min_word_count' => '0',
+      'help' => '',
+    ),
     'kendra_import' => array(
       'name' => t('Kendra Import'),
       'module' => 'features',

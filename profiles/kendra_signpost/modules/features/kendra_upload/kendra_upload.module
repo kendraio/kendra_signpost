@@ -27,6 +27,10 @@ function kendra_upload_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 				$node->content['sparql_result'] = array(
           '#value' => $result->data,
 				);
+			  $node->content['atom_feed'] = array(
+			    '#value' => l('<strong>Atom Feed</strong>'. theme('image', 'misc/feed.png'), "node/{$node->nid}/atom", array('html' => TRUE)),
+          '#weight' => -10,
+			  );
 			}
 			break;
 	}
