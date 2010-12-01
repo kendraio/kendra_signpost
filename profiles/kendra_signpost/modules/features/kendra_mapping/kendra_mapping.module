@@ -19,7 +19,7 @@ function kendra_mapping_allowed_values() {
 	}
 	if ($maps == NULL) {
 		// only retrieve mappings on first call of this function
-		$result = db_query("SELECT nid FROM node WHERE type = '%s'", 'kendra_import');
+		$result = db_query("SELECT nid FROM node WHERE type = '%s' OR type = '%s'", 'kendra_import', 'kendra_format');
 		$maps = array();
 		while ($node = db_fetch_object($result)) {
 			$graph = url("node/{$node->nid}", array('absolute' => TRUE));

@@ -5,7 +5,9 @@ include_once('kendra_upload.features.inc');
 function kendra_upload_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 	switch ($op) {
 		case 'insert':
-		case 'update':
+		// only create triples on insert
+		// TODO: handle update event
+		//case 'update':
 			if ($node->type == 'kendra_import') {
 				if (module_exists('krumo')
 				&& 	(($handle = fopen($node->field_upload_file[0]['filepath'], 'r')) !== FALSE)
@@ -18,6 +20,9 @@ function kendra_upload_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 					array($node->nid),
 	          '', TRUE);
 				}
+			}
+			if ($node->type == 'kendra_format') {
+			  _kendra_upload_process_format($node->nid);
 			}
 			break;
 		case 'view':
@@ -32,12 +37,36 @@ function kendra_upload_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
           '#weight' => -10,
 			  );
 			}
+			if ($node->type == 'kendra_format') {
+				$graph = url("node/{$node->nid}", array('absolute' => TRUE));
+				$result = kendra_rdf_send("SELECT * FROM <{$graph}> WHERE {?s ?p ?o}");
+				$node->content['sparql_result'] = array(
+          '#value' => $result->data,
+          '#weight' => 99,
+				);
+			}
 			break;
 	}
 }
 
 function array_trim(&$value, $key) {
 	$value = trim($value);
+}
+
+function _kendra_upload_process_format($nid) {
+  $node = node_load($nid);
+	$graph = url("node/{$nid}", array('absolute' => TRUE));
+	$query = "";
+  $triples = "";
+  foreach ($node->field_format_prop as $key => $prop) {
+		$row_uri = $graph ."/property#{$key}";
+		$relation = $prop['value']; // TODO: filter user input
+		$triples .= "\n<{$row_uri}> <{$relation}> \"\" .\n";
+  }
+  watchdog('kendra_format', "triples: \n\n". $triples ."\n\n from \n\n". print_r($node, TRUE));
+	if (!empty($triples)) {
+		job_queue_add('kendra_rdf_insert', "insert for graph {$graph}", array($graph, $triples), '', TRUE);
+	}
 }
 
 function _kendra_upload_process_csv($nid) {
