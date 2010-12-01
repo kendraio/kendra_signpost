@@ -113,7 +113,7 @@
 }
 
 #kendra-search-pager {
-	
+	margin: 0;
 }
 
 #kendra-search-pager li {
@@ -124,7 +124,7 @@
 }
 
 #kendra-search-pager-header {
-	
+	margin-bottom: 1em;
 }
 
 #kendra-search-docs {
