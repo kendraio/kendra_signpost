@@ -625,14 +625,14 @@ jQuery.extend(Kendra, {
 						var objKey = key + '.facet.range.end';
 						params = $.extend(true, params, {
 							objKey : val,
-							'facet.range' : key
+							'facet.range' : [ key ]
 						});
 						break;
 					case '&gt;':
 						var objKey = key + '.facet.range.start';
 						params = $.extend(true, params, {
 							objKey : val,
-							'facet.range' : key
+							'facet.range' : [ key ]
 						});
 						break;
 					case '==':
@@ -648,14 +648,14 @@ jQuery.extend(Kendra, {
 						var objKey = key + '.facet.date.end';
 						params = $.extend(true, params, {
 							objKey : val,
-							'facet.date' : key
+							'facet.date' : [ key ]
 						});
 						break;
 					case '&gt;':
 						var objKey = key + '.facet.date.start';
 						params = $.extend(true, params, {
 							objKey : val,
-							'facet.date' : key
+							'facet.date' : [ key ]
 						});
 						break;
 					case '==':
