@@ -635,7 +635,7 @@ jQuery.extend(Kendra, {
 // document ready:
 (function($) {
 	$(function() {
-		if ($('body.node-type-smart-filter').length > 0) {
+		if ($('body.node-type-smart-filter').length > 0 || $('#edit-smart-filter-node-form').length > 0) {
 			var $form = $('form#node-form'), html = '', container = '<div id="kendra-query-builder"><h3>' + 'Loading&hellip;' + '</h3></div>';
 
 			if ($form.length > 0) {
