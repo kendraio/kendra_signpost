@@ -85,7 +85,7 @@ def rewrite_stanza(text):
     # Bash these metadata fields in, very inefficiently
     # TO DO: make more efficient
     for name, value in mangled_properties.items():
-        type_prefix = get_type_prefix(name_uri_to_type_uri.get(name, None))
+        type_prefix = type_uri_to_prefix(name_uri_to_type_uri.get(name, None))
         text = string.replace(text, "</doc>", '<field name="%s">%s</field></doc>' % (mangle_uri(type_prefix, name), value))
 
     return text
@@ -117,6 +117,7 @@ name_uri_to_type_uri = dict(get_type_list())
 print >> logfile, "<mappings>"
 print >> logfile, "same_as_mappings:", same_as_mappings
 print >> logfile, "item_synset:", item_synset
+print >> logfile, "name_uri_to_type_uri:", name_uri_to_type_uri
 print >> logfile, "</mappings>"
 
 print >> logfile, "<environment>"
