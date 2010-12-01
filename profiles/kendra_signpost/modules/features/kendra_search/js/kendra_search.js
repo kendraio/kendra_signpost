@@ -482,7 +482,6 @@ jQuery.extend(Kendra, {
 			if (typeof Kendra.mapping.mappings[key] != 'undefined' && Kendra.mapping.mappings[key].dataType) {
 				var dataType = Kendra.mapping.mappings[key].dataType.split('#').pop(), options = Kendra.service.buildQueryMappingTypes(dataType);
 				$this.parents('tr.draggable:eq(0)').find('.kendra-filter-op2').html(options);
-				Kendra.util.log(Kendra.mapping.mappings[key].dataType, Kendra.mapping.mappings[key].dataType.split('#').pop());
 			}
 
 			return true;
@@ -571,18 +570,21 @@ jQuery.extend(Kendra, {
 		params = $.extend(params, Kendra.service.buildSolrQuery(query));
 
 		for ( var name in params) {
-			var val = params[name];
+			var val = params[name], multivariate_facets = [ 'fq', 'facet.field', 'facet.query' ];
 
 			if (typeof val == 'object') {
-				if (val.length > 0) {
-					val = val.join(',');
+				if ($.inArray(name, multivariate_facets)) {
+					for ( var i in val) {
+						Kendra.Manager.store.addByValue(name, val[i]);
+					}
+				} else if (val.length > 0) {
+					Kendra.Manager.store.addByValue(name, val.join(','));
 				} else {
 					Kendra.util.log(val, "Kendra.service.solrQuery: skipping object parameter");
-					continue;
 				}
+			} else {
+				Kendra.Manager.store.addByValue(name, val);
 			}
-
-			Kendra.Manager.store.addByValue(name, val);
 		}
 		Kendra.Manager.doRequest();
 	},
@@ -597,38 +599,82 @@ jQuery.extend(Kendra, {
 	 *            Object
 	 * @returns Object
 	 * 
-	 * @TODO add cases for number & datetime
+	 * @TODO inspect the condition (op2); use it to determine the facet
+	 *       operation
 	 * @TODO add query grouping
 	 * @TODO add support for AND vs OR subqueries
 	 */
 	buildSolrQuery : function(query) {
 		var i = {}, key = '', val = '', dataType = '', params = {
-			'q' : [],
 			'fq' : []
 		};
 		for ( var i in query) {
 			key = query[i].op1;
-			val = query[i].op3; // encodeURIComponent(query[i].op3);
+			val = query[i].op3;
+			condition = query[i].op2;
 
-		/**
-		 * format the operand according to data type
-		 */
-		if (typeof Kendra.mapping.mappings[key] != 'undefined' && Kendra.mapping.mappings[key].dataType) {
-			dataType = Kendra.mapping.mappings[key].dataType.split('#').pop();
-			switch (dataType) {
-			case 'number':
-			case 'datetime':
-				break;
-			case 'string':
-			default:
-				val = '"' + val + '"';
+			/**
+			 * format the operand according to data type
+			 */
+			if (typeof Kendra.mapping.mappings[key] != 'undefined' && Kendra.mapping.mappings[key].dataType) {
+				dataType = Kendra.mapping.mappings[key].dataType.split('#').pop();
+				switch (dataType) {
+				case 'number':
+					switch (condition) {
+					case '&lt;':
+						if (!params['facet.range']) {
+							params['facet.range'] = [];
+							params[key + '.facet.range.end'] = [];
+						}
+						params[key + '.facet.range.end'].push(val);
+						params['facet.range'].push(key);
+						break;
+					case '&gt;':
+						if (!params['facet.range']) {
+							params['facet.range'] = [];
+							params[key + '.facet.range.start'] = [];
+						}
+						params[key + '.facet.range.start'].push(val);
+						params['facet.range'].push(key);
+						break;
+					case '==':
+						params['fq'].push(Kendra.util.mungeString(key) + ':' + val);
+						break;
+					}
+					break;
+				case 'datetime':
+					switch (condition) {
+					case '&lt;':
+						if (!params['facet.date']) {
+							params['facet.date'] = [];
+							params[key + '.facet.date.end'] = [];
+						}
+						params[key + '.facet.date.end'].push(val);
+						params['facet.date'].push(key);
+						break;
+					case '&gt;':
+						if (!params['facet.date']) {
+							params['facet.date'] = [];
+							params[key + '.facet.date.start'] = [];
+						}
+						params[key + '.facet.date.start'].push(val);
+						params['facet.date'].push(key);
+						break;
+					case '==':
+						params['fq'].push(Kendra.util.mungeString(key) + ':' + val);
+						break;
+					}
+					params['fq'].push(Kendra.util.mungeString(key) + ':' + val);
+					break;
+				case 'string':
+				default:
+					val = '"' + val + '"';
+					params['fq'].push(Kendra.util.mungeString(key) + ':' + val);
+				}
 			}
 		}
-
-		params.fq.push(Kendra.util.mungeString(key) + ':' + val);
+		return params;
 	}
-	return params;
-}
 	}
 });
 
