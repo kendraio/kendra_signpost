@@ -459,6 +459,9 @@ jQuery.extend(Kendra, {
 	 *            JQuery object
 	 */
 	buildQueryFormPostProcess : function($form) {
+		if ($form.length == 0)
+			return;
+
 		Kendra.service.buildQueryFormToggleRemoveLinks($form);
 
 		/**
@@ -633,12 +636,16 @@ jQuery.extend(Kendra, {
 (function($) {
 	$(function() {
 		if ($('body.node-type-smart-filter').length > 0) {
-			var $form = $('form#node-form'), html = '';
+			var $form = $('form#node-form'), html = '', container = '<div id="kendra-query-builder"><h3>' + 'Loading&hellip;' + '</h3></div>';
 
-			$form.find('.body-field-wrapper').hide().before('<div id="kendra-query-builder"><h3>' + 'Loading&hellip;' + '</h3></div>');
+			if ($form.length > 0) {
+				$form.find('.body-field-wrapper').hide().before(container);
+			} else {
+				$('.node-smart_filter .node-content').append(container);
+			}
 
 			var success = function(selector) {
-				var jsonFilter = $form.find('textarea#edit-body').val() || $('.node-smart_filter .node-content').text();
+				var jsonFilter = $form.find('textarea#edit-body').val() || $('.node-smart_filter .node-content p').text();
 
 				if (jsonFilter != '') {
 					jsonFilter = JSON.parse(jsonFilter);
@@ -656,13 +663,15 @@ jQuery.extend(Kendra, {
 					/**
 					 * build the query form
 					 */
-					html = Kendra.service.buildQueryForm(jsonFilter);
-					html += Kendra.service.buildQueryResponseContainer();
-	
-					$(selector).html(html);
-	
-					Kendra.service.buildQueryFormPostProcess($form);
+					html += Kendra.service.buildQueryForm(jsonFilter);
 				}
+
+				html += Kendra.service.buildQueryResponseContainer();
+
+				$(selector).html(html);
+
+				Kendra.service.buildQueryFormPostProcess($form);
+
 			}, failure = function() {
 				$('#kendra-query-builder').html('No mappings were found. Please <a href="/node/add/kendra-import">import a catalogue</a> first.');
 			};
