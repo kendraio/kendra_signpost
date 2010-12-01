@@ -2,7 +2,7 @@
 
 	AjaxSolr.ResultWidget = AjaxSolr.AbstractWidget.extend( {
 		beforeRequest : function() {
-			$(this.target).html($('<img/>').attr('src', 'images/ajax-loader.gif'));
+			$(this.target).html($('<img/>').attr('src', '/profiles/kendra_signpost/themes/kendra_tao/images/ajax-loader.gif'));
 		},
 
 		facetLinks : function(facet_field, facet_values) {
