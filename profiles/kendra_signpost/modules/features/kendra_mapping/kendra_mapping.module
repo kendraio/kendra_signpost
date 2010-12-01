@@ -64,7 +64,7 @@ function kendra_mapping_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 		case 'delete':
 		case 'delete revision':
 			if ($node->type == 'kendra_map') {
-				cache_clear_all('kendra_search_mappings');
+				cache_clear_all('kendra_search_mappings', 'cache');
 			}
 			break;
 	}
@@ -79,7 +79,7 @@ function _kendra_mapping_send_rdf($nid, $mapnid) {
 	$item = "\n<{$source}> <{$type}> <{$dest}> .\n";
 	$response = kendra_rdf_send("INSERT IN GRAPH <{$graph}> \n{ {$item} }");
 
-	cache_clear_all('kendra_search_mappings');
+	cache_clear_all('kendra_search_mappings', 'cache');
 }
 
 
