@@ -18,7 +18,7 @@ function kendra_search_map_alter(&$item, $key) {
  * @returns the printable version of a mapping term
  */
 function kendra_search_map_alter_value($item) {
-	return t(str_replace('_', ' ', urldecode(end(split('#', $item)))));
+	return urldecode(end(split('#', $item)));
 }
 
 /**
