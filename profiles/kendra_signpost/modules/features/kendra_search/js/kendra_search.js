@@ -27,7 +27,7 @@ jQuery.extend(Kendra, {
 		 */
 		log : function(obj, label) {
 			if (typeof console != 'undefined') {
-				console.log(obj);
+				console.log(typeof label != 'undefined' ? label : '', obj);
 			}
 			return;
 
@@ -75,7 +75,19 @@ jQuery.extend(Kendra, {
 		mungeString : function(str) {
 			// str = 'ss_kendra_' + str;
 		return encodeURIComponent(str).replace(/\./g, '_2E').replace(/%/g, '_');
+	},
+
+	/**
+	 * dataTypeForKey
+	 * 
+	 * @param key
+	 *            String munged URI key for a mapping item
+	 * @returns String 'string'|'number'|'datetime'
+	 */
+	dataTypeForKey : function(key) {
+		return (!Kendra.mapping.mappings[key] || !Kendra.mapping.mappings[key].dataType) ? null : Kendra.mapping.mappings[key].dataType.split('#').pop();
 	}
+
 	},
 
 	/**
@@ -277,8 +289,8 @@ jQuery.extend(Kendra, {
 		html += '<td class="kendra-filter-op2-wrapper">';
 		html += '<select class="kendra-filter-op2" name="op2">';
 
-		if (rule && rule.op2 && rule.op2.dataType) {
-			dataType = rule.op2.dataType;
+		if (rule && typeof rule.op2 != 'undefined' && Kendra.mapping.mappings[key].dataType) {
+			dataType = Kendra.util.dataTypeForKey(key);
 		}
 		html += Kendra.service.buildQueryMappingTypes(dataType, rule);
 
@@ -308,14 +320,14 @@ jQuery.extend(Kendra, {
 	/**
 	 * buildQueryMappingTypes
 	 * 
-	 * @param datatype
+	 * @param dataType
 	 *            String optional
 	 * @param rule
 	 *            Object optional returns an HTML string with a list of search
 	 *            options depending on the data type provided
 	 */
-	buildQueryMappingTypes : function(datatype, rule) {
-		var html = '', datatype = datatype ? datatype.toLowerCase() : 'default', operands = {
+	buildQueryMappingTypes : function(dataType, rule) {
+		var html = '', dataType = dataType ? dataType.toLowerCase() : 'default', operands = {
 			'default' : {
 				'==' : {
 					'label' : 'is'
@@ -363,16 +375,16 @@ jQuery.extend(Kendra, {
 			}
 		};
 
-		for ( var key in operands[datatype]) {
+		for ( var key in operands[dataType]) {
 			html += '<option value="' + key + '"';
 			if (typeof rule != 'undefined' && typeof rule.op2 != 'undefined' && rule.op2 != '') {
 				if (key == rule.op2) {
 					html += ' selected="selected"';
 				}
-			} else if (operands[datatype][key].selected) {
+			} else if (operands[dataType][key].selected) {
 				html += ' selected="selected"';
 			}
-			html += '>' + (typeof operands[datatype][key].label != 'undefined' ? operands[datatype][key].label : key) + '</option>';
+			html += '>' + (typeof operands[dataType][key].label != 'undefined' ? operands[dataType][key].label : key) + '</option>';
 		}
 		return html;
 	},
@@ -481,7 +493,7 @@ jQuery.extend(Kendra, {
 			var $this = $(this), key = $this.val();
 
 			if (typeof Kendra.mapping.mappings[key] != 'undefined' && Kendra.mapping.mappings[key].dataType) {
-				var dataType = Kendra.mapping.mappings[key].dataType.split('#').pop(), options = Kendra.service.buildQueryMappingTypes(dataType);
+				var dataType = Kendra.util.dataTypeForKey(key), options = Kendra.service.buildQueryMappingTypes(dataType);
 				$this.parents('tr.draggable:eq(0)').find('.kendra-filter-op2').html(options);
 			}
 
@@ -616,7 +628,7 @@ jQuery.extend(Kendra, {
 			 * format the operand according to data type
 			 */
 			if (typeof Kendra.mapping.mappings[key] != 'undefined' && Kendra.mapping.mappings[key].dataType) {
-				dataType = Kendra.mapping.mappings[key].dataType.split('#').pop();
+				dataType = Kendra.util.dataTypeForKey(key);
 				switch (dataType) {
 				case 'number':
 					switch (condition) {
