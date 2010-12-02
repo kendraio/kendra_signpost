@@ -580,7 +580,7 @@ jQuery.extend(Kendra, {
 		/**
 		 * now, build the actual query strings
 		 */
-		params = $.extend(params, Kendra.service.buildSolrQuery(query));
+		Kendra.service.buildSolrQuery(query);
 
 		for ( var name in params) {
 			var val = params[name], multivariate_facets = [ 'fq', 'facet.field', 'facet.query' ];
@@ -618,7 +618,7 @@ jQuery.extend(Kendra, {
 	 * @TODO add support for AND vs OR subqueries
 	 */
 	buildSolrQuery : function(query) {
-		var i = {}, key = '', val = '', dataType = '', params = {};
+		var i = {}, key = '', val = '', dataType = '';
 		for ( var i in query) {
 			key = query[i].op1;
 			val = query[i].op3;
@@ -634,22 +634,17 @@ jQuery.extend(Kendra, {
 					switch (condition) {
 					case '&lt;':
 						var objKey = key + '.facet.range.end';
-						params = $.extend(true, params, {
-							objKey : val,
-							'facet.range' : [ key ]
-						});
+						Kendra.Manager.store.addByValue(objKey, val);
+						Kendra.Manager.store.addByValue('facet.range', key);
 						break;
 					case '&gt;':
 						var objKey = key + '.facet.range.start';
-						params = $.extend(true, params, {
-							objKey : val,
-							'facet.range' : [ key ]
-						});
+						Kendra.Manager.store.addByValue(objKey, val);
+						Kendra.Manager.store.addByValue('facet.range', key);
 						break;
 					case '==':
-						params = $.extend(true, params, {
-							'fq' : Kendra.util.mungeString(key) + ':' + val
-						});
+						var val = Kendra.util.mungeString(key) + ':' + val;
+						Kendra.Manager.store.addByValue('fq', val);
 						break;
 					}
 					break;
@@ -657,35 +652,27 @@ jQuery.extend(Kendra, {
 					switch (condition) {
 					case '&lt;':
 						var objKey = key + '.facet.date.end';
-						params = $.extend(true, params, {
-							objKey : val,
-							'facet.date' : [ key ]
-						});
+						Kendra.Manager.store.addByValue(objKey, val);
+						Kendra.Manager.store.addByValue('facet.date', key);
 						break;
 					case '&gt;':
 						var objKey = key + '.facet.date.start';
-						params = $.extend(true, params, {
-							objKey : val,
-							'facet.date' : [ key ]
-						});
+						Kendra.Manager.store.addByValue(objKey, val);
+						Kendra.Manager.store.addByValue('facet.date', key);
 						break;
 					case '==':
-						params = $.extend(true, params, {
-							'fq' : Kendra.util.mungeString(key) + ':' + val
-						});
+						var val = Kendra.util.mungeString(key) + ':' + val;
+						Kendra.Manager.store.addByValue('fq', val);
 						break;
 					}
 					break;
 				case 'string':
 				default:
-					val = '"' + val + '"';
-					params = $.extend(true, params, {
-						'fq' : Kendra.util.mungeString(key) + ':' + val
-					});
+					var fq = Kendra.util.mungeString(key) + ':' + '"' + val + '"';
+					Kendra.Manager.store.addByValue('fq', fq);
 				}
 			}
 		}
-		return params;
 	}
 	}
 });
