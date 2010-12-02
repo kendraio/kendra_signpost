@@ -138,10 +138,10 @@ jQuery.extend(Kendra, {
 						}, function(status, data) {
 							if (status == false) {
 								Kendra.util.log("Kendra.service.getMappings: FATAL ERROR");
-								failure();
+								failure(status, data);
 							} else if (data['#error'] == true) {
 								Kendra.util.log("Kendra.service.getMappings: error: " + data['#message']);
-								failure();
+								failure(status, data);
 							} else {
 								Kendra.mapping.mappings = $.extend(Kendra.mapping.mappings, data);
 								Kendra.util.log(data, 'Kendra.service.getMappings: merged ' + Kendra.util.arrayLength(Kendra.mapping.mappings) + ' mappings');
@@ -719,14 +719,21 @@ jQuery.extend(Kendra, {
 					Kendra.service.solrQuery(jsonFilter.rules);
 				}
 
-			}, failure = function() {
-				$('#kendra-query-builder').html('No mappings were found. Please <a href="/node/add/kendra-import">import a catalogue</a> first.');
+			}, failure = function(status, data) {
+				var html = '';
+				if (data && data['#message'] && data['#message'] == "Access denied") {
+					html = 'Access denied. Please <a href="/user">log in</a> first.';
+					$('#page #content .content-wrapper').html(html);
+				} else {
+					html = 'No mappings were found. Please <a href="/node/add/kendra-import">import a catalogue</a> first.';
+					$('#kendra-query-builder').html(html);
+				}
 			};
 
 			Kendra.service.getMappings(function() {
 				success('#kendra-query-builder');
-			}, function() {
-				failure();
+			}, function(status, data) {
+				failure(status, data);
 			});
 		}
 	});
