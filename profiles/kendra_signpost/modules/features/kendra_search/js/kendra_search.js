@@ -685,24 +685,20 @@ jQuery.extend(Kendra, {
 			var $form = $('form#node-form'), html = '', container = '<div id="kendra-query-builder"><h3>' + 'Loading&hellip;' + '</h3></div>';
 
 			if ($form.length > 0) {
+				// smart filter editor page
 				$form.find('.body-field-wrapper').hide().before(container);
 			} else {
+				// smart filter view page
 				$('.node-smart_filter .node-content').append(container);
 			}
 
 			var success = function(selector) {
+				// load an existing smart filter from the page content
 				var jsonFilter = $form.find('textarea#edit-body').val() || $('.node-smart_filter .node-content p').text();
 
 				if (jsonFilter != '') {
 					jsonFilter = JSON.parse(jsonFilter);
 					Kendra.util.log(jsonFilter, 'parsed JSON');
-
-					/**
-					 * run a test query
-					 */
-					if (jsonFilter && jsonFilter.rules && jsonFilter.rules.length > 0) {
-						Kendra.service.solrQuery(jsonFilter.rules);
-					}
 				}
 
 				if ($form.length > 0) {
@@ -717,6 +713,11 @@ jQuery.extend(Kendra, {
 				$(selector).html(html);
 
 				Kendra.service.buildQueryFormPostProcess($form);
+
+				// run the query
+				if (jsonFilter && jsonFilter.rules && jsonFilter.rules.length > 0) {
+					Kendra.service.solrQuery(jsonFilter.rules);
+				}
 
 			}, failure = function() {
 				$('#kendra-query-builder').html('No mappings were found. Please <a href="/node/add/kendra-import">import a catalogue</a> first.');
