@@ -28,7 +28,7 @@ function kendra_search_map_alter_value($item) {
  * @returns a munged URI suitable for usage as a search facet for Apache Solr
  */
 function kendra_search_map_alter_key($text) {
-	$munged_text = "ss_kendra_" . str_replace('.', '_2E', str_replace('%', '_', urlencode($text)));
+	$munged_text = "ss_kendra_" . str_replace('.', '_2E', str_replace('%', '_', str_replace('_', '_5F', urlencode($text))));
 	return $munged_text ;
 }
 
