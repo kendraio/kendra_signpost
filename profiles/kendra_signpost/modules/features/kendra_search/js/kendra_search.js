@@ -74,7 +74,7 @@ jQuery.extend(Kendra, {
 		 */
 		mungeString : function(str) {
 			// str = 'ss_kendra_' + str;
-		return encodeURIComponent(str).replace(/\./g, '_2E').replace(/%/g, '_');
+		return encodeURIComponent(str).replace(/_/g, '_5F').replace(/\./g, '_2E').replace(/%/g, '_');
 	},
 
 	/**
