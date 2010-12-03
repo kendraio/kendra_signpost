@@ -76,13 +76,14 @@ jQuery.extend(Kendra, {
 			var dataType = Kendra.util.dataTypeForKey(key), str = encodeURIComponent(key).replace(/\./g, '_2E').replace(/%/g, '_');
 			switch (dataType) {
 			case 'number':
-				str = str.replace(/^ss_/, 'fs_');
+				str = str.replace(/^[dfs]s_/, 'fs_');
 				break;
 			case 'datetime':
-				str = str.replace(/^ss_/, 'ds_');
+				str = str.replace(/^[dfs]s_/, 'ds_');
 				break;
 			case 'string':
 			default:
+				str = str.replace(/^[dfs]s_/, 'ss_');
 				break;
 			}
 			return str;
@@ -638,51 +639,50 @@ jQuery.extend(Kendra, {
 			/**
 			 * format the operand according to data type
 			 */
-			if (typeof Kendra.mapping.mappings[key] != 'undefined' && Kendra.mapping.mappings[key].dataType) {
-				dataType = Kendra.util.dataTypeForKey(key);
-				switch (dataType) {
-				case 'number':
-					switch (condition) {
-					case '&lt;':
-						var objKey = key + '.facet.range.end';
-						Kendra.Manager.store.addByValue(objKey, val);
-						Kendra.Manager.store.addByValue('facet.range', key);
-						break;
-					case '&gt;':
-						var objKey = key + '.facet.range.start';
-						Kendra.Manager.store.addByValue(objKey, val);
-						Kendra.Manager.store.addByValue('facet.range', key);
-						break;
-					case '==':
-						var val = Kendra.util.mungeKey(key) + ':' + val;
-						Kendra.Manager.store.addByValue('fq', val);
-						break;
-					}
+			dataType = Kendra.util.dataTypeForKey(key);
+			switch (dataType) {
+			case 'number':
+				switch (condition) {
+				case '&lt;':
+					var objKey = key + '.facet.range.end';
+					Kendra.Manager.store.addByValue(objKey, val);
+					Kendra.Manager.store.addByValue('facet.range', key);
 					break;
-				case 'datetime':
-					switch (condition) {
-					case '&lt;':
-						var objKey = key + '.facet.date.end';
-						Kendra.Manager.store.addByValue(objKey, val);
-						Kendra.Manager.store.addByValue('facet.date', key);
-						break;
-					case '&gt;':
-						var objKey = key + '.facet.date.start';
-						Kendra.Manager.store.addByValue(objKey, val);
-						Kendra.Manager.store.addByValue('facet.date', key);
-						break;
-					case '==':
-						var val = Kendra.util.mungeKey(key) + ':' + val;
-						Kendra.Manager.store.addByValue('fq', val);
-						break;
-					}
+				case '&gt;':
+					var objKey = key + '.facet.range.start';
+					Kendra.Manager.store.addByValue(objKey, val);
+					Kendra.Manager.store.addByValue('facet.range', key);
 					break;
-				case 'string':
-				default:
-					var fq = Kendra.util.mungeKey(key) + ':' + '"' + val + '"';
-					Kendra.Manager.store.addByValue('fq', fq);
+				case '==':
+					var val = Kendra.util.mungeKey(key) + ':' + val;
+					Kendra.Manager.store.addByValue('fq', val);
+					break;
 				}
+				break;
+			case 'datetime':
+				switch (condition) {
+				case '&lt;':
+					var objKey = key + '.facet.date.end';
+					Kendra.Manager.store.addByValue(objKey, '"' + val + '"');
+					Kendra.Manager.store.addByValue('facet.date', key);
+					break;
+				case '&gt;':
+					var objKey = key + '.facet.date.start';
+					Kendra.Manager.store.addByValue(objKey, '"' + val + '"');
+					Kendra.Manager.store.addByValue('facet.date', key);
+					break;
+				case '==':
+					var val = Kendra.util.mungeKey(key) + ':' + '"' + val + '"';
+					Kendra.Manager.store.addByValue('fq', val);
+					break;
+				}
+				break;
+			case 'string':
+			default:
+				var fq = Kendra.util.mungeKey(key) + ':' + '"' + val + '"';
+				Kendra.Manager.store.addByValue('fq', fq);
 			}
+
 		}
 	}
 	}
