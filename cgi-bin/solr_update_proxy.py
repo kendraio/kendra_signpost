@@ -54,11 +54,11 @@ def get_type_list():
 	return map(strip_result_fields, re.findall(r"(?s)<result>.*?</result>", urllib.urlopen(query_url).read()))
 
 def type_uri_to_prefix(name_uri):
-   return 'ss_kendra_'    # HACK: force everything to string until Solr stuff is fixed: breaks on date fields at the moment
-#   return {
-#       'http://kendra.org.uk/#number': 'fs_kendra_',
-#       'http://kendra.org.uk/#datetime': 'ds_kendra_'
-#          }.get(name_uri, 'ss_kendra_')
+#   return 'ss_kendra_'    # HACK: force everything to string until Solr stuff is fixed: breaks on date fields at the moment
+   return {
+       'http://kendra.org.uk/#number': 'fs_kendra_',
+       'http://kendra.org.uk/#datetime': 'ds_kendra_'
+          }.get(name_uri, 'ss_kendra_')
 
 # Process a single XML segment
 def rewrite_stanza(text):
