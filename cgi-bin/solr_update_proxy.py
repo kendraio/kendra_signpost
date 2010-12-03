@@ -54,10 +54,11 @@ def get_type_list():
 	return map(strip_result_fields, re.findall(r"(?s)<result>.*?</result>", urllib.urlopen(query_url).read()))
 
 def type_uri_to_prefix(name_uri):
-   return {
-       'http://kendra.org.uk/#number': 'fs_kendra_',
-       'http://kendra.org.uk/#datetime': 'ds_kendra_'
-          }.get(name_uri, 'ss_kendra_')
+   return 'ss_kendra_'    # HACK: force everything to string until Solr stuff is fixed: breaks on date fields at the moment
+#   return {
+#       'http://kendra.org.uk/#number': 'fs_kendra_',
+#       'http://kendra.org.uk/#datetime': 'ds_kendra_'
+#          }.get(name_uri, 'ss_kendra_')
 
 # Process a single XML segment
 def rewrite_stanza(text):
@@ -75,8 +76,11 @@ def rewrite_stanza(text):
     # now modifiy property list to include inferred properties from metadata equivalences
     mangled_properties = {}
     for name, value in property_list:
-        for other_name in item_synset.get(name, []):
-            mangled_properties[other_name] = value
+       other_names = item_synset.get(name, [])
+       if len(other_names) > 1:
+          print >> logfile, "MADE INFERENCE:", name, "->", other_names
+       for other_name in other_names:
+          mangled_properties[other_name] = value
 
     # exact names override inferred properties, for now, because we don't yet handle multiple values
     for name, value in property_list:
@@ -118,6 +122,7 @@ print >> logfile, "<mappings>"
 print >> logfile, "same_as_mappings:", same_as_mappings
 print >> logfile, "item_synset:", item_synset
 print >> logfile, "name_uri_to_type_uri:", name_uri_to_type_uri
+print >> logfile, "sparql endpoint uri", kendra_signpost_utils.get_sparql_endpoint_uri()
 print >> logfile, "</mappings>"
 
 print >> logfile, "<environment>"
