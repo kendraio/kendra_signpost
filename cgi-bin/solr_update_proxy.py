@@ -118,6 +118,7 @@ print >> logfile, "<mappings>"
 print >> logfile, "same_as_mappings:", same_as_mappings
 print >> logfile, "item_synset:", item_synset
 print >> logfile, "name_uri_to_type_uri:", name_uri_to_type_uri
+print >> logfile, "sparql endpoint uri", kendra_signpost_utils.get_sparql_endpoint_uri()
 print >> logfile, "</mappings>"
 
 print >> logfile, "<environment>"
