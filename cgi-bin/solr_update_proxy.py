@@ -74,16 +74,13 @@ def rewrite_stanza(text):
     property_list = get_property_list(row_uri)
 
     # now modifiy property list to include inferred properties from metadata equivalences
-
-    # print debugging messages...
-    other_names = item_synset.get(name, [])
-    if len(other_names) > 1:
-       print >> logfile, "MADE INFERENCE:", name, "->", other_names
-
     mangled_properties = {}
     for name, value in property_list:
-        for other_name in item_synset.get(name, []):
-            mangled_properties[other_name] = value
+       other_names = item_synset.get(name, [])
+       if len(other_names) > 1:
+          print >> logfile, "MADE INFERENCE:", name, "->", other_names
+       for other_name in other_names:
+          mangled_properties[other_name] = value
 
     # exact names override inferred properties, for now, because we don't yet handle multiple values
     for name, value in property_list:
