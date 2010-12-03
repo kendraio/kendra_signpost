@@ -1,5 +1,5 @@
 <?php
-// $Id: services_keyauth.inc,v 1.1.2.8.2.12 2010/02/27 17:22:11 heyrocker Exp $
+// $Id: services_keyauth.inc,v 1.1.2.8.2.17 2010/10/26 21:55:31 ocyrus Exp $
 
 /**
  * @file
@@ -69,18 +69,21 @@ function _services_keyauth_alter_methods(&$methods) {
     'name' => 'sessid',
     'type' => 'string',
     'description' => t('A valid sessid.'),
+    'source' => array('param' => 'sessid'),
   );
 
   $arg_domain_time_stamp = array(
     'name' => 'domain_time_stamp',
     'type' => 'string',
     'description' => t('Time stamp used to hash key.'),
+    'source' => array('param' => 'domain_time_stamp'),
   );
 
   $arg_nonce = array(
     'name' => 'nonce',
     'type' => 'string',
-    'description' => t('One time use nonce also used hash key.'),
+    'description' => t('One-time-use nonce also used to hash key.'),
+    'source' => array('param' => 'nonce'),
   );
 
   // domain arg
@@ -88,13 +91,15 @@ function _services_keyauth_alter_methods(&$methods) {
     'name' => 'domain_name',
     'type' => 'string',
     'description' => t('A valid domain for the API key.'),
+    'source' => array('param' => 'domain_name'),
   );
 
   // api_key arg
   $arg_api_key = array(
     'name' => 'hash',
     'type' => 'string',
-    'description' => t('A valid API key.'),
+    'description' => t('An SHA-256 hash of the timestamp, domain, nonce, and method name delimited by semicolons and using the remote API key as the shared key.'),
+    'source' => array('param' => 'hash'),
   );
 
   foreach ($methods as $key => &$method) {
@@ -142,27 +147,30 @@ function _services_keyauth_alter_browse_form(&$form, $method) {
     switch ($arg['name']) {
       case 'hash':
         $form['arg'][$key] = array(
-          '#title'          => 'Hash',
+          '#title'          => t('Hash'),
           '#type'           => 'textfield',
           '#value'          => t('Gets generated after form submission'),
           '#disabled'       => TRUE
         );
         break;
       case 'sessid':
+        $form['arg'][$key]['#title']  = t('Session ID');
         $form['arg'][$key]['#default_value']  = session_id();
         break;
       case 'domain_name':
+        $form['arg'][$key]['#title']  = t('Domain name');
         $form['arg'][$key]['#default_value'] = $_SERVER['HTTP_HOST'];
         break;
       case 'domain_time_stamp':
         $form['arg'][$key] = array(
-          '#title'          => 'Timestamp',
+          '#title'          => t('Timestamp'),
           '#type'           => 'textfield',
           '#value'          => t('Gets generated after form submission'),
           '#disabled'       => TRUE
         );
         break;
       case 'nonce':
+        $form['arg'][$key]['#title']  = t('Nonce');
         $form['arg'][$key]['#default_value'] = user_password();
         break;
     }

@@ -1,5 +1,5 @@
 <?php
-// $Id: search_service.inc,v 1.1.2.8.2.4 2010/02/22 01:53:33 heyrocker Exp $
+// $Id: search_service.inc,v 1.1.2.8.2.5 2010/05/22 23:05:34 heyrocker Exp $
 /**
  * @file
  *  Link general search functionalities to services module.
@@ -90,7 +90,7 @@ function search_service_content($keys, $simple = FALSE) {
   $results = array();
   $search_hooks = variable_get('search_service_options', array('node' => 'node'));
 
-  watchdog('search_service', t('search.content invoked for !keys using hooks !hooks', array('!keys' => $keys, '!hooks' => implode(', ', $search_hooks))));
+  watchdog('search_service', 'search.content invoked for "!keys".', array('!keys' => $keys));
 
   // run through only select hook_search() as defined in /admin/settings/search_service
   foreach ($search_hooks as $hook) {
@@ -102,7 +102,8 @@ function search_service_content($keys, $simple = FALSE) {
     }
   }
 
-  watchdog('search_service', t('search.content returned !count results for !keys using hooks !hooks', array('!count' => count($results), '!keys' => $keys, '!hooks' => implode($search_hooks, ', '))));
+  $count_message = format_plural(count($results), '1 result', '@count results');
+  watchdog('search_service', 'search.content returned !count for "!keys".', array('!count' => $count_message, '!keys' => $keys));
 
   if ($results and is_array($results) and count($results)) {
     // if simple results requested, remove extra data

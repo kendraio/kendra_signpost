@@ -1,5 +1,5 @@
 <?php
-// $Id: node_resource.inc,v 1.1.2.5 2010/01/26 13:59:48 heyrocker Exp $
+// $Id: node_resource.inc,v 1.1.2.6 2010/10/26 23:24:31 ocyrus Exp $
 
 /**
  * @file
@@ -30,7 +30,11 @@ function _node_resource_retrieve($nid) {
 
 function _node_resource_create($node) {
   $node = (object)$node;
-
+  if (!isset($node->name)) {
+    //assign username to the node from $user created at auth step.
+    global $user;
+    $node->name = $user->name;
+  }
   if (!isset($node->type)) {
     return services_error('Missing node type', 406);
   }

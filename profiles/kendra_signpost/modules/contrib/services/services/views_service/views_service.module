@@ -1,5 +1,5 @@
 <?php
-// $Id: views_service.module,v 1.4.2.20.2.4 2010/02/28 01:15:31 heyrocker Exp $
+// $Id: views_service.module,v 1.4.2.20.2.5 2010/07/14 03:33:21 skyredwang Exp $
 /**
  * @file
  *  Link general views functionalities to services module.
@@ -38,13 +38,13 @@ function views_service_service() {
           '#name'           => 'offset',
           '#type'           => 'int',
           '#optional'       => TRUE,
-          '#description'    => t('An offset integer for paging. If this is set limit will be ignored.')
+          '#description'    => t('An offset integer for paging. For example to get item from 6 to 15, pass offset=5 and limit=10.')
         ),
         array(
           '#name'           => 'limit',
           '#type'           => 'int',
           '#optional'       => TRUE,
-          '#description'    => t('A limit integer for paging. If offset is set, this will be ignored.')
+          '#description'    => t('A limit integer for paging. For example to get item from 6 to 15, pass offset=5 and limit=10.')
         ),
         array(
           '#name'           => 'format_output',

@@ -1,5 +1,5 @@
 <?php
-// $Id: user_service.inc,v 1.1.2.8.2.11 2010/02/27 05:57:03 heyrocker Exp $
+// $Id: user_service.inc,v 1.1.2.8.2.12 2010/10/26 23:54:21 ocyrus Exp $
 
 /**
  * @file
@@ -95,7 +95,8 @@ function user_service_login($username, $password) {
   if ($user->uid) {
     // Regenerate the session ID to prevent against session fixation attacks.
     sess_regenerate();
-    module_invoke_all('user', 'login', NULL, $user);
+    $array = array();
+    user_module_invoke('login', $array, $user);
 
     $return = new stdClass();
     $return->sessid = session_id();
@@ -122,7 +123,8 @@ function user_service_logout() {
 
   // Destroy the current session:
   session_destroy();
-  module_invoke_all('user', 'logout', NULL, $user);
+  $array = array();
+  user_module_invoke('logout', $array, $user);
 
   // Load the anonymous user
   $user = drupal_anonymous_user();

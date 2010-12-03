@@ -1,5 +1,5 @@
 <?php
-// $Id: comment_service.module,v 1.1.2.1.2.8 2010/04/29 00:03:48 heyrocker Exp $
+// $Id: comment_service.module,v 1.1.2.1.2.9 2010/07/16 02:59:56 skyredwang Exp $
 
 /**
  * @file
@@ -32,7 +32,7 @@ function comment_service_service() {
         ),
       ),
       '#return' => 'int',
-      '#help' => t('This method adds a comment to a node and returns a comment id.  If the comment object contains a numeric "cid", then the comment will be updated. Required fields in the comment object: nid, comment. Optional fields: cid (comment id), pid (parent comment), subject, mail, homepage'),
+      '#help' => t('This method adds a comment to a node and returns a comment id. If the comment object contains a numeric "cid", then the comment will be updated. Required fields in the comment object: nid, comment. Optional fields: cid (comment id), pid (parent comment), subject, name, mail, homepage'),
     ),
 
     // comment.loadNodeComments

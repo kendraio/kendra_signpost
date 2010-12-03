@@ -1,5 +1,5 @@
 <?php
-// $Id: node_service.inc,v 1.1.2.11.2.10 2010/02/20 23:50:05 heyrocker Exp $
+// $Id: node_service.inc,v 1.1.2.11.2.14 2010/12/01 20:05:35 marcingy Exp $
 
 /**
  * @file
@@ -55,6 +55,15 @@ function node_service_get($nid, $fields = array()) {
 function node_service_get_access($nid) {
   global $user;
   $node = node_load($nid);
+
+  // If the node doesn't exist, we want to report a 'node not found' services
+  // error, but if we return FALSE here services will report an 'access denied'
+  // error. So we just return TRUE here and let everything move to fail in the
+  // callback function.
+  if (!$node) {
+    return TRUE;
+  }
+
   return (node_access('view', $node) && user_access('load node data'));
 }
 
@@ -114,6 +123,17 @@ function node_service_save($edit) {
   module_load_include('inc', 'node', 'node.pages');
   $nid = NULL;
   $edit = (array) $edit;
+
+  // The translation module relies on two $_GET variables in order to
+  // function properly. In order to properly save translated nodes, we will
+  // have to set these by hand when we detect this situation. Summarizing
+  // our feelings about having to implement this hack is left as an
+  // exercise for the reader.
+  if (!empty($edit['tnid']) && !empty($edit['language'])) {
+    $_GET['language'] = $edit['language'];
+    $_GET['translation'] = $edit['tnid'];
+  }
+
   if ($edit['nid']) {
     $node = node_load($edit['nid']);
     if ($node->nid) {
@@ -141,8 +161,8 @@ function node_service_save($edit) {
   }
   else {
     // If the submitted node has no author (for instance if it was
-    // created programmatically by hand) then set the currently logged 
-    // in user as the author. 
+    // created programmatically by hand) then set the currently logged
+    // in user as the author.
     if (!$edit['uid']) {
       global $user;
       $edit['uid'] = $user->uid;
@@ -158,6 +178,14 @@ function node_service_save($edit) {
     // Fetch $nid out of $form_state
     $nid = $form_state['nid'];
   }
+
+  // Now unset those $_GET params so they're not hanging around causing trouble
+  // for anyone else.
+  if (isset($_GET['language'])) {
+    unset($_GET['language']);
+    unset($_GET['translation']);
+  }
+
   if ($errors = form_get_errors()) {
     return services_error(implode("\n", $errors), 401);
   }
@@ -175,7 +203,9 @@ function node_service_save($edit) {
 function node_service_save_access($node) {
   $node = (array) $node;
   if (isset($node['nid'])) {
-    return node_access('update', $node);
+    // Grab the existing node information and use that for the access check.
+    $old_node = node_load($node['nid']);
+    return node_access('update', $old_node);
   }
   return node_access('create', $node['type']);
 }

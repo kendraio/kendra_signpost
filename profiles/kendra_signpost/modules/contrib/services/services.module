@@ -1,5 +1,5 @@
 <?php
-// $Id: services.module,v 1.8.2.88.2.18 2010/05/12 19:17:06 heyrocker Exp $
+// $Id: services.module,v 1.8.2.88.2.23 2010/10/27 20:40:09 ocyrus Exp $
 
 /**
  * @file
@@ -25,7 +25,7 @@ function services_help($path, $arg) {
     case 'admin/build/services':
     case 'admin/build/services/browse':
       $output = '<p>'. t('Services are collections of methods available to remote applications. They are defined in modules, and may be accessed in a number of ways through server modules. Visit the <a href="@handbook_url">Services Handbook</a> for help and information.', array('@handbook_url' => 'http://drupal.org/node/109782')) .'</p>';
-      $output .= '<p>'. t('All enabled services and methods are shown. Click on any method to view information or test.') .'</p>';      
+      $output .= '<p>'. t('All enabled services and methods are shown. Click on any method to view information or test.') .'</p>';
       return $output;
 
     case 'admin/build/services/keys':
@@ -171,7 +171,7 @@ function services_crossdomain_xml() {
 }
 
 /**
- * Helper function for sending XML output. 
+ * Helper function for sending XML output.
  *
  * This method outputs an XML processing instruction and the necessary headers
  * and then exits.
@@ -262,7 +262,7 @@ function services_error($message, $code = 0, $exception = NULL) {
  * @param string $property
  *   Optional. The name of a single property to get. Defaults to NULL.
  * @param string $module
- *   Optional. The module to get info for, Defaults to the current 
+ *   Optional. The module to get info for, Defaults to the current
  *   authentication module.
  *
  * @return mixed
@@ -378,7 +378,16 @@ function services_auth_invoke_custom($module, $method, &$arg1 = NULL, &$arg2 = N
 function services_method_call($method_name, $args = array(), $browsing = FALSE) {
   // Allow external modules to log the results of this service call
   module_invoke_all('services_method_call', $method_name, $args, $browsing);
-
+  
+  // If we're dealing with a resource, we need to convert it.
+  if(isset($method_name['resource_type']) && is_array($method_name)) {
+    module_load_include('inc', 'services', 
+	'services.resource-translation');
+    
+    $method_name = _services_resource_controller_as_service(
+    $method_name['resource_name'], $method_name['resource_type'] , 
+    $method_name, $method_name['file']);
+  }
   if (is_array($method_name) && isset($method_name['callback'])) {
     $method = $method_name;
   }
@@ -394,7 +403,7 @@ function services_method_call($method_name, $args = array(), $browsing = FALSE) 
   // Check for missing args
   $hash_parameters = array();
   foreach ($method['args'] as $key => $arg) {
-    if (!$arg['optional']) {
+    if (isset($arg['optional']) && !$arg['optional']) {
       if (!isset($args[$key]) && !is_array($args[$key]) && !is_bool($args[$key])) {
         return services_error(t('Missing required arguments.'), 406);
       }
@@ -479,7 +488,7 @@ function services_resource_uri_formatter($callback = NULL) {
  * Formats a resource uri as registered by services_resource_uri_formatter().
  *
  * @param array $path
- *   An array of strings containing the component parts of the path to the 
+ *   An array of strings containing the component parts of the path to the
  *   resource.
  *
  * @return string
@@ -675,6 +684,12 @@ function services_get_all($include_resources = TRUE, $reset = FALSE) {
   $cache_key = 'services:methods'. ($include_resources?'_with_resources':'');
 
   if (!$reset && ($cache = cache_get($cache_key)) && isset($cache->data)) {
+    // This code is copied from this D7 patch http://drupal.org/node/718636
+    // and is required because under certain caching circumstances, cache_get
+    // does not unserialize the data it returns.
+    if (!is_array($cache->data)) {
+      $cache->data = unserialize($cache->data);
+    }
     return $cache->data;
   }
   else {
@@ -848,7 +863,7 @@ function services_session_load($sessid) {
   sess_read($sessid);
 
   // Check if it really loaded the user.
-  if ($user->sid != $sessid) {
+  if (isset($user->sid) && $user->sid != $sessid) {
     services_session_unload($backup);
     return NULL;
   }

@@ -1,5 +1,5 @@
 <?php
-// $Id: services_keyauth.module,v 1.1.2.6.2.6 2010/02/27 00:34:33 heyrocker Exp $
+// $Id: services_keyauth.module,v 1.1.2.6.2.9 2010/10/26 20:22:51 ocyrus Exp $
 /**
  * @file
  *  Provides a key based validation system.
@@ -90,13 +90,13 @@ function services_keyauth_menu() {
 /**
  * Given the necessary data, create a unique hash for key authentication.
  *
- * This has is compared to the has passed in by the client to verify
+ * This hash is compared to the hash passed in by the client to verify
  * that the two match.
  *
  * @param $timestamp
- *   Current time in unix timestamp format.
+ *   Current time in Unix timestamp format.
  * @param $domain
- *   A unique value to identify this request. This typically matched the
+ *   A unique value to identify this request. This typically matches the
  *   client's domain, but does not have to.
  * @param $nonce
  *   A random value. 
@@ -113,7 +113,7 @@ function services_keyauth_menu() {
 function services_get_hash($timestamp, $domain, $nonce, $method, $args) {
   $hash_parameters = array($timestamp, $domain, $nonce, $method['method']);
   foreach ($method['args'] as $key => $arg) {
-    if ($arg['signed'] == TRUE) {
+    if (isset($arg['signed']) && $arg['signed'] == TRUE) {
       if (is_numeric($args[$key]) || !empty($args[$key])) {
         if (is_array($args[$key]) || is_object($args[$key])) {
           $hash_parameters[] = serialize($args[$key]);
@@ -128,11 +128,42 @@ function services_get_hash($timestamp, $domain, $nonce, $method, $args) {
     }
   }
   $api_key = db_result(db_query("SELECT kid FROM {services_keys} WHERE domain = '%s'", $domain));
+  // Store Key ID so service has ability to later identify caller if this call
+  // is successfully authenticated.
+  _services_keyauth_set_kid($api_key);
+
   return hash_hmac("sha256", implode(';', $hash_parameters), $api_key);
 }
 
 /**
- * Return key inforamtion for a specified API key.
+ * Returns Key ID of key used to authenticate call.
+ *
+ * @return
+ *   The Key ID.
+ */
+function services_keyauth_get_kid() {
+  return _services_keyauth_set_kid();
+}
+
+/**
+ * Set or get Key ID of key used to authenticate call.
+ *
+ * @param
+ *   A Key ID to set.
+ *
+ * @return
+ *   The Key ID currently set.
+ */
+function _services_keyauth_set_kid($caller_kid = NULL) {
+  static $kid;
+  if (!$kid && $caller_kid) {
+    $kid = $caller_kid;
+  }
+  return $kid;
+}
+
+/**
+ * Return key information for a specified API key.
  *
  * @param $kid
  *   The Key ID for this key in the services_keys table.
@@ -150,7 +181,7 @@ function services_keyauth_get_key($kid) {
 }
 
 /**
- * Return key inforamtion for all API keys.
+ * Return key information for all API keys.
  *
  * @return
  *   An associative array of objects with the key's title and domain,
