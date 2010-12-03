@@ -64,29 +64,40 @@ jQuery.extend(Kendra, {
 		},
 
 		/**
-		 * mungeString
+		 * mungeKey
 		 * 
 		 * URI encode a string, replacing percent signs with underscores and
 		 * prefixing it with ss_kendra_
 		 * 
-		 * @param str
+		 * @param key
 		 *            String
 		 */
-		mungeString : function(str) {
-			// str = 'ss_kendra_' + str;
-		return encodeURIComponent(str).replace(/\./g, '_2E').replace(/%/g, '_');
-	},
+		mungeKey : function(key) {
+			var dataType = Kendra.util.dataTypeForKey(key), str = encodeURIComponent(key).replace(/\./g, '_2E').replace(/%/g, '_');
+			switch (dataType) {
+			case 'number':
+				str = str.replace(/^ss_/, 'fs_');
+				break;
+			case 'datetime':
+				str = str.replace(/^ss_/, 'ds_');
+				break;
+			case 'string':
+			default:
+				break;
+			}
+			return str;
+		},
 
-	/**
-	 * dataTypeForKey
-	 * 
-	 * @param key
-	 *            String munged URI key for a mapping item
-	 * @returns String 'string'|'number'|'datetime'
-	 */
-	dataTypeForKey : function(key) {
-		return (!Kendra.mapping.mappings[key] || !Kendra.mapping.mappings[key].dataType) ? null : Kendra.mapping.mappings[key].dataType.split('#').pop();
-	}
+		/**
+		 * dataTypeForKey
+		 * 
+		 * @param key
+		 *            String munged URI key for a mapping item
+		 * @returns String 'string'|'number'|'datetime'
+		 */
+		dataTypeForKey : function(key) {
+			return (!Kendra.mapping.mappings[key] || !Kendra.mapping.mappings[key].dataType) ? null : Kendra.mapping.mappings[key].dataType.split('#').pop();
+		}
 
 	},
 
@@ -643,7 +654,7 @@ jQuery.extend(Kendra, {
 						Kendra.Manager.store.addByValue('facet.range', key);
 						break;
 					case '==':
-						var val = Kendra.util.mungeString(key) + ':' + val;
+						var val = Kendra.util.mungeKey(key) + ':' + val;
 						Kendra.Manager.store.addByValue('fq', val);
 						break;
 					}
@@ -661,14 +672,14 @@ jQuery.extend(Kendra, {
 						Kendra.Manager.store.addByValue('facet.date', key);
 						break;
 					case '==':
-						var val = Kendra.util.mungeString(key) + ':' + val;
+						var val = Kendra.util.mungeKey(key) + ':' + val;
 						Kendra.Manager.store.addByValue('fq', val);
 						break;
 					}
 					break;
 				case 'string':
 				default:
-					var fq = Kendra.util.mungeString(key) + ':' + '"' + val + '"';
+					var fq = Kendra.util.mungeKey(key) + ':' + '"' + val + '"';
 					Kendra.Manager.store.addByValue('fq', fq);
 				}
 			}
