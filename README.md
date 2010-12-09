@@ -10,14 +10,14 @@ configuration.
 
 To run a full Kendra Signpost stack, the following components are required:
 
- * LAMP (Linux/Apache/MySQL/PHP) server for running the Signpost site
+ * LAMP (Linux/Apache/MySQL/PHP) server for running the Kendra Signpost site
  * Python for running the inference proxy layer
  * Solr for powering the search services
  * Virtuoso for storage of RDF data
 
 ## Installation 
 
-These are the steps to get your own Signpost server up and running:
+These are the steps to get your own Kendra Signpost server up and running:
 
     TBC
 
