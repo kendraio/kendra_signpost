@@ -6,9 +6,9 @@ dependencies[] = services
 dependencies[] = comment
 core = 6.x
 
-; Information added by drupal.org packaging script on 2010-05-17
-version = "6.x-2.2"
+; Information added by drupal.org packaging script on 2010-12-01
+version = "6.x-2.3"
 core = "6.x"
 project = "services"
-datestamp = "1274122506"
+datestamp = "1291234254"
 

@@ -1,5 +1,5 @@
 <?php
-// $Id: views_service.inc,v 1.1.2.12.2.4 2010/02/20 05:13:29 heyrocker Exp $
+// $Id: views_service.inc,v 1.1.2.12.2.5 2010/07/14 03:33:21 skyredwang Exp $
 /**
  * @file
  *  Link general views functionalities to services module.
@@ -31,10 +31,9 @@ function views_service_get($view_name, $display_id = 'default', $args = array(),
   // Put all arguments and then execute.
   $view->set_arguments($args, FALSE);
   $view->set_offset($offset);
-  // If offset is set we can't have a user pager.
-  if (empty($offset)) {
+  $view->set_items_per_page($limit);
+  if (!empty($limit)) {
     $view->set_use_pager(TRUE);
-    $view->set_items_per_page($limit);
   }
   else {
     // Disable the user pager.

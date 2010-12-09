@@ -1,5 +1,5 @@
 <?php
-// $Id: services_admin_browse.inc,v 1.5.2.45.2.7 2010/02/27 05:43:16 heyrocker Exp $
+// $Id: services_admin_browse.inc,v 1.5.2.45.2.10 2010/10/26 20:22:51 ocyrus Exp $
 /**
  * @file
  *  Browser thru all services and servers.
@@ -84,7 +84,7 @@ function services_admin_browse_method($method) {
   foreach ($method['args'] as $arg) {
     $count++;
     $output .= '<dt><em class="type">'. $arg['type'] .'</em><strong class="name">'.
-      $arg['name'] .'</strong> ('. (($arg['optional']) ? t('optional') : t('required')) .')</dt>';
+      ' '. $arg['name'] .'</strong> ('. (isset($arg['optional']) && ($arg['optional']) ? t('optional') : t('required')) .')</dt>';
     $output .= '<dd>'. $arg['description'] .'</dd>';
   }
 
@@ -125,7 +125,7 @@ function services_admin_browse_test() {
       '#value' => $arg['name']
     );
     $form['optional'][$key]     = array(
-      '#value' => ($arg['optional']) ? t('optional') : t('required')
+      '#value' => (isset($arg['optional']) && $arg['optional']) ? t('optional') : t('required')
     );
 
     if (isset($arg['size']) && $arg['size'] == 'big') {
@@ -192,6 +192,7 @@ function services_admin_browse_test_submit($form, $form_state) {
 }
 
 function services_admin_browse_test_unserialize_args($values, $formats) {
+  $return = array();
   $method = services_method_get(arg(4));
   $noskip = FALSE;
   // Convert args

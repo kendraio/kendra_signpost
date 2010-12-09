@@ -1,5 +1,5 @@
 <?php
-// $Id: search_service.module,v 1.1.4.19.2.3 2010/02/28 01:15:31 heyrocker Exp $
+// $Id: search_service.module,v 1.1.4.19.2.4 2010/05/22 23:05:34 heyrocker Exp $
 /**
  * @file
  *  Link general search functionalities to services module.
@@ -20,8 +20,8 @@ function search_service_perm() {
 function search_service_menu() {
   $items = array();
   $items['admin/settings/search_service'] = array(
-    'title'            => t('Search Service'),
-    'description'      => t('Configure search service.'),
+    'title'            => 'Search Service',
+    'description'      => 'Configure search service.',
     'page callback'    => 'drupal_get_form',
     'page arguments'   => array('search_service_admin'),
     'file'             => 'search_service_admin.inc',

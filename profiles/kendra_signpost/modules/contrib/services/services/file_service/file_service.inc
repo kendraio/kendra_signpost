@@ -1,5 +1,5 @@
 <?php
-// $Id: file_service.inc,v 1.1.2.7.2.3 2009/12/05 01:42:38 heyrocker Exp $
+// $Id: file_service.inc,v 1.1.2.7.2.4 2010/10/26 17:58:39 ocyrus Exp $
 
 /**
  * @file
@@ -85,7 +85,11 @@ function file_service_save($file) {
 
   // Update file object as necessary
   $file->filepath = file_destination(file_create_path($file->filepath), FILE_EXISTS_RENAME);
-  $file->filename = file_munge_filename(trim(basename($file->filepath), '.'), $extensions, TRUE);
+  // If filename has not been specified extract it from filepath.
+  if ((!isset($file->filename)) || (empty($file->filename))) {
+    $file->filename = trim(basename($file->filepath), '.');
+  }
+  $file->filename = file_munge_filename($file->filename, $extensions, TRUE);
   $file->filemime = file_get_mimetype($file->filename);
 
   // Rename potentially executable files, to help prevent exploits.

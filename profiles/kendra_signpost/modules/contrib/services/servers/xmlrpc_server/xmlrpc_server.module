@@ -1,5 +1,5 @@
 <?php
-// $Id: xmlrpc_server.module,v 1.6.2.14.2.5 2010/02/21 03:01:19 heyrocker Exp $
+// $Id: xmlrpc_server.module,v 1.6.2.14.2.6 2010/10/26 22:54:57 ocyrus Exp $
 /**
  * @file
  *  Enable XML-RPC for services module.
@@ -54,24 +54,33 @@ function xmlrpc_server_call_wrapper() {
 
 /**
  * Implementation of hook_server_error().
- *
  * Takes the error message and wraps it into an XMLRPC error object.
  *
+ * @param string $message
+ *   The error message.
+ * @param int $code
+ *   Optional. An error code, these should map to the applicable
+ *   http error codes as closely as possible.
+ *
+ * @return
+ *   An error as specified by the XMLRPC server.
  * @see xmlrpc_error() 
  */
-function xmlrpc_server_server_error($message) {
+function xmlrpc_server_server_error($message, $code = 0) {
   if (!is_array($message)) {
     $message = (array)$message;
   }
 
   $message = implode(' ', $message);
 
-  $matches = array();
-  if (preg_match("/\#(\d+)/", $message, $matches)) {
-    $code = $matches[1];
-  } 
-  else {
-    $code = 1;
+  if ($code === 0) {
+    $matches = array();
+    if (preg_match("/\#(\d+)/", $message, $matches)) {
+      $code = $matches[1];
+    } 
+    else {
+      $code = 1;
+    }
   }
   
   return xmlrpc_error($code, strip_tags($message));
