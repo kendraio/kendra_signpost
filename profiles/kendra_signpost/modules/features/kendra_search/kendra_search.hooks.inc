@@ -115,6 +115,7 @@ function kendra_search_init() {
 	drupal_add_js(drupal_get_path('module', 'draggableviews') .'/draggableviews.js');
 
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/json2.js');
+	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/jquery.tmpl.min.js');
 
 	// AjaxSolr core
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/core/Core.js');
