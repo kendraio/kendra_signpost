@@ -177,28 +177,6 @@ jQuery.extend(Kendra, {
 		},
 
 		/**
-		 * buildQueryFormHeader
-		 * 
-		 * build the top of the smart filter editor
-		 */
-		buildQueryFormHeader : function() {
-			var html = '';
-			html += '<table id="kendra-smart-filters" class="kendra-filter-rule views-table">';
-			return html;
-		},
-
-		/**
-		 * buildQueryFormFooter
-		 * 
-		 * build the bottom of the smart filter editor
-		 */
-		buildQueryFormFooter : function() {
-			var html = '';
-			html += '</table>';
-			return html;
-		},
-
-		/**
 		 * buildQueryFormAddRule
 		 * 
 		 * add a new row to the smart filter editor
@@ -418,36 +396,12 @@ jQuery.extend(Kendra, {
 
 		var html = '';
 
-		html += Kendra.service.buildQueryFormHeader();
-
 		for ( var i in jsonFilter.rules) {
 			var rule = jsonFilter.rules[i];
 			if (rule.op1 || rule.op2 || rule.op3)
 				Kendra.util.log(rule, 'buildQueryForm:deserializing rule #' + (1 + i / 1));
 			html += Kendra.service.buildQueryFormRow(rule);
 		}
-
-		html += Kendra.service.buildQueryFormFooter();
-
-		return html;
-	},
-
-	/**
-	 * buildQueryResponseContainer
-	 * 
-	 * returns HTML for the AjaxSolr response widgets
-	 */
-	buildQueryResponseContainer : function() {
-		var html = '';
-		html += '<div class="right">';
-		html += '<div id="kendra-search-result">';
-		html += '<div id="kendra-search-navigation">';
-		html += '<ul id="kendra-search-pager"></ul>';
-		html += '<div id="kendra-search-pager-header"></div>';
-		html += '</div>';
-		html += '<div id="kendra-search-docs"></div>';
-		html += '</div>';
-		html += '</div>';
 
 		return html;
 	},
@@ -715,10 +669,12 @@ jQuery.extend(Kendra, {
 					/**
 					 * build the query form
 					 */
+					html += '<table id="kendra-smart-filters" class="kendra-filter-rule views-table">';
 					html += Kendra.service.buildQueryForm(jsonFilter);
+					html += '</table>';
+					html += '<div class="right">' + '<div id="kendra-search-result">' + '<div id="kendra-search-navigation">' + '<ul id="kendra-search-pager"></ul>' + '<div id="kendra-search-pager-header"></div>' + '</div>'
+							+ '<div id="kendra-search-docs"></div>' + '</div>' + '</div>';
 				}
-
-				html += Kendra.service.buildQueryResponseContainer();
 
 				$(selector).html(html);
 
