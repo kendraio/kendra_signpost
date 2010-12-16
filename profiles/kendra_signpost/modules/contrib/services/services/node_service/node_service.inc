@@ -1,5 +1,5 @@
 <?php
-// $Id: node_service.inc,v 1.1.2.11.2.14 2010/12/01 20:05:35 marcingy Exp $
+// $Id: node_service.inc,v 1.1.2.11.2.15 2010/12/06 20:48:43 heyrocker Exp $
 
 /**
  * @file
@@ -202,7 +202,7 @@ function node_service_save($edit) {
  */
 function node_service_save_access($node) {
   $node = (array) $node;
-  if (isset($node['nid'])) {
+  if (isset($node['nid']) && !empty($node['nid'])) {
     // Grab the existing node information and use that for the access check.
     $old_node = node_load($node['nid']);
     return node_access('update', $old_node);

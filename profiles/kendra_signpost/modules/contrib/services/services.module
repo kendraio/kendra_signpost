@@ -1,5 +1,5 @@
 <?php
-// $Id: services.module,v 1.8.2.88.2.23 2010/10/27 20:40:09 ocyrus Exp $
+// $Id: services.module,v 1.8.2.88.2.27 2010/12/06 20:48:42 heyrocker Exp $
 
 /**
  * @file
@@ -378,14 +378,13 @@ function services_auth_invoke_custom($module, $method, &$arg1 = NULL, &$arg2 = N
 function services_method_call($method_name, $args = array(), $browsing = FALSE) {
   // Allow external modules to log the results of this service call
   module_invoke_all('services_method_call', $method_name, $args, $browsing);
-  
+
   // If we're dealing with a resource, we need to convert it.
   if(isset($method_name['resource_type']) && is_array($method_name)) {
-    module_load_include('inc', 'services', 
-	'services.resource-translation');
-    
+    module_load_include('inc', 'services', 'services.resource-translation');
+
     $method_name = _services_resource_controller_as_service(
-    $method_name['resource_name'], $method_name['resource_type'] , 
+    $method_name['resource_name'], $method_name['resource_type'] ,
     $method_name, $method_name['file']);
   }
   if (is_array($method_name) && isset($method_name['callback'])) {
@@ -402,12 +401,16 @@ function services_method_call($method_name, $args = array(), $browsing = FALSE) 
 
   // Check for missing args
   $hash_parameters = array();
+  $missing_parameters = array();
   foreach ($method['args'] as $key => $arg) {
     if (isset($arg['optional']) && !$arg['optional']) {
       if (!isset($args[$key]) && !is_array($args[$key]) && !is_bool($args[$key])) {
-        return services_error(t('Missing required arguments.'), 406);
+        $missing_parameters[] = $arg['name'];
       }
     }
+  }
+  if (!empty($missing_parameters)) {
+    return services_error(t('Missing required arguments: @missing', array('@missing' => implode(', ', $missing_parameters))), 406);
   }
 
   // Check authentication
@@ -416,7 +419,7 @@ function services_method_call($method_name, $args = array(), $browsing = FALSE) 
       drupal_set_message(t('Authentication failed: !message', array('!message' => $auth_error)), 'error');
     }
     else {
-      return services_error($auth_error, 401);
+      return $auth_error;
     }
   }
 
@@ -863,7 +866,7 @@ function services_session_load($sessid) {
   sess_read($sessid);
 
   // Check if it really loaded the user.
-  if (isset($user->sid) && $user->sid != $sessid) {
+  if (!isset($user->sid) || (isset($user->sid) && $user->sid != $sessid)) {
     services_session_unload($backup);
     return NULL;
   }

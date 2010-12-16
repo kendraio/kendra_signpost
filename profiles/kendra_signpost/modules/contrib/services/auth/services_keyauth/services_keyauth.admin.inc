@@ -1,5 +1,5 @@
 <?php
-// $Id: services_keyauth.admin.inc,v 1.1.2.2.2.8 2010/11/01 17:34:06 ocyrus Exp $
+// $Id: services_keyauth.admin.inc,v 1.1.2.2.2.9 2010/12/05 03:08:51 marcingy Exp $
 
 /**
  * @file
@@ -111,9 +111,8 @@ function services_keyauth_admin_keys_form() {
  */
 function services_keyauth_admin_keys_form_validate($form, &$form_state) {
   $domain = $form_state['values']['domain'];
-  $is_existing =  db_result(db_query("SELECT count(*) FROM {services_keys}
-    WHERE domain = '%s'", $domain));
-  if($is_existing) {
+  $is_existing =  db_result(db_query("SELECT count(*) FROM {services_keys} WHERE domain = '%s'", $domain));
+  if ($is_existing) {
     form_set_error('domain', t('Domain @domain already exists.', array('@domain', $domain)));
   }
 }

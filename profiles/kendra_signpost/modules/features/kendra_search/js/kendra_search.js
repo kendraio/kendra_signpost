@@ -236,309 +236,210 @@ jQuery.extend(Kendra, {
 		},
 
 		/**
-		 * buildQueryFormRow
+		 * buildQueryMappingTypes
 		 * 
-		 * builds one row of the smart filter form
-		 * 
+		 * @param dataType
+		 *            String optional
 		 * @param rule
-		 *            Object
+		 *            Object optional returns an HTML string with a list of
+		 *            search options depending on the data type provided
 		 */
-		buildQueryFormRow : function(rule) {
-			var html = '', dataType = 'default';
+		buildQueryMappingTypes : function(dataType, rule) {
+			var html = '', dataType = dataType ? dataType.toLowerCase() : 'default', operands = {
+				'default' : {
+					'==' : {
+						'label' : 'is'
+					}
+				},
+				'string' : {
+					'==' : {
+						'label' : 'is'
+					},
+					'^=' : {
+						'label' : 'starts with'
+					},
+					'*=' : {
+						'label' : 'contains',
+						'selected' : 'selected'
+					},
+					'$=' : {
+						'label' : 'ends with'
+					}
 
-			html += '<tr class="draggable">';
-
-			html += '<td>';
-			html += '<input type="hidden" class="hidden_nid" name="hidden_nid" value=""/>';
-			html += '<input type="hidden" class="field_filter_parent_nid" value="0" id="edit-field-field-filter-parent-nid" name="field_filter_parent_nid_3"/>';
-
-			// html += '<a class="tabledrag-handle" href="#" title="Drag to
-		// re-order"><div class="handle">&nbsp;</div></a>';
-		//
-
-		html += '</td>';
-
-		/**
-		 * operator 1: transform the Kendra.mapping.mappings array into an HTML
-		 * select element
-		 */
-		html += '<td class="kendra-filter-op1-wrapper">';
-		html += '<select class="kendra-filter-op1" name="op1">';
-		for ( var key in Kendra.mapping.mappings) {
-			html += '<option value="' + key + '"';
-			if (rule && typeof rule.op1 != 'undefined' && rule.op1 != '' && key == rule.op1)
-				html += ' selected="selected"';
-			html += '>' + (typeof Kendra.mapping.mappings[key].label != 'undefined' ? Kendra.mapping.mappings[key].label : key) + '</option>';
-		}
-		html += '</select>';
-		html += '</td>';
-
-		/**
-		 * operand
-		 */
-		html += '<td class="kendra-filter-op2-wrapper">';
-		html += '<select class="kendra-filter-op2" name="op2">';
-
-		if (rule && typeof rule.op2 != 'undefined' && Kendra.mapping.mappings[key].dataType) {
-			dataType = Kendra.util.dataTypeForKey(key);
-		}
-		html += Kendra.service.buildQueryMappingTypes(dataType, rule);
-
-		html += '</select>';
-		html += '</td>';
-
-		/**
-		 * operator 2: text field
-		 */
-		html += '<td class="kendra-filter-op3-wrapper">';
-		html += '<input class="kendra-filter-op3 form-text" name="op3" type="text" value="';
-		if (rule && typeof rule.op3 != 'undefined')
-			html += rule.op3;
-		html += '" />';
-		html += '</td>';
-
-		html += '<td class="kendra-filter-button-wrapper">';
-		html += '<div class="smart-filter-add-rule-wrapper">' + '<a class="smart-filter-add-rule" title="Add a rule" href="#" onclick="' + "return !Kendra.service.buildQueryFormAddRule(this);" + '">' + '+' + '</a>'
-				+ '<a class="smart-filter-remove-rule" title="Remove this rule" href="#" onclick="' + "return !Kendra.service.buildQueryFormRemoveRule(this);" + '">' + '-' + '</a>' + '</div>';
-		html += '</td>';
-
-		html += '</tr>';
-
-		return html;
-	},
-
-	/**
-	 * buildQueryMappingTypes
-	 * 
-	 * @param dataType
-	 *            String optional
-	 * @param rule
-	 *            Object optional returns an HTML string with a list of search
-	 *            options depending on the data type provided
-	 */
-	buildQueryMappingTypes : function(dataType, rule) {
-		var html = '', dataType = dataType ? dataType.toLowerCase() : 'default', operands = {
-			'default' : {
-				'==' : {
-					'label' : 'is'
+				},
+				'number' : {
+					'&lt;' : {
+						'label' : 'less than'
+					},
+					'==' : {
+						'label' : 'is',
+						'selected' : 'selected'
+					},
+					'&gt;' : {
+						'label' : 'greater than'
+					}
+				},
+				'datetime' : {
+					'&lt;' : {
+						'label' : 'before'
+					},
+					'==' : {
+						'label' : 'is',
+						'selected' : 'selected'
+					},
+					'&gt;' : {
+						'label' : 'after'
+					}
 				}
-			},
-			'string' : {
-				'==' : {
-					'label' : 'is'
-				},
-				'^=' : {
-					'label' : 'starts with'
-				},
-				'*=' : {
-					'label' : 'contains',
-					'selected' : 'selected'
-				},
-				'$=' : {
-					'label' : 'ends with'
-				}
+			};
 
-			},
-			'number' : {
-				'&lt;' : {
-					'label' : 'less than'
-				},
-				'==' : {
-					'label' : 'is',
-					'selected' : 'selected'
-				},
-				'&gt;' : {
-					'label' : 'greater than'
-				}
-			},
-			'datetime' : {
-				'&lt;' : {
-					'label' : 'before'
-				},
-				'==' : {
-					'label' : 'is',
-					'selected' : 'selected'
-				},
-				'&gt;' : {
-					'label' : 'after'
-				}
-			}
-		};
-
-		for ( var key in operands[dataType]) {
-			html += '<option value="' + key + '"';
-			if (typeof rule != 'undefined' && typeof rule.op2 != 'undefined' && rule.op2 != '') {
-				if (key == rule.op2) {
+			for ( var key in operands[dataType]) {
+				html += '<option value="' + key + '"';
+				if (typeof rule != 'undefined' && typeof rule.op2 != 'undefined' && rule.op2 != '') {
+					if (key == rule.op2) {
+						html += ' selected="selected"';
+					}
+				} else if (operands[dataType][key].selected) {
 					html += ' selected="selected"';
 				}
-			} else if (operands[dataType][key].selected) {
-				html += ' selected="selected"';
+				html += '>' + (typeof operands[dataType][key].label != 'undefined' ? operands[dataType][key].label : key) + '</option>';
 			}
-			html += '>' + (typeof operands[dataType][key].label != 'undefined' ? operands[dataType][key].label : key) + '</option>';
-		}
-		return html;
-	},
+			return html;
+		},
 
-	/**
-	 * buildQueryForm
-	 * 
-	 * using the current list of mappings, create and render a form for querying
-	 * Solr
-	 */
-	buildQueryForm : function(jsonFilter) {
-		var jsonFilter = jsonFilter ? jsonFilter : {
-			'rules' : [ {
-				'op1' : '',
-				'op2' : '',
-				'op3' : ''
-			} ]
-		};
+		/**
+		 * buildQueryFormSerialize
+		 */
+		buildQueryFormSerialize : function($form) {
+			var filter = {
+				rules : []
+			}, $rule = {}, jsonFilter = '';
 
-		var html = '';
+			$form.find('tr.draggable').each(function() {
+				var temp = {};
+				$fields = $(this).find('.kendra-filter-op1,.kendra-filter-op2,.kendra-filter-op3');
 
-		for ( var i in jsonFilter.rules) {
-			var rule = jsonFilter.rules[i];
-			if (rule.op1 || rule.op2 || rule.op3)
-				Kendra.util.log(rule, 'buildQueryForm:deserializing rule #' + (1 + i / 1));
-			html += Kendra.service.buildQueryFormRow(rule);
-		}
-
-		return html;
-	},
-
-	/**
-	 * buildQueryFormSerialize
-	 */
-	buildQueryFormSerialize : function($form) {
-		var filter = {
-			rules : []
-		}, $rule = {}, jsonFilter = '';
-
-		$form.find('tr.draggable').each(function() {
-			var temp = {};
-			$fields = $(this).find('.kendra-filter-op1,.kendra-filter-op2,.kendra-filter-op3');
-
-			$fields.each(function() {
-				var $this = $(this), key = $this.attr('class').replace(/.*kendra-filter-(op\d).*/, '$1'), value = $this.val();
-				temp[key] = value;
+				$fields.each(function() {
+					var $this = $(this), key = $this.attr('class').replace(/.*kendra-filter-(op\d).*/, '$1'), value = $this.val();
+					temp[key] = value;
+				});
+				filter.rules.push(temp);
 			});
-			filter.rules.push(temp);
-		});
 
-		jsonFilter = JSON.stringify(filter);
-		Kendra.util.log(jsonFilter, 'serialized smart filter');
-		$form.find('textarea#edit-body').val(jsonFilter);
-		return filter;
-	},
-
-	/**
-	 * buildQueryFormPostProcess
-	 * 
-	 * @param $form
-	 *            JQuery object
-	 */
-	buildQueryFormPostProcess : function($form) {
-		if ($form.length == 0)
-			return;
-
-		Kendra.service.buildQueryFormToggleRemoveLinks($form);
+			jsonFilter = JSON.stringify(filter);
+			Kendra.util.log(jsonFilter, 'serialized smart filter');
+			$form.find('textarea#edit-body').val(jsonFilter);
+			return filter;
+		},
 
 		/**
-		 * form onsubmit : serialize the form values into a smart filter
-		 */
-		$form.submit(function() {
-			Kendra.service.buildQueryFormSerialize($form);
-			return true;
-
-		}).find('.kendra-filter-op1,.kendra-filter-op2,.kendra-filter-op3').change(function() {
-			var filter = Kendra.service.buildQueryFormSerialize($form);
-			Kendra.service.solrQuery(filter.rules);
-			return true;
-
-		}).filter('.kendra-filter-op1').change(function() {
-			var $this = $(this), key = $this.val();
-
-			if (typeof Kendra.mapping.mappings[key] != 'undefined' && Kendra.mapping.mappings[key].dataType) {
-				var dataType = Kendra.util.dataTypeForKey(key), options = Kendra.service.buildQueryMappingTypes(dataType);
-				$this.parents('tr.draggable:eq(0)').find('.kendra-filter-op2').html(options);
-			}
-
-			return true;
-		});
-
-		/**
-		 * make the search form rows draggable // skip the next hack
+		 * buildQueryFormPostProcess
 		 * 
-		 * @hack this should probably be triggered via a sub-module?
+		 * @param $form
+		 *            JQuery object
 		 */
-		if (false && typeof Drupal.behaviors.draggableviewsLoad == 'function') {
-			Drupal.settings = $.extend(Drupal.settings, {
-				'draggableviews' : {
-					// table_id:
-					'kendra-smart-filters' : {
-						'parent' : null
+		buildQueryFormPostProcess : function($form) {
+			if ($form.length == 0)
+				return;
+
+			Kendra.service.buildQueryFormToggleRemoveLinks($form);
+
+			/**
+			 * form onsubmit : serialize the form values into a smart filter
+			 */
+			$form.submit(function() {
+				Kendra.service.buildQueryFormSerialize($form);
+				return true;
+
+			}).find('.kendra-filter-op1,.kendra-filter-op2,.kendra-filter-op3').change(function() {
+				var filter = Kendra.service.buildQueryFormSerialize($form);
+				Kendra.service.solrQuery(filter.rules);
+				return true;
+
+			}).filter('.kendra-filter-op1').change(function() {
+				var $this = $(this), key = $this.val();
+
+				if (typeof Kendra.mapping.mappings[key] != 'undefined' && Kendra.mapping.mappings[key].dataType) {
+					var dataType = Kendra.util.dataTypeForKey(key), options = Kendra.service.buildQueryMappingTypes(dataType);
+					$this.parents('tr.draggable:eq(0)').find('.kendra-filter-op2').html(options);
+				}
+
+				return true;
+			});
+
+			/**
+			 * make the search form rows draggable // skip the next hack
+			 * 
+			 * @hack this should probably be triggered via a sub-module?
+			 */
+			if (false && typeof Drupal.behaviors.draggableviewsLoad == 'function') {
+				Drupal.settings = $.extend(Drupal.settings, {
+					'draggableviews' : {
+						// table_id:
+						'kendra-smart-filters' : {
+							'parent' : null
+						}
+					}
+				});
+				Kendra.util.log(Drupal.settings.draggableviews, 'initializing draggableviews');
+				Drupal.behaviors.draggableviewsLoad();
+			}
+		},
+
+		/**
+		 * set up ApacheSolr query
+		 * 
+		 * @param query
+		 *            Object hash of query facets => values
+		 * @param params
+		 *            Object hash of Solr parameters
+		 */
+		solrQuery : function(query) {
+			var query = query || {}, params = {
+				'facet' : true,
+				'facet.missing' : true,
+				'json.nl' : 'map'
+			};
+			Kendra.Manager = new AjaxSolr.Manager( {
+				solrUrl : Kendra.search.solrUrl || '',
+
+				/**
+				 * override AbstractManager.handleResponse
+				 */
+				handleResponse : function(data) {
+					this.response = data;
+					Kendra.util.log(this.response, 'Kendra.service.solrQuery: got response: ' + data.response.numFound + ' records');
+
+					for ( var widgetId in this.widgets) {
+						this.widgets[widgetId].afterRequest();
 					}
 				}
 			});
-			Kendra.util.log(Drupal.settings.draggableviews, 'initializing draggableviews');
-			Drupal.behaviors.draggableviewsLoad();
-		}
-	},
 
-	/**
-	 * set up ApacheSolr query
-	 * 
-	 * @param query
-	 *            Object hash of query facets => values
-	 * @param params
-	 *            Object hash of Solr parameters
-	 */
-	solrQuery : function(query) {
-		var query = query || {}, params = {
-			'facet' : true,
-			'facet.missing' : true,
-			'json.nl' : 'map'
-		};
-		Kendra.Manager = new AjaxSolr.Manager( {
-			solrUrl : Kendra.search.solrUrl || '',
-
-			/**
-			 * override AbstractManager.handleResponse
-			 */
-			handleResponse : function(data) {
-				this.response = data;
-				Kendra.util.log(this.response, 'Kendra.service.solrQuery: got response: ' + data.response.numFound + ' records');
-
-				for ( var widgetId in this.widgets) {
-					this.widgets[widgetId].afterRequest();
+			Kendra.Manager.addWidget(new AjaxSolr.ResultWidget( {
+				id : 'kendra-search-result',
+				target : '#kendra-search-docs'
+			}));
+			Kendra.Manager.addWidget(new AjaxSolr.PagerWidget( {
+				id : 'kendra-search-pager',
+				target : '#kendra-search-pager',
+				prevLabel : '&lt;',
+				nextLabel : '&gt;',
+				innerWindow : 1,
+				renderHeader : function(perPage, offset, total) {
+					var text = '';
+					if (total > 0) {
+						text = 'displaying ' + Math.min(total, offset + 1) + ' to ' + Math.min(total, offset + perPage) + ' of ' + total;
+					} else {
+						text = 'no results match your query';
+					}
+					$('#kendra-search-pager-header').html($('<span/>').text(text));
 				}
-			}
-		});
+			}));
 
-		Kendra.Manager.addWidget(new AjaxSolr.ResultWidget( {
-			id : 'kendra-search-result',
-			target : '#kendra-search-docs'
-		}));
-		Kendra.Manager.addWidget(new AjaxSolr.PagerWidget( {
-			id : 'kendra-search-pager',
-			target : '#kendra-search-pager',
-			prevLabel : '&lt;',
-			nextLabel : '&gt;',
-			innerWindow : 1,
-			renderHeader : function(perPage, offset, total) {
-				var text = '';
-				if (total > 0) {
-					text = 'displaying ' + Math.min(total, offset + 1) + ' to ' + Math.min(total, offset + perPage) + ' of ' + total;
-				} else {
-					text = 'no results match your query';
-				}
-				$('#kendra-search-pager-header').html($('<span/>').text(text));
-			}
-		}));
+			Kendra.Manager.init();
 
-		Kendra.Manager.init();
-
-		// set the solr query here
+			// set the solr query here
 		// Kendra.Manager.store.addByValue('q', '*:*');
 		Kendra.Manager.store.addByValue('q.alt', '*:*');
 		Kendra.Manager.store.addByValue('fq', 'type:kendra_cat');
@@ -646,7 +547,7 @@ jQuery.extend(Kendra, {
 (function($) {
 	$(function() {
 		if ($('body.node-type-smart-filter').length > 0 || $('#edit-smart-filter-node-form').length > 0) {
-			var $form = $('form#node-form'), html = '', container = '<div id="kendra-query-builder"><h3>' + 'Loading&hellip;' + '</h3></div>';
+			var $form = $('form#node-form'), container = '<div id="kendra-query-builder"><h3>' + 'Loading&hellip;' + '</h3></div>';
 
 			if ($form.length > 0) {
 				// smart filter editor page
@@ -656,6 +557,9 @@ jQuery.extend(Kendra, {
 				$('.node-smart_filter .node-content').append(container);
 			}
 
+			/**
+			 * render output using JQuery templates
+			 */
 			var success = function(selector) {
 				// load an existing smart filter from the page content
 				var jsonFilter = $form.find('textarea#edit-body').val() || $('.node-smart_filter .node-content p').text();
@@ -665,24 +569,23 @@ jQuery.extend(Kendra, {
 					Kendra.util.log(jsonFilter, 'parsed JSON');
 				}
 
-				if ($form.length > 0) {
-					/**
-					 * build the query form
-					 */
-					html += '<table id="kendra-smart-filters" class="kendra-filter-rule views-table">';
-					html += Kendra.service.buildQueryForm(jsonFilter);
-					html += '</table>';
-					html += '<div class="right">' + '<div id="kendra-search-result">' + '<div id="kendra-search-navigation">' + '<ul id="kendra-search-pager"></ul>' + '<div id="kendra-search-pager-header"></div>' + '</div>'
-							+ '<div id="kendra-search-docs"></div>' + '</div>' + '</div>';
-				}
+				if (jsonFilter && $form.length > 0) {
+					var tmplName = 'smart-filter-wrapper-tmpl', $html = {};
 
-				$(selector).html(html);
+					// Compile the markup as a named template
+					if (typeof $.template[tmplName] == 'undefined') {
+						$.template(tmplName, $('#' + tmplName));
+					}
+					$html = $.tmpl(tmplName, jsonFilter);
 
-				Kendra.service.buildQueryFormPostProcess($form);
+					$(selector).html($html);
 
-				// run the query
-				if (jsonFilter && jsonFilter.rules && jsonFilter.rules.length > 0) {
-					Kendra.service.solrQuery(jsonFilter.rules);
+//					Kendra.service.buildQueryFormPostProcess($form);
+
+					// run the query
+					if (jsonFilter.rules && jsonFilter.rules.length > 0) {
+//						Kendra.service.solrQuery(jsonFilter.rules);
+					}
 				}
 
 			}, failure = function(status, data) {
@@ -700,6 +603,10 @@ jQuery.extend(Kendra, {
 				success('#kendra-query-builder');
 			}, function(status, data) {
 				failure(status, data);
+				/**
+				 * TESTING
+				 */
+				success('#kendra-query-builder');
 			});
 		}
 	});

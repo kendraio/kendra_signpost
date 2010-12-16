@@ -1,0 +1,41 @@
+<tr class="draggable">
+
+<td>
+	<input type="hidden" class="hidden_nid" name="hidden_nid" value=""/>
+	<input type="hidden" class="field_filter_parent_nid" value="0" id="edit-field-field-filter-parent-nid" name="field_filter_parent_nid_3"/>
+	<a class="tabledrag-handle" href="#" title="Drag to re-order"><div class="handle">&nbsp;</div></a>
+</td>
+
+<!-- operator 1: transform the Kendra.mapping.mappings array into an HTML select element -->
+<td class="kendra-filter-op1-wrapper">
+	<select class="kendra-filter-op1" name="op1">
+		{{each(index, value) Kendra.mapping.mappings}}
+		    <option value="${index}" {{if (typeof op1 != 'undefined') && (index == op1) }}selected="selected"{{/if}}>
+			{{html Kendra.mapping.mappings[index].label || index}}</option>
+		{{/each}}
+	</select>
+</td>
+
+<!-- operand -->
+<td class="kendra-filter-op2-wrapper">
+	<select class="kendra-filter-op2" name="op2">
+	{{if typeof rule != 'undefined'}}
+		{{if typeof op1 != 'undefined' && Kendra.mapping.mappings[op1].dataType }}
+		{{html Kendra.service.buildQueryMappingTypes(Kendra.util.dataTypeForKey(op1), rule)}}
+		{{else}}
+		{{html Kendra.service.buildQueryMappingTypes('default', rule)}}
+		{{/if}}
+	{{/if}}
+	</select>
+</td>
+
+<!-- operator 2: text field -->
+<td class="kendra-filter-op3-wrapper">
+	<input class="kendra-filter-op3 form-text" name="op3" type="text" value="{{if op3 }}${op3}{{/if}}"/>
+</td>
+
+<td class="kendra-filter-button-wrapper">
+	<div class="smart-filter-add-rule-wrapper"><a class="smart-filter-add-rule" title="Add a rule" href="#" onclick="return !Kendra.service.buildQueryFormAddRule(this);">+</a> <a class="smart-filter-remove-rule" title="Remove this rule" href="#" onclick="return !Kendra.service.buildQueryFormRemoveRule(this);">-</a></div>
+</td>
+
+</tr>
