@@ -23,7 +23,7 @@ ErrorDocument 404 /index.php
 </Files>
 
 # Set the default handler.
-DirectoryIndex index.php
+DirectoryIndex index.html index.php
 
 # Override PHP settings. More in sites/default/settings.php
 # but the following cannot be changed at runtime.
@@ -105,6 +105,16 @@ DirectoryIndex index.php
   # If your site is running in a VirtualDocumentRoot at http://example.com/,
   # uncomment the following line:
   # RewriteBase /
+
+  # Intercept calls to Apache Solr on any port for which Apache is listening
+  RewriteCond %{REQUEST_METHOD} ^(GET|HEAD|POST) [NC]
+  RewriteCond %{REQUEST_URI} ^/solr/[a-z]+ [NC]
+  RewriteRule ^solr/[a-z]+/select(.*)$ /cgi-bin/solr_search_proxy.py$1 [L,QSA]
+  RewriteRule ^solr/[a-z]+/update(.*)$ /cgi-bin/solr_update_proxy.py$1 [L,QSA]
+  RewriteRule ^solr/[a-z]+/admin/ping$ /cgi-bin/solr_ping_proxy.py [L,QSA]
+
+  # TEST RULE -- intercept all /solr/ requests
+  RewriteRule ^solr/[a-z]+/[a-z]+ /cgi-bin/solr_ping_proxy.py [L,QSA]
 
   # Rewrite URLs of the form 'x' to the form 'index.php?q=x'.
   RewriteCond %{REQUEST_FILENAME} !-f
