@@ -34,15 +34,16 @@ function _batch_page() {
       _batch_do();
       break;
 
-    case 'do_nojs':
-      // Non-JS progress page.
-      $output = _batch_progress_page_nojs();
-      break;
-
     case 'finished':
       $output = _batch_finished();
       break;
-  }
+
+      case 'do_nojs':
+      default:
+      // Non-JS progress page.
+      $output = _batch_progress_page_nojs();
+      break;
+}
 
   return $output;
 }
