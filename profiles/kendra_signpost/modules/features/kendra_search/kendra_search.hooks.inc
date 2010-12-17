@@ -107,7 +107,7 @@ function kendra_search_get_options_array($first_element = array('' => 'Please Ch
 function kendra_search_get_js_template($filename, $parent_type = 'module', $parent_name = 'help', $subdirectory = '/') {
 	$cache_key = 'kendra_search_tmpl_'.$filename;
 
-	$debugging = FALSE;
+	$debugging = TRUE;
 
 	if (!$debugging && $cache = cache_get($cache_key)) {
 		$data = $cache->data;
@@ -126,7 +126,7 @@ function kendra_search_get_js_template($filename, $parent_type = 'module', $pare
 		if (!drupal_validate_utf8($data)) return '';
 
 		// strip PHP tags, comments, and excess whitespace from the template body
-		$data = preg_replace(array('/<\?((?!\?>).)*\?>/s', '/<!\-\-(.+)\-\->/U', '/\s\s+/'), array('', '', ' '), $data);
+		$data = preg_replace(array('/<\?((?!\?>).)*\?>/sU', '/<!\-\-(.+)\-\->/U', '/\s\s+/s'), array('', '', ' '), $data);
 		cache_set($cache_key, $data);
 	}
 
