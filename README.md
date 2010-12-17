@@ -26,6 +26,62 @@ These are the steps to get your own Kendra Signpost server up and running:
  4. Run the Drupal installer, using install.php and selecting the Kendra Signpost Trial install profile. You will need to enter database connection settings and create an admin account.
  5. Configure the connection settings for Virtuoso. 
 
+## Apache and Python configuration
+
+Configure Apache to execute the python scripts when called. There are rules in the .htaccess file to deal with the rewriting of Solr requests to use the proxy.
+
+## Installation instructions for Solr and Kendra Signpost
+
+The instructions below offer a step by step procedure for installing Apache Solr for use with the Kendra Signpost Trial.
+
+### install Java
+
+    apt-get install openjdk-6-jdk
+
+### download and install Apache Solr
+
+    wget http://apache.dataphone.se//lucene/solr/1.4.1/apache-solr-1.4.1.tgz
+    tar xzvf apache-solr-1.4.1.tgz 
+    cd apache-solr-1.4.1/example/solr/conf/
+
+### Backup default configuration files.
+
+    mv schema.xml schema.bak
+    mv solrconfig.xml solrconfig.bak
+
+### install Drupal Solr module
+
+    cd /var/www/dev.kendra.org.uk/
+    drush dl apachesolr
+    cd /var/www/dev.kendra.org.uk/sites/all/modules/apachesolr
+
+### get the PHP Solr module
+
+    svn checkout -r22 http://solr-php-client.googlecode.com/svn/trunk/ SolrPhpClient
+
+### To prepare solr for use with Drupal we must copy over schema.xml and solrconfig.xml which comes with the solr Drupal module.
+
+    cp schema.xml solrconfig.xml /usr/local/src/apache-solr-1.4.1/example/solr/conf/
+
+### enable the Solr module
+
+    drush en apachesolr #    The following modules will be enabled: apachesolr, search
+
+### confirm Drupal solr configuration
+
+Visit http://dev.kendra.org.uk/admin/settings/apachesolr in a browser.
+
+### start solr
+    cd /usr/local/src/apache-solr-1.4.1/example
+    java -jar start.jar
+
+### create an init script to start solr at boot time
+
+    cp /etc/init.d/skeleton /etc/init.d/solr
+    vim /etc/init.d/solr      # see attached configuration script
+    chmod 700 /etc/init.d/solr
+    rcconf    # look for the new solr service, select to start at boot time
+
 ## Testing
 
 The Kendra Signpost Trial includes a content type for uploading CSV data. An example file for testing is included with the source code in the examples folder.
