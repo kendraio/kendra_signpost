@@ -87,7 +87,7 @@ function kendra_signpost_profile_tasks(&$task, $url) {
 
 	switch ($task) {
 		case 'kendra-signpost-features':
-			watchdog('kendra_signpost_profile', "kendra_signpost_profile_tasks:kendra-signpost-features");
+			watchdog('kendra_signpost_profile', "kendra_signpost_profile_tasks:kendra-signpost-features:url=$url");
 			$modules = _kendra_signpost_features();
 			$files = module_rebuild_cache();
 			// create a batch job to install Kendra Signpost features
@@ -103,7 +103,7 @@ function kendra_signpost_profile_tasks(&$task, $url) {
 			return;
 
 		case 'kendra-signpost-configure':
-			watchdog('kendra_signpost_profile', "kendra_signpost_profile_tasks:kendra-signpost-configure");
+			watchdog('kendra_signpost_profile', "kendra_signpost_profile_tasks:kendra-signpost-configure:url=$url");
 			$batch['title'] = st('Configuring @drupal', array('@drupal' => drupal_install_profile_name()));
 			$batch['operations'][] = array('_kendra_signpost_configure', array());
 			$batch['operations'][] = array('_kendra_signpost_check', array());
@@ -113,7 +113,7 @@ function kendra_signpost_profile_tasks(&$task, $url) {
 			batch_process($url, $url);
 			return;
 		case 'kendra-signpost-configure-batch': // @FIXME?
-		watchdog('kendra_signpost_profile', "kendra_signpost_profile_tasks:kendra-signpost-configure-batch");
+		watchdog('kendra_signpost_profile', "kendra_signpost_profile_tasks:kendra-signpost-configure-batch:url=$url");
 	}
 	return $output;
 }
