@@ -92,12 +92,17 @@ function kendra_signpost_profile_tasks(&$task, $url) {
 			$modules = _kendra_signpost_features();
 			$files = module_rebuild_cache();
 			// create a batch job to install Kendra Signpost features
+			$batch = array(
+			    'init_message' => t('kendra-signpost-features is starting.'),
+				'progress_message' => t('Processed @current out of @total.'),
+				'title' => st('Installing @drupal', array('@drupal' => drupal_install_profile_name())),
+				'error_message' => st('The installation has encountered an error.'),
+				'finished' => '_kendra_signpost_features_finished',
+				'operations' => array()
+			);
 			foreach ($modules as $module) {
 				$batch['operations'][] = array('_install_module_batch', array($module,$files[$module]->info['name']));
 			}
-			$batch['finished'] = '_kendra_signpost_features_finished';
-			$batch['title'] = st('Installing @drupal', array('@drupal' => drupal_install_profile_name()));
-			$batch['error_message'] = st('The installation has encountered an error.');
 			variable_set('install_task', 'kendra-signpost-features-batch');
 			batch_set($batch);
 			batch_process($url, $url);
@@ -105,7 +110,7 @@ function kendra_signpost_profile_tasks(&$task, $url) {
 
 		case 'kendra-signpost-configure':
 			watchdog('kendra_signpost_profile', "kendra_signpost_profile_tasks:kendra-signpost-configure:url=$url");
-			$batch = array(    'init_message' => t('Batch 2 is starting.'),
+			$batch = array(    'init_message' => t('kendra-signpost-configure is starting.'),
 				'progress_message' => t('Processed @current out of @total.'),
 				'title' => st('Configuring @drupal', array('@drupal' => drupal_install_profile_name())),
 				'error_message' => st('The configuration task has encountered an error.'),
