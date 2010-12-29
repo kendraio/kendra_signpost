@@ -55,7 +55,7 @@ def get_type_list():
 
 def validate_typed_data_value(name, value):
     if name == "http://kendra.org.uk/#datetime":
-       return re.findall(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:.[0-9]+)Z$", value) != []
+       return re.findall(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:.[0-9]+)?Z$", value) != []
     if name == "http://kendra.org.uk/#number":
        return re.findall(r"^[-+]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][-+]?[0-9]+)?$", value) != []
     # Otherwise, everything is valid by default -- will change later
