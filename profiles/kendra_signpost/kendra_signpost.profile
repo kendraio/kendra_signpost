@@ -71,8 +71,7 @@ function kendra_signpost_profile_task_list() {
 
 
 function kendra_signpost_profile_tasks(&$task, $url) {
-  //Debug message: 
-  drupal_set_message("Doing $task");
+  //Debug message: drupal_set_message("Doing $task");
   $output = '';
   
   if ($task == 'profile') {
@@ -115,7 +114,6 @@ function kendra_signpost_profile_tasks(&$task, $url) {
 
 
 function _kendra_signpost_configure() {
-  drupal_set_message("enter:_kendra_signpost_configure");
   variable_set('site_footer', 'Powered by '. l('Kendra Signpost', 'http://www.kendra.org.uk', array('absolute' => TRUE)));
   variable_set('admin_theme', 'rubik');
   variable_set('site_frontpage', 'kendra-front');
@@ -127,11 +125,9 @@ function _kendra_signpost_configure() {
     'kendra_cat' => 0,
     'kendra_import' => 0,
   ));
-  drupal_set_message("exit:_kendra_signpost_configure");
 }
 
 function _kendra_signpost_check() {
-  drupal_set_message("enter:_kendra_signpost_check");
   // Perform any final installation tasks
   drupal_flush_all_caches();
   variable_set('theme_default', 'rubik');
@@ -147,7 +143,6 @@ function _kendra_signpost_check() {
   $theme_settings = variable_get('theme_settings', array());
   $theme_settings['toggle_search'] = 0;
   variable_set('theme_settings', $theme_settings);
-  drupal_set_message("exit:_kendra_signpost_check");
 }
 
 function kendra_signpost_form_alter(&$form, $form_state, $form_id) {
@@ -164,10 +159,8 @@ function _kendra_signpost_features_finished($success, $results) {
 }
 // For when configuration batch job has finished:
 function _kendra_signpost_configure_finished($success, $results) {
-  drupal_set_message("enter:_kendra_signpost_configure_finished");
   variable_set('kendra_signpost_install', 1);
   // Get out of this batch and let the installer continue.
   variable_set('install_task', 'profile-finished');
-  drupal_set_message("exit:_kendra_signpost_configure_finished");
 }
 
