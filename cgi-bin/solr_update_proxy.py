@@ -9,7 +9,7 @@ import cgitb, cgi, sys, urllib, urllib2, string, re, os, time, traceback
 import urllib
 
 import kendra_signpost_utils
-from kendra_signpost_utils import mangle_uri
+from kendra_signpost_utils import mangle_uri, type_uri_to_prefix
 
 # start logging early
 current_time = time.time()
@@ -52,13 +52,6 @@ def get_type_list():
 	query = "SELECT ?subject ?object WHERE {?subject <http://kendra.org.uk/#hasType> ?object}"
 	query_url = "%s?default-graph-uri=&query=%s&format=text%%2Frdf+n3&debug=on&timeout=" % (kendra_signpost_utils.get_sparql_endpoint_uri(), urllib.quote_plus(query))
 	return map(strip_result_fields, re.findall(r"(?s)<result>.*?</result>", urllib.urlopen(query_url).read()))
-
-def type_uri_to_prefix(name_uri):
-   return {
-       'http://kendra.org.uk/#number': 'fs_kendra_',
-       'http://kendra.org.uk/#datetime': 'ds_kendra_'
-          }.get(name_uri, 'ss_kendra_')
-
 
 def validate_typed_data_value(name, value):
     if name == "http://kendra.org.uk/#datetime":
