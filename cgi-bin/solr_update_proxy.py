@@ -59,8 +59,14 @@ def type_uri_to_prefix(name_uri):
        'http://kendra.org.uk/#datetime': 'ds_kendra_'
           }.get(name_uri, 'ss_kendra_')
 
-def is_valid_ISO8601_datetime(value):
-    return re.findall(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:.[0-9]+)Z$", value) != []
+
+def validate_typed_data_value(name, value):
+    if name == "http://kendra.org.uk/#datetime":
+       return re.findall(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:.[0-9]+)Z$", value) != []
+    if name == "http://kendra.org.uk/#number":
+       return re.findall(r"^[-+]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][-+]?[0-9]+)?$", value) != []
+    # Otherwise, everything is valid by default -- will change later
+    return 1
 
 # Process a single XML segment
 def rewrite_stanza(text):
@@ -91,8 +97,8 @@ def rewrite_stanza(text):
     # Bash these metadata fields in, very inefficiently
     # TO DO: make more efficient
     for name, value in mangled_properties.items():
-        # Validate date/time values
-        if name == "http://kendra.org.uk/#datetime" and not is_valid_ISO8601_datetime(value):
+        # Validate date/time values, numbers, etc.
+        if not validate_typed_data_value(name, value):
            continue
         type_prefix = type_uri_to_prefix(name_uri_to_type_uri.get(name, None))
         text = string.replace(text, "</doc>", '<field name="%s">%s</field></doc>' % (mangle_uri(type_prefix, name), value))
