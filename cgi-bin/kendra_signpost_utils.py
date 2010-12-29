@@ -1,4 +1,4 @@
-import string
+import string, re
 
 def get_sparql_endpoint_uri():
     return string.strip(open("sparql_endpoint.conf").read())
@@ -18,4 +18,8 @@ type_uri_to_prefix_map = {
 def type_uri_to_prefix(prefix):
      return type_uri_to_prefix_map.get(prefix, 'ss_kendra_')
 
+uri_regex = re.compile(r"^[A-Za-z][-A-Za-z0-9+.]*://(?:[-._~A-Za-z0-9:/?#\[\]@!$&'()*+,;=]|%[A-Fa-f0-9][A-Fa-f0-9])*$")
+
+def validate_uri(uristring):
+    return re.findall(uri_regex, uristring) != []
 
