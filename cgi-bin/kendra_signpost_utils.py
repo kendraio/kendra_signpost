@@ -23,3 +23,9 @@ uri_regex = re.compile(r"^[A-Za-z][-A-Za-z0-9+.]*://(?:[-._~A-Za-z0-9:/?#\[\]@!$
 def validate_uri(uristring):
     return re.findall(uri_regex, uristring) != []
 
+# Escape the most problematic XML delimiters that might be used for XML frame-breaking
+def xml_escape_text(text):
+    text = string.replace(text, "&", "&amp;")
+    text = string.replace(text, "<", "&lt;")
+    text = string.replace(text, ">", "&gt;")
+    return text
