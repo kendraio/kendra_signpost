@@ -39,6 +39,7 @@ function _batch_page() {
       break;
 
       case 'do_nojs':
+      default:
       // Non-JS progress page.
       $output = _batch_progress_page_nojs();
       break;
