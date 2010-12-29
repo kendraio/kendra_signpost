@@ -23,12 +23,19 @@ function kendra_search_map_alter_value($item) {
 
 /**
  * kendra_search_map_alter_key
+ * munge a string according to RFC 3986
+ * see http://www.faqs.org/rfcs/rfc3986.html
+ * 
+ * also transforms the dot (.), tilde (~), and underscore (_) characters
+ * and then transforms all percent (%) signs into underscores
  *
  * @param string $text URI corresponding to a mapping term
  * @returns a munged URI suitable for usage as a search facet for Apache Solr
  */
 function kendra_search_map_alter_key($text) {
-	$munged_text = "ss_kendra_" . str_replace('.', '_2E', str_replace('%', '_', str_replace('_', '_5F', urlencode($text))));
+	$munged_text = "ss_kendra_" ;
+	//	$munged_text .= preg_replace_callback( '/./', create_function('$c', 'if (preg_match("/[a-zA-Z0-9]/", $c)) return $c; return str_replace("%", "_", urlencode($c));'));
+	$munged_text .= str_replace('~', '_7E', str_replace('.', '_2E', str_replace('%', '_', str_replace('_', '_5F', rawurlencode($text)))));
 	return $munged_text ;
 }
 
