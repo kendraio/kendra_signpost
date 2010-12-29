@@ -91,6 +91,8 @@ function kendra_signpost_profile_tasks(&$task, $url) {
     foreach ($modules as $module) {
       $batch['operations'][] = array('_install_module_batch', array($module,$files[$module]->info['name']));
     }
+    $batch['operations'][] = array('_kendra_signpost_configure', array());
+    $batch['operations'][] = array('_kendra_signpost_check', array());
     $batch['finished'] = '_kendra_signpost_features_finished';
     $batch['title'] = st('Installing @drupal', array('@drupal' => drupal_install_profile_name()));
     $batch['error_message'] = st('The installation has encountered an error.');
@@ -99,6 +101,7 @@ function kendra_signpost_profile_tasks(&$task, $url) {
     batch_process($url, $url);
     return;
   }
+  /*
   if ($task == 'kendra-signpost-configure') {
     $batch['title'] = st('Configuring @drupal', array('@drupal' => drupal_install_profile_name()));
     $batch['operations'][] = array('_kendra_signpost_configure', array());
@@ -109,6 +112,7 @@ function kendra_signpost_profile_tasks(&$task, $url) {
     batch_process($url, $url);
     return;    
   }
+  */
   return $output;
 }
 
@@ -156,6 +160,7 @@ function kendra_signpost_form_alter(&$form, $form_state, $form_id) {
 // For when feature install has finished:
 function _kendra_signpost_features_finished($success, $results) {
   variable_set('install_task', 'kendra-signpost-configure');
+  _kendra_signpost_configure_finished($success, $results);
 }
 // For when configuration batch job has finished:
 function _kendra_signpost_configure_finished($success, $results) {
