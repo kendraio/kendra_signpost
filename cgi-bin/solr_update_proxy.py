@@ -54,11 +54,13 @@ def get_type_list():
 	return map(strip_result_fields, re.findall(r"(?s)<result>.*?</result>", urllib.urlopen(query_url).read()))
 
 def type_uri_to_prefix(name_uri):
-#   return 'ss_kendra_'    # HACK: force everything to string until Solr stuff is fixed: breaks on date fields at the moment
    return {
        'http://kendra.org.uk/#number': 'fs_kendra_',
        'http://kendra.org.uk/#datetime': 'ds_kendra_'
           }.get(name_uri, 'ss_kendra_')
+
+def is_valid_ISO8601_datetime(value):
+    return re.findall(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:.[0-9]+)Z$", value) != []
 
 # Process a single XML segment
 def rewrite_stanza(text):
@@ -89,6 +91,9 @@ def rewrite_stanza(text):
     # Bash these metadata fields in, very inefficiently
     # TO DO: make more efficient
     for name, value in mangled_properties.items():
+        # Validate date/time values
+        if name == "http://kendra.org.uk/#datetime" and not is_valid_ISO8601_datetime(value):
+           continue
         type_prefix = type_uri_to_prefix(name_uri_to_type_uri.get(name, None))
         text = string.replace(text, "</doc>", '<field name="%s">%s</field></doc>' % (mangle_uri(type_prefix, name), value))
 
