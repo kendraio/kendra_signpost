@@ -107,7 +107,6 @@ function kendra_signpost_profile_tasks(&$task, $url) {
 			$batch['title'] = st('Configuring @drupal', array('@drupal' => drupal_install_profile_name()));
 			$batch['operations'][] = array('_kendra_signpost_configure', array());
 			$batch['operations'][] = array('_kendra_signpost_check', array());
-			$batch['error_message'] = st('The configuration task has encountered an error.');
 			$batch['finished'] = '_kendra_signpost_configure_finished';
 			variable_set('install_task', 'kendra-signpost-configure-batch');
 			batch_set($batch);
