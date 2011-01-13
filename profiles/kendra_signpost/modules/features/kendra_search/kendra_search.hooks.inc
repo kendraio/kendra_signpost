@@ -101,46 +101,6 @@ function kendra_search_get_options_array($first_element = array('' => 'Please Ch
 }
 
 /**
- * kendra_search_get_js_template
- *
- * returns the contents of a (cached) JQuery template file
- * removes PHP tags, comments, and excess whitespace from the template body
- *
- * @param $filename String
- * @param $parent_type String parent item type (i.e. theme, theme_engine, module, profile)
- * @param $parent_name String parent item name (i.e. module or theme name)
- * @param $subdirectory String optional directory within the parent container; should have leading and trailing slashes
- */
-function kendra_search_get_js_template($filename, $parent_type = 'module', $parent_name = 'help', $subdirectory = '/') {
-	$cache_key = 'kendra_search_tmpl_'.$filename;
-
-	$debugging = TRUE;
-
-	if (!$debugging && $cache = cache_get($cache_key)) {
-		$data = $cache->data;
-	} else {
-		$path = drupal_get_path($parent_type, $parent_name);
-		$fullpath = $path . $subdirectory . $filename;
-
-		if (!file_check_location($fullpath, $path)) return '';
-		if (!is_file($fullpath)) return '';
-
-		ob_start();
-		include( $fullpath );
-		$data = ob_get_contents();
-		ob_end_clean();
-
-		if (!drupal_validate_utf8($data)) return '';
-
-		// strip PHP tags, comments, and excess whitespace from the template body
-		$data = preg_replace(array('/<\?((?!\?>).)*\?>/sU', '/<!\-\-(.+)\-\->/U', '/\s\s+/s'), array('', '', ' '), $data);
-		cache_set($cache_key, $data);
-	}
-
-	return $data;
-}
-
-/**
  * Implementation of hook_init().
  *
  * <p>Includes the global JSON object <strong>Kendra</strong>, which gets exposed in the HTML.</p>
@@ -170,11 +130,14 @@ function kendra_search_init() {
 	 * expose the required JQuery templates in the page head
 	 * see http://api.jquery.com/template/
 	 */
+	/*
 	$templates = array('smart-filter-row-tmpl' => 'kendra_search.smart_filter_row.tmpl.html','smart-filter-wrapper-tmpl' => 'kendra_search.smart_filter_wrapper.tmpl.html');
 	foreach ($templates as $id => $template) {
-		$data = kendra_search_get_js_template($template, 'module','kendra_search', '/js/tmpl/');
+		//$data = kendra_search_get_js_template($template, 'module','kendra_search', '/js/tmpl/');
+		$data = kendra_search_service_get_template($template, 'module','kendra_search', '/js/tmpl/');
 		drupal_set_html_head(sprintf('<script id="%s" type="text/x-jquery-tmpl">%s</script>', $id, $data));
 	}
+	*/
 
 	// AjaxSolr core
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/core/Core.js');

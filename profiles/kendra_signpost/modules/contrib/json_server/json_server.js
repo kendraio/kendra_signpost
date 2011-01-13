@@ -13,8 +13,13 @@ Drupal.toJson = function(v) {
       return '"'+ v +'"';
     case 'object':
       var output = "{";
+      
+      var in_loop = false;
       for(i in v) {
-        output = output + i + ":" + Drupal.toJson(v[i]) + ",";
+    	
+        output = output + (in_loop?", ":"")+ i + ":" + Drupal.toJson(v[i]);
+        
+        in_loop = true;
       }
       output = output + "}";
       return output;

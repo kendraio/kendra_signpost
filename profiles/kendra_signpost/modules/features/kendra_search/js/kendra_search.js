@@ -155,25 +155,85 @@ jQuery.extend(Kendra, {
 			Kendra.service.connect(function() {
 				Drupal.service('kendra_search.get_mappings_array', {
 					sessid : Kendra.service.sessid
-				// api_key : "123461823762348756293",
-						// extra_parameter : "asdfasdf",
-						// other_parameter : [ "nodes", "are",
-						// "good" ]
-						}, function(status, data) {
-							if (status == false) {
-								Kendra.util.log("Kendra.service.getMappings: FATAL ERROR");
-								failure(status, data);
-							} else if (data['#error'] == true) {
-								Kendra.util.log("Kendra.service.getMappings: error: " + data['#message']);
-								failure(status, data);
-							} else {
-								Kendra.mapping.mappings = $.extend(Kendra.mapping.mappings, data);
-								Kendra.util.log(data, 'Kendra.service.getMappings: merged ' + Kendra.util.arrayLength(Kendra.mapping.mappings) + ' mappings');
+				}, function(status, data) {
+					if (status == false) {
+						Kendra.util.log("Kendra.service.getMappings: FATAL ERROR");
+						failure(status, data);
+					} else if (data['#error'] == true) {
+						Kendra.util.log("Kendra.service.getMappings: error: " + data['#message']);
+						failure(status, data);
+					} else {
+						Kendra.mapping.mappings = $.extend(Kendra.mapping.mappings, data);
+						Kendra.util.log(data, 'Kendra.service.getMappings: merged ' + Kendra.util.arrayLength(Kendra.mapping.mappings) + ' mappings');
 
-								success();
-							}
-						});
+						success();
+					}
+				});
 			});
+		},
+
+		/**
+		 * getTemplate
+		 * 
+		 * fetch and compile a JQuery template
+		 * 
+		 * @param success
+		 *            Function callback
+		 * @param failure
+		 *            Function callback
+		 */
+		getTemplate : function(tmplName, success, failure) {
+			var success = success || function() {
+			}, failure = failure || function() {
+			};
+
+			if (typeof $.template[tmplName] != 'undefined') {
+				/**
+				 * template has already been compiled
+				 */
+				success();
+			} else if ($('#' + tmplName).length > 0) {
+				/**
+				 * template already loaded into page but not yet compiled
+				 */
+				$.template(tmplName, $('#' + tmplName));
+				success();
+			} else {
+				/**
+				 * fetch and compile the template on demand
+				 * 
+				 * @todo get URL prefix from module configuration
+				 */
+				var prefix = '/profiles/kendra_signpost/modules/features/kendra_search/js/tmpl/';
+				$.get(prefix + tmplName, function(html) {
+					
+					$.template(tmplName, html);
+					Kendra.util.log(tmplName, 'compiled template');
+					success();
+				});
+
+			}
+		},
+
+		/**
+		 * applyTemplate
+		 * 
+		 * apply a JQuery template to a data object fetching the template first
+		 * if necessary
+		 */
+		applyTemplate : function(tmplName, data, success, failure) {
+			var success = success || function() {
+			}, failure = failure || function() {
+			};
+
+			Kendra.service.getTemplate(tmplName, function() {
+				Kendra.util.log(tmplName, 'rendering template');
+				var result = $.tmpl(tmplName, data);
+				Kendra.util.log(result, 'rendered template');
+
+				success(result);
+
+			}, failure);
 		},
 
 		/**
@@ -570,21 +630,22 @@ jQuery.extend(Kendra, {
 				}
 
 				if (jsonFilter && $form.length > 0) {
-					var tmplName = 'smart-filter-wrapper-tmpl', $html = {};
 
-					// Compile the markup as a named template
-					if (typeof $.template[tmplName] == 'undefined') {
-						$.template(tmplName, $('#' + tmplName));
-					}
-					$html = $.tmpl(tmplName, jsonFilter);
+					Kendra.service.getTemplate('smart_filter_row.tmpl.html', function() {
+						Kendra.service.applyTemplate('smart_filter_wrapper.tmpl.html', jsonFilter, function(html) {
 
-					$(selector).html($html);
+							$(selector).html(html);
 
-//					Kendra.service.buildQueryFormPostProcess($form);
+							// Kendra.service.buildQueryFormPostProcess($form);
 
-					// run the query
+							});
+					});
+					
+					/**
+					 * run the query
+					 */
 					if (jsonFilter.rules && jsonFilter.rules.length > 0) {
-//						Kendra.service.solrQuery(jsonFilter.rules);
+						// Kendra.service.solrQuery(jsonFilter.rules);
 					}
 				}
 
