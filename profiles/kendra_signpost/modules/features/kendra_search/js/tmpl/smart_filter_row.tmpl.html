@@ -9,9 +9,10 @@
 <!-- operator 1: transform the Kendra.mapping.mappings array into an HTML select element -->
 <td class="kendra-filter-op1-wrapper">
 	<select class="kendra-filter-op1" name="op1">
-		{{each(index, value) Kendra.mapping.mappings}}
-		    <option value="${index}" {{if (typeof op1 != 'undefined') && (index == op1) }}selected="selected"{{/if}}>
-			{{html Kendra.mapping.mappings[index].label || index}}</option>
+		{{each($index, $value) Kendra.mapping.mappings}}
+		    <option value="${$index}" {{if (typeof op1 != 'undefined') && ($index == op1) }}selected="selected"{{/if}}>
+			{{html Kendra.mapping.mappings[$index].label || $index}}
+			</option>
 		{{/each}}
 	</select>
 </td>
