@@ -50,6 +50,14 @@ jQuery.extend(Kendra, {
 		},
 
 		/**
+		 * 
+		 */
+		debugEach : function(index, value) {
+			Kendra.util.log(value, 'debugEach:' + index);
+			return value || '';
+		},
+
+		/**
 		 * arrayLength utility function to compute length of an associative
 		 * array
 		 * 
@@ -163,7 +171,8 @@ jQuery.extend(Kendra, {
 						Kendra.util.log("Kendra.service.getMappings: error: " + data['#message']);
 						failure(status, data);
 					} else {
-						Kendra.mapping.mappings = $.extend(Kendra.mapping.mappings, data);
+						//Kendra.mapping.mappings = $.extend(Kendra.mapping.mappings, data);
+						Kendra.mapping.mappings = data;
 						Kendra.util.log(data, 'Kendra.service.getMappings: merged ' + Kendra.util.arrayLength(Kendra.mapping.mappings) + ' mappings');
 
 						success();
@@ -206,7 +215,7 @@ jQuery.extend(Kendra, {
 				 */
 				var prefix = '/profiles/kendra_signpost/modules/features/kendra_search/js/tmpl/';
 				$.get(prefix + tmplName, function(html) {
-					
+
 					$.template(tmplName, html);
 					Kendra.util.log(tmplName, 'compiled template');
 					success();
@@ -634,13 +643,14 @@ jQuery.extend(Kendra, {
 					Kendra.service.getTemplate('smart_filter_row.tmpl.html', function() {
 						Kendra.service.applyTemplate('smart_filter_wrapper.tmpl.html', jsonFilter, function(html) {
 
+							Kendra.util.log(html, 'success:html=');
 							$(selector).html(html);
 
 							// Kendra.service.buildQueryFormPostProcess($form);
 
 							});
 					});
-					
+
 					/**
 					 * run the query
 					 */
@@ -664,10 +674,6 @@ jQuery.extend(Kendra, {
 				success('#kendra-query-builder');
 			}, function(status, data) {
 				failure(status, data);
-				/**
-				 * TESTING
-				 */
-				success('#kendra-query-builder');
 			});
 		}
 	});

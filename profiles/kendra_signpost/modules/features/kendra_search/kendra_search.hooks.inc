@@ -124,7 +124,7 @@ function kendra_search_init() {
 	drupal_add_js(drupal_get_path('module', 'draggableviews') .'/draggableviews.js');
 
 	// JQuery templates
-	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/jquery.tmpl.min.js');
+	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/jquery.tmpl.js');
 
 	/**
 	 * expose the required JQuery templates in the page head
