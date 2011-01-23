@@ -661,7 +661,7 @@ jQuery.extend(Kendra, {
 					 * run the query
 					 */
 					if (jsonFilter.rules && jsonFilter.rules.length > 0) {
-						// Kendra.service.solrQuery(jsonFilter.rules);
+						Kendra.service.solrQuery(jsonFilter.rules);
 					}
 				}
 
