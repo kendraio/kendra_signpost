@@ -34,13 +34,14 @@ function kendra_search_map_get_prefix($dataType = '') {
 		$headers = array();
 		$headers[] = 'User-Agent: Drupal (+http://drupal.org/)';
 		$url = variable_get('apachesolr_path', '/solr') . '/maps';
-		
+
 		$result = drupal_http_request($url, $headers);
 		if (isset($result->code) && $result->code == 200) {
 			$type_maps = json_decode($result->data);
 			cache_set('kendra_search_type_uri_to_prefix_map', $type_maps);
 		} else {
-			watchdog('kendra_search', "kendra_search_map_get_prefix: couldn't fetch type mappings from url $url", array(), WATCHDOG_ERROR);		}
+			watchdog('kendra_search', "kendra_search_map_get_prefix: couldn't fetch type mappings from url $url", array(), WATCHDOG_ERROR);
+		}
 	}
 
 	if (isset($type_maps[$dataType])) return $type_maps[$dataType];

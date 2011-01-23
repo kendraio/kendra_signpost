@@ -6,6 +6,7 @@
 # Author: Neil Harris
 
 import cgitb, cgi, sys, urllib, urllib2, string, re, os, time, traceback
+import simplejson
 import urllib
 
 import kendra_signpost_utils
@@ -27,7 +28,7 @@ if is_bad_request():
     sys.exit(0)
 
 # Add linefeed to end for the sake of neatness -- not strictly needed
-results = repr(type_uri_to_prefix_map) + "\n"
+results = simplejson.dumps(type_uri_to_prefix_map) + "\n"
 
 sys.stdout.write("Content-Type: %s\r\n" % "text/plain")
 sys.stdout.write("Content-Length: %d\r\n\r\n" % len(results))
