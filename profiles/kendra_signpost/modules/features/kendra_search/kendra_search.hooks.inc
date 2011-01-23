@@ -32,19 +32,19 @@ function kendra_search_map_get_prefix($dataType = '') {
 
 		// fetch the data type mappings from the Python utility
 		$headers = array();
-		$headers[] = 'User-Agent: Drupal (+http://drupal.org/)';
-		$url = variable_get('apachesolr_path', '/solr') . '/maps';
+		$headers[] = "User-Agent: Drupal (+http://drupal.org/)";
+		$url = sprintf("http://%s:%s%s/maps", variable_get("apachesolr_host", "dev.signpost.kendra.org.uk"), variable_get("apachesolr_port", "8983"), variable_get("apachesolr_path", "/solr/dev"));
 
 		$result = drupal_http_request($url, $headers);
 		if (isset($result->code) && $result->code == 200) {
 			$type_maps = json_decode($result->data);
-			cache_set('kendra_search_type_uri_to_prefix_map', $type_maps);
+			cache_set("kendra_search_type_uri_to_prefix_map", $type_maps);
 		} else {
-			watchdog('kendra_search', "kendra_search_map_get_prefix: couldn't fetch type mappings from url $url", array(), WATCHDOG_ERROR);
+			watchdog("kendra_search", "kendra_search_map_get_prefix: couldn't fetch type mappings from url $url", array(), WATCHDOG_ERROR);
 		}
 	}
 
-	if (isset($type_maps[$dataType])) return $type_maps[$dataType];
+	if (isset($type_maps->$dataType)) return $type_maps->$dataType;
 	return "ss_kendra_";
 }
 
