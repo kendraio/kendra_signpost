@@ -134,7 +134,8 @@ function kendra_search_get_array() {
 		ksort($tempMaps);
 
 		foreach($tempMaps as $key => $data) {
-			$key = kendra_search_map_alter_key($key, $data['dataType'] || null);
+			$key = kendra_search_map_alter_key($key, !empty($data['dataType']) ? $data['dataType'] : null);
+				
 			$maps[$key] = $data;
 		}
 
