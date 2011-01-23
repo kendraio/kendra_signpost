@@ -66,9 +66,21 @@ function kendra_search_map_get_prefix($dataType = '') {
 function kendra_search_map_alter_key($text, $dataType) {
 	$munged_text = kendra_search_map_get_prefix($dataType);
 
-	//	$munged_text .= preg_replace_callback( '/./', create_function('$c', 'if (preg_match("/[a-zA-Z0-9]/", $c)) return $c; return str_replace("%", "_", urlencode($c));'));
-	$munged_text .= str_replace('~', '_7E', str_replace('.', '_2E', str_replace('%', '_', str_replace('_', '_5F', rawurlencode($text)))));
-	return $munged_text ;
+	$munged_text .= str_replace(
+	array(
+		'~',
+		'.', 
+		'%',
+		'_'
+		),
+		array(
+		'_7E',
+		'_2E',
+		'_',
+		'_5F'
+		),
+		rawurlencode($text));
+		return $munged_text ;
 }
 
 /**
