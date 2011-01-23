@@ -68,19 +68,19 @@ function kendra_search_map_alter_key($text, $dataType) {
 
 	$munged_text .= str_replace(
 	array(
-		'~',
-		'.', 
-		'%',
-		'_'
-		),
-		array(
-		'_7E',
-		'_2E',
 		'_',
-		'_5F'
-		),
-		rawurlencode($text));
-		return $munged_text ;
+		'%',
+		'.',
+		'~',
+	),
+	array(
+		'_5F',
+		'_',
+		'_2E',
+		'_7E',
+	),
+	rawurlencode($text));
+	return $munged_text ;
 }
 
 /**
@@ -135,7 +135,7 @@ function kendra_search_get_array() {
 
 		foreach($tempMaps as $key => $data) {
 			$key = kendra_search_map_alter_key($key, !empty($data['dataType']) ? $data['dataType'] : null);
-				
+
 			$maps[$key] = $data;
 		}
 
