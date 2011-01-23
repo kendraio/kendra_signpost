@@ -112,6 +112,7 @@ DirectoryIndex index.html index.php
   RewriteRule ^solr/[a-z]+/select(.*)$ /cgi-bin/solr_search_proxy.py$1 [L,QSA]
   RewriteRule ^solr/[a-z]+/update(.*)$ /cgi-bin/solr_update_proxy.py$1 [L,QSA]
   RewriteRule ^solr/[a-z]+/admin/ping$ /cgi-bin/solr_ping_proxy.py [L,QSA]
+  RewriteRule ^solr/[a-z]+/maps$ /cgi-bin/solr_get_name_mangling_mappings.py [L,QSA]
 
   # TEST RULE -- intercept all /solr/ requests
   RewriteRule ^solr/[a-z]+/[a-z]+ /cgi-bin/solr_ping_proxy.py [L,QSA]
