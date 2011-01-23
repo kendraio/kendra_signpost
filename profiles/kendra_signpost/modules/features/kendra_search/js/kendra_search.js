@@ -77,10 +77,14 @@ jQuery.extend(Kendra, {
 		 * URI encode a string, replacing percent signs with underscores and
 		 * prefixing it with ss_kendra_
 		 * 
+		 * @deprecated
+		 * 
 		 * @param key
 		 *            String
 		 */
 		mungeKey : function(key) {
+			return key;
+
 			var dataType = Kendra.util.dataTypeForKey(key), str = encodeURIComponent(key).replace(/\./g, '_2E').replace(/%/g, '_');
 			switch (dataType) {
 			case 'number':

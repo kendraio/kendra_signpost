@@ -22,18 +22,45 @@ function kendra_search_map_alter_value($item) {
 }
 
 /**
+ * kendra_search_map_get_prefix
+ * @param String $dataType
+ * @returns String prefix for the given type
+ */
+function kendra_search_map_get_prefix($dataType = '') {
+	if ((!($type_maps = cache_get('kendra_search_type_uri_to_prefix_map')))) {
+		$type_maps = array();
+
+		// fetch the data type mappings from the Python utility
+		$headers = array();
+		$headers[] = 'User-Agent: Drupal (+http://drupal.org/)';
+		$url = variable_get('apachesolr_path', '/solr') . '/maps';
+		
+		$result = drupal_http_request($url, $headers);
+		if (isset($result->code) && $result->code == 200) {
+			$type_maps = json_decode($result->data);
+			cache_set('kendra_search_type_uri_to_prefix_map', $type_maps);
+		} else {
+			watchdog('kendra_search', "kendra_search_map_get_prefix: couldn't fetch type mappings from url $url", array(), WATCHDOG_ERROR);		}
+	}
+
+	if (isset($type_maps[$dataType])) return $type_maps[$dataType];
+	return "ss_kendra_";
+}
+
+/**
  * kendra_search_map_alter_key
  * munge a string according to RFC 3986
  * see http://www.faqs.org/rfcs/rfc3986.html
- * 
+ *
  * also transforms the dot (.), tilde (~), and underscore (_) characters
  * and then transforms all percent (%) signs into underscores
  *
  * @param string $text URI corresponding to a mapping term
  * @returns a munged URI suitable for usage as a search facet for Apache Solr
  */
-function kendra_search_map_alter_key($text) {
-	$munged_text = "ss_kendra_" ;
+function kendra_search_map_alter_key($text, $dataType) {
+	$munged_text = kendra_search_map_get_prefix($dataType);
+
 	//	$munged_text .= preg_replace_callback( '/./', create_function('$c', 'if (preg_match("/[a-zA-Z0-9]/", $c)) return $c; return str_replace("%", "_", urlencode($c));'));
 	$munged_text .= str_replace('~', '_7E', str_replace('.', '_2E', str_replace('%', '_', str_replace('_', '_5F', rawurlencode($text)))));
 	return $munged_text ;
@@ -44,25 +71,26 @@ function kendra_search_map_alter_key($text) {
  * Can be used to get results for FAPI form options.
  * @return array
  *  An associative array based on arguments
+ *
+ *  @todo optimize the foreach loops, combining if possible
  **/
 function kendra_search_get_array() {
 	static $maps = NULL;
+	// only retrieve mappings on first call of this function
 	if ($cache = cache_get('kendra_search_mappings')) {
 		$maps = $cache->data;
 	}
 	if ($maps == NULL) {
-		// only retrieve mappings on first call of this function
 		$result = db_query("SELECT nid, title FROM node WHERE type = '%s'", 'kendra_import');
 		$maps = array();
+		$tempMaps = array();
 
 		// fetch mappings for data types
 		$map = kendra_rdf_send("SELECT DISTINCT ?s, ?o WHERE {?s <http://kendra.org.uk/#hasType> ?o}", "application/sparql-results+json");
 		$result_list = json_decode($map->data);
 		if (!empty($result_list->results->bindings)) {
 			foreach ($result_list->results->bindings as $binding) {
-				$key = kendra_search_map_alter_key($binding->s->value);
-				$value = $binding->o->value;
-				$maps [$key] = array('dataType' => $value);
+				$tempMaps [$binding->s->value] = array('dataType' => $binding->o->value);
 			}
 		}
 
@@ -74,15 +102,22 @@ function kendra_search_get_array() {
 			$result_list = json_decode($map->data);
 			if (!empty($result_list->results->bindings)) {
 				foreach ($result_list->results->bindings as $binding) {
-					$label = $node->title . ': ' . kendra_search_map_alter_value($binding->p->value);
-					$key = kendra_search_map_alter_key($binding->p->value);
+					$key = $binding->s->value;
+					$label = sprintf('%s: %s', $node->title , kendra_search_map_alter_value($binding->p->value));
 
-					if (!isset($maps[$key])) $maps[$key] = array();
-					$maps [$key]['label'] = $label;
+					if (!isset($tempMaps[$key])) $tempMaps[$key] = array();
+					$tempMaps [$key]['label'] = $label;
 				}
 			}
 		}
-		ksort($maps);
+
+		ksort($tempMaps);
+
+		foreach($tempMaps as $key => $data) {
+			$key = kendra_search_map_alter_key($key, (isset($data['dataType']) ? $data['dataType'] : null));
+			$maps[$key] = $data;
+		}
+
 		cache_set('kendra_search_mappings', $maps);
 	}
 
@@ -131,13 +166,13 @@ function kendra_search_init() {
 	 * see http://api.jquery.com/template/
 	 */
 	/*
-	$templates = array('smart-filter-row-tmpl' => 'kendra_search.smart_filter_row.tmpl.html','smart-filter-wrapper-tmpl' => 'kendra_search.smart_filter_wrapper.tmpl.html');
-	foreach ($templates as $id => $template) {
+	 $templates = array('smart-filter-row-tmpl' => 'kendra_search.smart_filter_row.tmpl.html','smart-filter-wrapper-tmpl' => 'kendra_search.smart_filter_wrapper.tmpl.html');
+	 foreach ($templates as $id => $template) {
 		//$data = kendra_search_get_js_template($template, 'module','kendra_search', '/js/tmpl/');
 		$data = kendra_search_service_get_template($template, 'module','kendra_search', '/js/tmpl/');
 		drupal_set_html_head(sprintf('<script id="%s" type="text/x-jquery-tmpl">%s</script>', $id, $data));
-	}
-	*/
+		}
+		*/
 
 	// AjaxSolr core
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/ajaxsolr/core/Core.js');
