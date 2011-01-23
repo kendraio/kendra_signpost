@@ -20,12 +20,10 @@
 <!-- operand -->
 <td class="kendra-filter-op2-wrapper">
 	<select class="kendra-filter-op2" name="op2">
-	{{if typeof rule != 'undefined'}}
-		{{if typeof op1 != 'undefined' && Kendra.mapping.mappings[op1].dataType }}
-		{{html Kendra.service.buildQueryMappingTypes(Kendra.util.dataTypeForKey(op1), rule)}}
-		{{else}}
-		{{html Kendra.service.buildQueryMappingTypes('default', rule)}}
-		{{/if}}
+	{{if typeof op1 != 'undefined' && typeof Kendra.mapping.mappings[op1] != 'undefined' && typeof Kendra.mapping.mappings[op1].dataType != 'undefined'}}
+	{{html Kendra.service.buildQueryMappingTypes(Kendra.util.dataTypeForKey(op1), op2 || null)}}
+	{{else}}
+	{{html Kendra.service.buildQueryMappingTypes('default', op2 || null)}}
 	{{/if}}
 	</select>
 </td>

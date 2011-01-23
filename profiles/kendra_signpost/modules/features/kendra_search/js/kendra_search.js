@@ -171,7 +171,8 @@ jQuery.extend(Kendra, {
 						Kendra.util.log("Kendra.service.getMappings: error: " + data['#message']);
 						failure(status, data);
 					} else {
-						//Kendra.mapping.mappings = $.extend(Kendra.mapping.mappings, data);
+						// Kendra.mapping.mappings =
+						// $.extend(Kendra.mapping.mappings, data);
 						Kendra.mapping.mappings = data;
 						Kendra.util.log(data, 'Kendra.service.getMappings: merged ' + Kendra.util.arrayLength(Kendra.mapping.mappings) + ' mappings');
 
@@ -309,11 +310,13 @@ jQuery.extend(Kendra, {
 		 * 
 		 * @param dataType
 		 *            String optional
-		 * @param rule
-		 *            Object optional returns an HTML string with a list of
-		 *            search options depending on the data type provided
+		 * @param op2
+		 *            String optional
+		 * 
+		 * returns an HTML string with a list of search options depending on the
+		 * data type provided
 		 */
-		buildQueryMappingTypes : function(dataType, rule) {
+		buildQueryMappingTypes : function(dataType, op2) {
 			var html = '', dataType = dataType ? dataType.toLowerCase() : 'default', operands = {
 				'default' : {
 					'==' : {
@@ -329,7 +332,7 @@ jQuery.extend(Kendra, {
 					},
 					'*=' : {
 						'label' : 'contains',
-						'selected' : 'selected'
+						'isDefault' : true
 					},
 					'$=' : {
 						'label' : 'ends with'
@@ -342,7 +345,7 @@ jQuery.extend(Kendra, {
 					},
 					'==' : {
 						'label' : 'is',
-						'selected' : 'selected'
+						'isDefault' : true
 					},
 					'&gt;' : {
 						'label' : 'greater than'
@@ -354,7 +357,7 @@ jQuery.extend(Kendra, {
 					},
 					'==' : {
 						'label' : 'is',
-						'selected' : 'selected'
+						'isDefault' : true
 					},
 					'&gt;' : {
 						'label' : 'after'
@@ -362,13 +365,15 @@ jQuery.extend(Kendra, {
 				}
 			};
 
+			Kendra.util.log('buildQueryMappingTypes:type=' + dataType + ';op2=' + (op2 || ''));
+
 			for ( var key in operands[dataType]) {
 				html += '<option value="' + key + '"';
-				if (typeof rule != 'undefined' && typeof rule.op2 != 'undefined' && rule.op2 != '') {
-					if (key == rule.op2) {
+				if (op2) {
+					if (key == op2) {
 						html += ' selected="selected"';
 					}
-				} else if (operands[dataType][key].selected) {
+				} else if (operands[dataType][key].isDefault) {
 					html += ' selected="selected"';
 				}
 				html += '>' + (typeof operands[dataType][key].label != 'undefined' ? operands[dataType][key].label : key) + '</option>';
@@ -421,6 +426,7 @@ jQuery.extend(Kendra, {
 				return true;
 
 			}).find('.kendra-filter-op1,.kendra-filter-op2,.kendra-filter-op3').change(function() {
+				Kendra.util.log('change');
 				var filter = Kendra.service.buildQueryFormSerialize($form);
 				Kendra.service.solrQuery(filter.rules);
 				return true;
@@ -646,9 +652,9 @@ jQuery.extend(Kendra, {
 							Kendra.util.log(html, 'success:html=');
 							$(selector).html(html);
 
-							// Kendra.service.buildQueryFormPostProcess($form);
+							Kendra.service.buildQueryFormPostProcess($form);
 
-							});
+						});
 					});
 
 					/**
