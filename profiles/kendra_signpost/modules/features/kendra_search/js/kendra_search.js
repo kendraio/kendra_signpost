@@ -260,12 +260,14 @@ jQuery.extend(Kendra, {
 		 * @returns true upon success, false upon failure
 		 */
 		buildQueryFormAddRule : function(el) {
-			var $row = $(el).parents('tr.draggable:eq(0)');
+			var $row = $(el).parents('tr.draggable:eq(0)'), $form = $row.parents('form#node-form');
 			if ($row.length != 1) {
 				return false;
 			}
 
 			$row.clone(true).insertAfter($row);
+
+			Kendra.service.filterUpdate($form);
 
 			Kendra.service.buildQueryFormToggleRemoveLinks();
 
@@ -282,12 +284,14 @@ jQuery.extend(Kendra, {
 		 * @returns true upon success, false upon failure
 		 */
 		buildQueryFormRemoveRule : function(el) {
-			var $row = $(el).parents('tr.draggable:eq(0)');
+			var $row = $(el).parents('tr.draggable:eq(0)'), $form = $row.parents('form#node-form');
 			if ($row.length != 1 || $(el).hasClass('disabled')) {
 				return false;
 			}
 
 			$row.remove();
+
+			Kendra.service.filterUpdate($form);
 
 			Kendra.service.buildQueryFormToggleRemoveLinks();
 
@@ -411,6 +415,22 @@ jQuery.extend(Kendra, {
 		},
 
 		/**
+		 * filterUpdate
+		 * 
+		 * serialize the filter from the given form fields and run it against
+		 * Solr
+		 * 
+		 * @param $form
+		 *            JQuery object
+		 */
+		filterUpdate : function($form) {
+			if ($form.length == 0)
+				return;
+			var filter = Kendra.service.buildQueryFormSerialize($form);
+			Kendra.service.solrQuery(filter.rules);
+		},
+
+		/**
 		 * buildQueryFormPostProcess
 		 * 
 		 * @param $form
@@ -430,9 +450,7 @@ jQuery.extend(Kendra, {
 				return true;
 
 			}).find('.kendra-filter-op1,.kendra-filter-op2,.kendra-filter-op3').change(function() {
-				Kendra.util.log('change');
-				var filter = Kendra.service.buildQueryFormSerialize($form);
-				Kendra.service.solrQuery(filter.rules);
+				Kendra.service.filterUpdate($form);
 				return true;
 
 			}).filter('.kendra-filter-op1').change(function() {
