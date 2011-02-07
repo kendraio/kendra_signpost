@@ -127,8 +127,21 @@
 	margin-bottom: 1em;
 }
 
-#kendra-search-docs {
-	
+#kendra-search-docs >div {
+	margin-bottom: 1em;
+}
+
+#kendra-search-docs dl dt {
+	float: left;
+	font-weight: 700;
+	font-style: normal;
+	width: 10em;
+}
+
+#kendra-search-docs dl dd {
+	font-weight: 400;
+	font-style: normal;
+	margin-bottom: 0;
 }
 
 /**

@@ -1,5 +1,16 @@
 (function($) {
 
+	var props = {
+		"title" : "Title",
+		"ss_cck_field_cat_album" : "Album",
+		"ss_cck_field_cat_artist" : "Artist",
+		"ss_cck_field_cat_date" : "Date",
+		"ss_cck_field_cat_isrc" : "ISRC",
+		"ss_cck_field_cat_no" : "Catalogue #",
+		"ss_cck_field_cat_publisher" : "Publisher",
+		"url" : "URL"
+	};
+
 	AjaxSolr.theme.prototype.result = function(doc, snippet) {
 		var output = '<div><h2 class="title">' + doc.title + '</h2>';
 		output += '<p id="links_' + doc.id + '" class="links"></p>';
@@ -10,12 +21,23 @@
 	AjaxSolr.theme.prototype.snippet = function(doc) {
 		var output = '';
 		if (doc.body && doc.body.length > 300) {
-			if (doc.dateline) output += doc.dateline + ' ';
-			output += doc.body.substring(0, 300);
-			output += '<span style="display:none;">' + doc.body.substring(300);
-			output += '</span> <a href="#" class="more">more</a>';
+			if (doc.dateline)
+				output += doc.dateline + ' ';
+			// output += doc.body.substring(0, 300);
+
+			output += '<dl class="dict">';
+			for ( var prop in props) {
+				if (typeof doc[prop] != 'undefined') {
+					output += '<dt class="' + prop + '">' + props[prop] + '</dt>';
+					output += '<dd class="' + prop + '">' + doc[prop] + '</dd>';
+				}
+			}
+			output += '</dl> ';
+			output += '<span style="display:none;">' + doc.body + '</span> ';
+			output += '<a href="#" class="more">more</a>';
 		} else {
-			if (doc.dateline) output += doc.dateline + ' ';
+			if (doc.dateline)
+				output += doc.dateline + ' ';
 			output += doc.body;
 		}
 		return output;
