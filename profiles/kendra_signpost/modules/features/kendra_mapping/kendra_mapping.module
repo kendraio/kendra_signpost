@@ -27,7 +27,7 @@ function kendra_mapping_allowed_values() {
 			$result_list = json_decode($map->data);
 			if (!empty($result_list->results->bindings)) {
 				foreach ($result_list->results->bindings as $binding) {
-				  $value = urldecode(substr($binding->p->value, strpos($binding->p->value, '#') + 1));
+					$value = urldecode(substr($binding->p->value, strpos($binding->p->value, '#') + 1));
 					$maps[$binding->p->value] = $node->title .': '. $value;
 				}
 			}
