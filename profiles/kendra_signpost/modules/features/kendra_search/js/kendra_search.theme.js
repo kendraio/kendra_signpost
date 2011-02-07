@@ -1,14 +1,31 @@
 (function($) {
 
 	var props = {
-		"title" : "Title",
-		"ss_cck_field_cat_album" : "Album",
-		"ss_cck_field_cat_artist" : "Artist",
-		"ss_cck_field_cat_date" : "Date",
-		"ss_cck_field_cat_isrc" : "ISRC",
-		"ss_cck_field_cat_no" : "Catalogue #",
-		"ss_cck_field_cat_publisher" : "Publisher",
-		"url" : "URL"
+		"title" : {
+			"label" : "Title"
+		},
+		"ss_cck_field_cat_album" : {
+			"label" : "Album"
+		},
+		"ss_cck_field_cat_artist" : {
+			"label" : "Artist"
+		},
+		"ss_cck_field_cat_date" : {
+			"label" : "Date"
+		},
+		"ss_cck_field_cat_isrc" : {
+			"label" : "ISRC"
+		},
+		"ss_cck_field_cat_no" : {
+			"label" : "Catalogue #"
+		},
+		"ss_cck_field_cat_publisher" : {
+			"label" : "Publisher"
+		},
+		"url" : {
+			"label" : "URL",
+			"format" : '<a href="__VALUE__">__VALUE__</a>'
+		}
 	};
 
 	AjaxSolr.theme.prototype.result = function(doc, snippet) {
@@ -28,8 +45,12 @@
 			output += '<dl class="dict">';
 			for ( var prop in props) {
 				if (typeof doc[prop] != 'undefined') {
-					output += '<dt class="' + prop + '">' + props[prop] + '</dt>';
-					output += '<dd class="' + prop + '">' + doc[prop] + '</dd>';
+					output += '<dt class="' + prop + '">' + props[prop].label + '</dt>';
+					if (typeof props[prop].format != 'undefined') {
+						output += '<dd class="' + prop + '">' + props[prop].format.replace(/__VALUE__/g, doc[prop]) + '</dd>';
+					} else {
+						output += '<dd class="' + prop + '">' + doc[prop] + '</dd>';
+					}
 				}
 			}
 			output += '</dl> ';
