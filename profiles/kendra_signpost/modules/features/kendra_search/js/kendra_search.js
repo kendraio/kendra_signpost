@@ -72,36 +72,6 @@ jQuery.extend(Kendra, {
 		},
 
 		/**
-		 * mungeKey
-		 * 
-		 * URI encode a string, replacing percent signs with underscores and
-		 * prefixing it with ss_kendra_
-		 * 
-		 * @deprecated
-		 * 
-		 * @param key
-		 *            String
-		 */
-		mungeKey : function(key) {
-			return key;
-
-			var dataType = Kendra.util.dataTypeForKey(key), str = encodeURIComponent(key).replace(/\./g, '_2E').replace(/%/g, '_');
-			switch (dataType) {
-			case 'number':
-				str = str.replace(/^[dfs]s_/, 'fs_');
-				break;
-			case 'datetime':
-				str = str.replace(/^[dfs]s_/, 'ds_');
-				break;
-			case 'string':
-			default:
-				str = str.replace(/^[dfs]s_/, 'ss_');
-				break;
-			}
-			return str;
-		},
-
-		/**
 		 * dataTypeForKey
 		 * 
 		 * @param key
@@ -606,7 +576,7 @@ jQuery.extend(Kendra, {
 					Kendra.Manager.store.addByValue('facet.range', key);
 					break;
 				case '==':
-					var val = Kendra.util.mungeKey(key) + ':' + val;
+					var val = key + ':' + val;
 					Kendra.Manager.store.addByValue('fq', val);
 					break;
 				}
@@ -624,14 +594,14 @@ jQuery.extend(Kendra, {
 					Kendra.Manager.store.addByValue('facet.date', key);
 					break;
 				case '==':
-					var val = Kendra.util.mungeKey(key) + ':' + '"' + val + '"';
+					var val = key + ':' + '"' + val + '"';
 					Kendra.Manager.store.addByValue('fq', val);
 					break;
 				}
 				break;
 			case 'string':
 			default:
-				var fq = Kendra.util.mungeKey(key) + ':' + '"' + val + '"';
+				var fq = key + ':' + '"' + val + '"';
 				Kendra.Manager.store.addByValue('fq', fq);
 			}
 
