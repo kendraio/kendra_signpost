@@ -666,16 +666,21 @@ jQuery.extend(Kendra, {
 					Kendra.util.log(jsonFilter, 'parsed JSON');
 				}
 
-				if (jsonFilter && $form.length > 0) {
+				if (jsonFilter) {
 
+					if ($form.length == 0) {
+						$('.node-smart_filter .node-content p').hide();
+					}
+					
 					Kendra.service.getTemplate('smart_filter_row.tmpl.html', function() {
 						Kendra.service.applyTemplate('smart_filter_wrapper.tmpl.html', jsonFilter, function(html) {
 
 							Kendra.util.log(html, 'success:html=');
 							$(selector).html(html);
 
-							Kendra.service.buildQueryFormPostProcess($form);
-
+							if ($form.length > 0) {
+								Kendra.service.buildQueryFormPostProcess($form);
+							}
 						});
 					});
 
