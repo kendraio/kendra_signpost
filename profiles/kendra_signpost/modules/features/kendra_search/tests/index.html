@@ -77,7 +77,14 @@
 <input type="text" name="json.nl" id="jsonnl" value="map" />
 </div>
 <div class="field"><label for="wt">wt</label>
-<input type="text" name="wt" id="wt" value="json" />
+<select name="wt" id="wt">
+<option value="json" selected="selected">json</option>
+<option value="xml">xml</option>
+<option value="python">python</option>
+<option value="ruby">ruby</option>
+<option value="php">php</option>
+<option value="phps">phps</option>
+</select>
 </div>
 <div class="field"><label for="indent">indent</label>
 <select name="indent" id="indent">
@@ -90,6 +97,7 @@
 <option value="dismax" selected="selected">dismax</option>
 <option value="standard">standard</option>
 <option value="partitioned">partitioned</option>
+<option value="/debug/dump">/debug/dump</option>
 </select>
 </div>
 <div class="field"><label for="facet">facet</label>
