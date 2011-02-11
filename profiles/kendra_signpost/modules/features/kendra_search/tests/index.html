@@ -37,7 +37,7 @@
     padding:10px;
     margin:5px;
 }
-#queryform input {
+#queryform input, #queryform select {
     margin:2px;
     padding:2px;
     border:1px solid #cccccc;
@@ -80,13 +80,29 @@
 <input type="text" name="wt" id="wt" value="json" />
 </div>
 <div class="field"><label for="indent">indent</label>
-<input type="text" name="indent" id="indent" value="true" />
+<select name="indent" id="indent">
+<option value="true" selected="selected">true</option>
+<option value="false">false</option>
+</select>
+</div>
+<div class="field"><label for="qt">qt</label>
+<select name="qt" id="qt">
+<option value="dismax" selected="selected">dismax</option>
+<option value="standard">standard</option>
+<option value="partitioned">partitioned</option>
+</select>
 </div>
 <div class="field"><label for="facet">facet</label>
-<input type="text" name="facet" id="facet" value="true" />
+<select name="facet" id="facet">
+<option value="true" selected="selected">true</option>
+<option value="false">false</option>
+</select>
 </div>
 <div class="field"><label for="facetmissing">facet.missing</label>
-<input type="text" name="facet.missing" id="facetmissing" value="true" />
+<select name="facet.missing" id="facetmissing">
+<option value="true" selected="selected">true</option>
+<option value="false">false</option>
+</select>
 </div>
 <div class="field"><label for="facet.limit">facet.limit</label>
 <input type="text" name="facet.limit" id="facet.limit" value="100" />
