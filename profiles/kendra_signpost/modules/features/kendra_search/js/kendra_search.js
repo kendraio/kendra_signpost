@@ -607,13 +607,13 @@ jQuery.extend(Kendra, {
 				var fq = $s + ':';
 				switch ($p) {
 				case '^=':
-					fq += $o + '*';
+					fq += '"' + $o + '"*';
 					break;
 				case '*=':
-					fq += '*' + $o + '*';
+					fq += '*"' + $o + '"*';
 					break;
 				case '$=':
-					fq += '*' + $o;
+					fq += '*"' + $o + '"';
 					break;
 				case '==':
 				default:
