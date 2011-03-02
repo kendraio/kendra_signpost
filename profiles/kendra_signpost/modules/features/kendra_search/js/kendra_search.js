@@ -1,15 +1,14 @@
 // $Id$
 /**
  * kendra_search.js
+ * 
  * @author Klokie <klokie@kendra.org.uk>
  * @package kendra_search
- * 
  * @requires ajaxsolr
  * @requires drupal.org/services
  */
 /**
  * kendra_search.js
- * 
  * <p>
  * connect to the Apache Solr instance
  * </p>
@@ -61,8 +60,7 @@ jQuery.extend(Kendra, {
 		 * arrayLength utility function to compute length of an associative
 		 * array
 		 * 
-		 * @param arr
-		 *            Array
+		 * @param arr Array
 		 */
 		arrayLength : function(arr) {
 			var len = 0;
@@ -74,8 +72,7 @@ jQuery.extend(Kendra, {
 		/**
 		 * dataTypeForKey
 		 * 
-		 * @param key
-		 *            String munged URI key for a mapping item
+		 * @param key String munged URI key for a mapping item
 		 * @returns String 'string'|'number'|'datetime'
 		 */
 		dataTypeForKey : function(key) {
@@ -93,10 +90,8 @@ jQuery.extend(Kendra, {
 		/**
 		 * connect to the services module to get a valid session ID
 		 * 
-		 * @param success
-		 *            Function callback
-		 * @param failure
-		 *            Function callback
+		 * @param success Function callback
+		 * @param failure Function callback
 		 */
 		connect : function(success, failure) {
 			var success = success || function() {
@@ -120,14 +115,10 @@ jQuery.extend(Kendra, {
 		},
 
 		/**
-		 * getMappings
+		 * getMappings fetch CSV mappings
 		 * 
-		 * fetch CSV mappings
-		 * 
-		 * @param success
-		 *            Function callback
-		 * @param failure
-		 *            Function callback
+		 * @param success Function callback
+		 * @param failure Function callback
 		 */
 		getMappings : function(success, failure) {
 			var success = success || function() {
@@ -157,14 +148,10 @@ jQuery.extend(Kendra, {
 		},
 
 		/**
-		 * getTemplate
+		 * getTemplate fetch and compile a JQuery template
 		 * 
-		 * fetch and compile a JQuery template
-		 * 
-		 * @param success
-		 *            Function callback
-		 * @param failure
-		 *            Function callback
+		 * @param success Function callback
+		 * @param failure Function callback
 		 */
 		getTemplate : function(tmplName, success, failure) {
 			var success = success || function() {
@@ -200,10 +187,8 @@ jQuery.extend(Kendra, {
 		},
 
 		/**
-		 * applyTemplate
-		 * 
-		 * apply a JQuery template to a data object fetching the template first
-		 * if necessary
+		 * applyTemplate apply a JQuery template to a data object fetching the
+		 * template first if necessary
 		 */
 		applyTemplate : function(tmplName, data, success, failure) {
 			var success = success || function() {
@@ -221,12 +206,9 @@ jQuery.extend(Kendra, {
 		},
 
 		/**
-		 * buildQueryFormAddRule
+		 * buildQueryFormAddRule add a new row to the smart filter editor
 		 * 
-		 * add a new row to the smart filter editor
-		 * 
-		 * @param el
-		 *            calling link
+		 * @param el calling link
 		 * @returns true upon success, false upon failure
 		 */
 		buildQueryFormAddRule : function(el) {
@@ -245,12 +227,10 @@ jQuery.extend(Kendra, {
 		},
 
 		/**
-		 * buildQueryFormRemoveRule
+		 * buildQueryFormRemoveRule remove the selected row to the smart filter
+		 * editor
 		 * 
-		 * remove the selected row to the smart filter editor
-		 * 
-		 * @param el
-		 *            calling link
+		 * @param el calling link
 		 * @returns true upon success, false upon failure
 		 */
 		buildQueryFormRemoveRule : function(el) {
@@ -269,9 +249,8 @@ jQuery.extend(Kendra, {
 		},
 
 		/**
-		 * buildQueryFormToggleRemoveLinks
-		 * 
-		 * enable all 'remove rule' links unless there's only one rule
+		 * buildQueryFormToggleRemoveLinks enable all 'remove rule' links unless
+		 * there's only one rule
 		 */
 		buildQueryFormToggleRemoveLinks : function($el) {
 			var $links = $('a.smart-filter-remove-rule', ($el ? $el : '#kendra-smart-filters'));
@@ -286,13 +265,9 @@ jQuery.extend(Kendra, {
 		/**
 		 * buildQueryMappingTypes
 		 * 
-		 * @param dataType
-		 *            String optional
-		 * @param op2
-		 *            String optional
-		 * 
-		 * returns an HTML string with a list of search options depending on the
-		 * data type provided
+		 * @param dataType String optional
+		 * @param op2 String optional returns an HTML string with a list of
+		 *            search options depending on the data type provided
 		 */
 		buildQueryMappingTypes : function(dataType, op2) {
 			var html = '', dataType = dataType ? dataType.toLowerCase() : 'default', operands = {
@@ -318,32 +293,32 @@ jQuery.extend(Kendra, {
 
 				},
 				'number' : {
-					'&lt;' : {
+					'lt' : {
 						'label' : 'less than'
 					},
 					'==' : {
 						'label' : 'is',
 						'isDefault' : true
 					},
-					'&gt;' : {
+					'gt' : {
 						'label' : 'greater than'
 					}
 				},
 				'datetime' : {
-					'&lt;' : {
+					'lt' : {
 						'label' : 'before'
 					},
 					'==' : {
 						'label' : 'is',
 						'isDefault' : true
 					},
-					'&gt;' : {
+					'gt' : {
 						'label' : 'after'
 					}
 				}
 			};
 
-			Kendra.util.log('buildQueryMappingTypes:type=' + dataType + ';op2=' + (op2 || ''));
+			Kendra.util.log('buildQueryMappingTypes:' + (operands[dataType] && operands[dataType][op2] ? operands[dataType][op2].label : 'undefined'));
 
 			for ( var key in operands[dataType]) {
 				html += '<option value="' + key + '"';
@@ -385,13 +360,10 @@ jQuery.extend(Kendra, {
 		},
 
 		/**
-		 * filterUpdate
+		 * filterUpdate serialize the filter from the given form fields and run
+		 * it against Solr
 		 * 
-		 * serialize the filter from the given form fields and run it against
-		 * Solr
-		 * 
-		 * @param $form
-		 *            JQuery object
+		 * @param $form JQuery object
 		 */
 		filterUpdate : function($form) {
 			if ($form.length == 0)
@@ -403,8 +375,7 @@ jQuery.extend(Kendra, {
 		/**
 		 * buildQueryFormPostProcess
 		 * 
-		 * @param $form
-		 *            JQuery object
+		 * @param $form JQuery object
 		 */
 		buildQueryFormPostProcess : function($form) {
 			if ($form.length == 0)
@@ -456,10 +427,8 @@ jQuery.extend(Kendra, {
 		/**
 		 * set up ApacheSolr query
 		 * 
-		 * @param query
-		 *            Object hash of query facets => values
-		 * @param params
-		 *            Object hash of Solr parameters
+		 * @param query Object hash of query facets => values
+		 * @param params Object hash of Solr parameters
 		 */
 		solrQuery : function(query) {
 			var query = query || {}, params = {
@@ -537,24 +506,21 @@ jQuery.extend(Kendra, {
 	},
 
 	/**
-	 * buildSolrQuery
+	 * buildSolrQuery group together the parameters necessary for doing a
+	 * faceted search against Apache Solr
 	 * 
-	 * group together the parameters necessary for doing a faceted search
-	 * against Apache Solr
-	 * 
-	 * @param query
-	 *            Object
+	 * @param query Object
 	 * @returns Object
-	 * 
-	 * @TODO escape Lucene-specific characters: * - ?
+	 * @TODO escape Lucene-specific characters: + - && || ! ( ) { } [ ] ^ " ~ * ? : \
 	 * @TODO add query grouping
 	 * @TODO add support for AND vs OR subqueries
+	 * @TODO decide what to do about leading and trailing whitespace
 	 */
 	buildSolrQuery : function(query) {
-		var i = {}, $s = $p = $o = dataType = '';
-		
+		var i = {}, q = $s = $p = $o = dataType = '';
+
 		Kendra.util.log(query, "Kendra.service.buildSolrQuery");
-		
+
 		for ( var i in query) {
 			$s = query[i].op1;
 			$p = query[i].op2;
@@ -565,64 +531,67 @@ jQuery.extend(Kendra, {
 			 */
 			dataType = Kendra.util.dataTypeForKey($s);
 
+			Kendra.util.log(dataType, "Kendra.service.buildSolrQuery:dataType");
+
 			switch (dataType) {
 			case 'number':
-				switch ($p) {
-				case '&lt;':
-					var objKey = $s + '.facet.range.end';
-					Kendra.Manager.store.addByValue(objKey, $o);
-					Kendra.Manager.store.addByValue('facet.range', $s);
-					break;
-				case '&gt;':
-					var objKey = $s + '.facet.range.start';
-					Kendra.Manager.store.addByValue(objKey, $o);
-					Kendra.Manager.store.addByValue('facet.range', $s);
-					break;
-				case '==':
-					var $o = $s + ':' + $o;
-					Kendra.Manager.store.addByValue('fq', $o);
-					break;
+				if (isNaN($o)) {
+					Kendra.util.log($o, "Kendra.service.buildSolrQuery:NaN");
+				} else {
+					switch ($p) {
+					case 'lt': /* less than */
+						q = $s + ':[* TO ' + $o + ']';
+						break;
+					case 'gt': /* greater than */
+						q = $s + ':[' + $o + ' TO *]';
+						break;
+					case '==': /* equal to */
+						q = $s + ':' + $o;
+						break;
+					}
+					Kendra.Manager.store.addByValue('q', q);
 				}
 				break;
 			case 'datetime':
+				/**
+				 * @todo verify that $o is a valid datetime field
+				 */
 				switch ($p) {
-				case '&lt;':
-					var objKey = $s + '.facet.date.end';
-					Kendra.Manager.store.addByValue(objKey, '"' + $o + '"');
-					Kendra.Manager.store.addByValue('facet.date', $s);
+				case 'lt': /* before */
+					q = $s + ':[* TO ' + $o + ']';
 					break;
-				case '&gt;':
-					var objKey = $s + '.facet.date.start';
-					Kendra.Manager.store.addByValue(objKey, '"' + $o + '"');
-					Kendra.Manager.store.addByValue('facet.date', $s);
+				case 'gt': /* after */
+					q = $s + ':[' + $o + ' TO *]';
 					break;
-				case '==':
-					var $o = $s + ':' + '"' + $o + '"';
-					Kendra.Manager.store.addByValue('fq', $o);
+				case '==': /* on */
+					q = $s + ':' + $o;
 					break;
 				}
+				Kendra.Manager.store.addByValue('q', q);
+
 				break;
 			case 'string':
 			default:
-				var fq = $s + ':';
+				q = $s + ':';
 				switch ($p) {
-				case '^=':
-					fq += '"' + $o + '"*';
+				case '^=': /* starts with */
+					q += '"' + $o + '"*';
 					break;
-				case '*=':
-					fq += '*"' + $o + '"*';
+				case '$=': /* ends with */
+					q += '*"' + $o + '"';
 					break;
-				case '$=':
-					fq += '*"' + $o + '"';
+				case '*=': /* contains */
+
+					/* @todo verify wildcard syntax */
+					q += '?"' + $o + '"?';
 					break;
-				case '==':
+				case '==': /* is */
 				default:
-					fq += '"' + $o + '"';
+					q += '"' + $o + '"';
 				}
 
-				Kendra.Manager.store.addByValue('fq', fq);
+				Kendra.Manager.store.addByValue('q', q);
 			}
-
 		}
 	}
 	}
