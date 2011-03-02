@@ -546,62 +546,80 @@ jQuery.extend(Kendra, {
 	 *            Object
 	 * @returns Object
 	 * 
-	 * @TODO inspect the condition (op2); use it to determine the facet
-	 *       operation
+	 * @TODO escape Lucene-specific characters: * - ?
 	 * @TODO add query grouping
 	 * @TODO add support for AND vs OR subqueries
 	 */
 	buildSolrQuery : function(query) {
-		var i = {}, key = '', val = '', dataType = '';
+		var i = {}, $s = $p = $o = dataType = '';
+		
+		Kendra.util.log(query, "Kendra.service.buildSolrQuery");
+		
 		for ( var i in query) {
-			key = query[i].op1;
-			val = query[i].op3;
-			condition = query[i].op2;
+			$s = query[i].op1;
+			$p = query[i].op2;
+			$o = query[i].op3;
 
 			/**
 			 * format the operand according to data type
 			 */
-			dataType = Kendra.util.dataTypeForKey(key);
+			dataType = Kendra.util.dataTypeForKey($s);
+
 			switch (dataType) {
 			case 'number':
-				switch (condition) {
+				switch ($p) {
 				case '&lt;':
-					var objKey = key + '.facet.range.end';
-					Kendra.Manager.store.addByValue(objKey, val);
-					Kendra.Manager.store.addByValue('facet.range', key);
+					var objKey = $s + '.facet.range.end';
+					Kendra.Manager.store.addByValue(objKey, $o);
+					Kendra.Manager.store.addByValue('facet.range', $s);
 					break;
 				case '&gt;':
-					var objKey = key + '.facet.range.start';
-					Kendra.Manager.store.addByValue(objKey, val);
-					Kendra.Manager.store.addByValue('facet.range', key);
+					var objKey = $s + '.facet.range.start';
+					Kendra.Manager.store.addByValue(objKey, $o);
+					Kendra.Manager.store.addByValue('facet.range', $s);
 					break;
 				case '==':
-					var val = key + ':' + val;
-					Kendra.Manager.store.addByValue('fq', val);
+					var $o = $s + ':' + $o;
+					Kendra.Manager.store.addByValue('fq', $o);
 					break;
 				}
 				break;
 			case 'datetime':
-				switch (condition) {
+				switch ($p) {
 				case '&lt;':
-					var objKey = key + '.facet.date.end';
-					Kendra.Manager.store.addByValue(objKey, '"' + val + '"');
-					Kendra.Manager.store.addByValue('facet.date', key);
+					var objKey = $s + '.facet.date.end';
+					Kendra.Manager.store.addByValue(objKey, '"' + $o + '"');
+					Kendra.Manager.store.addByValue('facet.date', $s);
 					break;
 				case '&gt;':
-					var objKey = key + '.facet.date.start';
-					Kendra.Manager.store.addByValue(objKey, '"' + val + '"');
-					Kendra.Manager.store.addByValue('facet.date', key);
+					var objKey = $s + '.facet.date.start';
+					Kendra.Manager.store.addByValue(objKey, '"' + $o + '"');
+					Kendra.Manager.store.addByValue('facet.date', $s);
 					break;
 				case '==':
-					var val = key + ':' + '"' + val + '"';
-					Kendra.Manager.store.addByValue('fq', val);
+					var $o = $s + ':' + '"' + $o + '"';
+					Kendra.Manager.store.addByValue('fq', $o);
 					break;
 				}
 				break;
 			case 'string':
 			default:
-				var fq = key + ':' + '"' + val + '"';
+				var fq = $s + ':';
+				switch ($p) {
+				case '^=':
+					fq += $o + '*';
+					break;
+				case '*=':
+					fq += '*' + $o + '*';
+					break;
+				case '$=':
+					fq += '*' + $o;
+					break;
+				case '==':
+				default:
+					fq += '"' + $o + '"';
+				}
+
 				Kendra.Manager.store.addByValue('fq', fq);
 			}
 
@@ -641,7 +659,7 @@ jQuery.extend(Kendra, {
 					if ($form.length == 0) {
 						$('.node-smart_filter .node-content p').hide();
 					}
-					
+
 					Kendra.service.getTemplate('smart_filter_row.tmpl.html', function() {
 						Kendra.service.applyTemplate('smart_filter_wrapper.tmpl.html', jsonFilter, function(html) {
 
