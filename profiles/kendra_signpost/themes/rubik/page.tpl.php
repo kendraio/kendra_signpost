@@ -20,7 +20,7 @@
     <?php if ($tabs): ?><?php print $tabs ?><?php endif; ?>
     <h1 class='page-title <?php print $page_icon_class ?>'>
       <?php if (!empty($page_icon_class)): ?><span class='icon'></span><?php endif; ?>
-      <?php if ($title) print $title ?>
+      <?php if ($title): ?><a href="/" class="site-logo" title="<?php print $title ?>"><?php print $title ?></a><?php print $title ?><?php endif; ?>
     </h1>
   </div>
 
