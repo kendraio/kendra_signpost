@@ -13,17 +13,25 @@ def urlquote(x):
 def make_url_fields(key, values):
     return string.join(["%s=%s" % (urlquote(key), urlquote(val)) for val in values], "&")
 
+def is_bad_request():
+    if os.environ.get("REQUEST_METHOD", None) != "GET": return "not a GET command"
+    if not os.environ.get("HTTP_HOST", None): return "no HTTP_HOST specified"
+    return 0
+
+# Do some sanity checking before actually dispatching: we are not a general-purpose proxy
+if is_bad_request():
+    print "Status: 403 Forbidden"
+    print "Content-type: text/plain"
+    print 
+    print "I'm sorry Dave, I can't do that:", is_bad_request()
+    sys.exit(0)
+
 form = cgi.FieldStorage(keep_blank_values=1)
 form_data = [(k, form.getlist(k)) for k in form.keys()]
 
 request_uri = os.environ.get("REQUEST_URI", "")
 request_uri_path = string.split(request_uri, "?")[0]
 recreated_query = string.join([make_url_fields(k, vs) for (k, vs) in form_data], "&")
-
-def is_bad_request():
-    if os.environ.get("REQUEST_METHOD", None) != "GET": return "not a GET command"
-    if not os.environ.get("HTTP_HOST", None): return "no HTTP_HOST specified"
-    return 0
 
 if os.environ.get('HTTPS', '') == 'on':
     # Warning: proxied HTTPS requests will not attempt to validate the server certificate!
@@ -39,14 +47,6 @@ print >> logfile, "environment"
 for k in os.environ:
     print >> logfile, k, os.environ.get(k)
 logfile.close()
-
-# Do some sanity checking before actually dispatching: we are not a general-purpose proxy
-if is_bad_request():
-    print "Status: 403 Forbidden"
-    print "Content-type: text/plain"
-    print 
-    print "I'm sorry Dave, I can't do that:", is_bad_request()
-    sys.exit(0)
 
 # Redirect to call local installation of Solr search 
 absolute_url = '%s://%s:%d%s?%s' % (protocol, os.environ['HTTP_HOST'], 8983,
