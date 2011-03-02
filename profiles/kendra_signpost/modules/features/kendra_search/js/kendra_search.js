@@ -540,10 +540,10 @@ jQuery.extend(Kendra, {
 				} else {
 					switch ($p) {
 					case 'lt': /* less than */
-						subqueries.push($s + ':[* TO ' + $o + ']');
+						subqueries.push($s + ':{* TO ' + $o + '}');
 						break;
 					case 'gt': /* greater than */
-						subqueries.push($s + ':[' + $o + ' TO *]');
+						subqueries.push($s + ':{' + $o + ' TO *}');
 						break;
 					case '==': /* equal to */
 						subqueries.push($s + ':' + $o);
@@ -557,13 +557,13 @@ jQuery.extend(Kendra, {
 				 */
 				switch ($p) {
 				case 'lt': /* before */
-					subqueries.push($s + ':[* TO ' + $o + ']');
+					subqueries.push($s + ':{* TO ' + $o + '}');
 					break;
 				case 'gt': /* after */
-					subqueries.push($s + ':[' + $o + ' TO *]');
+					subqueries.push($s + ':{' + $o + ' TO *}');
 					break;
 				case '==': /* on */
-					subqueries.push($s + ':' + $o);
+					subqueries.push($s + ':[' + $o + ' TO ' + $o + ']');
 					break;
 				}
 
