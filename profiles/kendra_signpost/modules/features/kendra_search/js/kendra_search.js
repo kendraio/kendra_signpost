@@ -517,7 +517,7 @@ jQuery.extend(Kendra, {
 	 * @TODO decide what to do about leading and trailing whitespace
 	 */
 	buildSolrQuery : function(query) {
-		var i = {}, q = $s = $p = $o = dataType = '';
+		var i = {}, subqueries = [], $s = $p = $o = dataType = '';
 
 		Kendra.util.log(query, "Kendra.service.buildSolrQuery");
 
@@ -540,16 +540,15 @@ jQuery.extend(Kendra, {
 				} else {
 					switch ($p) {
 					case 'lt': /* less than */
-						q = $s + ':[* TO ' + $o + ']';
+						subqueries.push($s + ':[* TO ' + $o + ']');
 						break;
 					case 'gt': /* greater than */
-						q = $s + ':[' + $o + ' TO *]';
+						subqueries.push($s + ':[' + $o + ' TO *]');
 						break;
 					case '==': /* equal to */
-						q = $s + ':' + $o;
+						subqueries.push($s + ':' + $o);
 						break;
 					}
-					Kendra.Manager.store.addByValue('q', q);
 				}
 				break;
 			case 'datetime':
@@ -558,41 +557,39 @@ jQuery.extend(Kendra, {
 				 */
 				switch ($p) {
 				case 'lt': /* before */
-					q = $s + ':[* TO ' + $o + ']';
+					subqueries.push($s + ':[* TO ' + $o + ']');
 					break;
 				case 'gt': /* after */
-					q = $s + ':[' + $o + ' TO *]';
+					subqueries.push($s + ':[' + $o + ' TO *]');
 					break;
 				case '==': /* on */
-					q = $s + ':' + $o;
+					subqueries.push($s + ':' + $o);
 					break;
 				}
-				Kendra.Manager.store.addByValue('q', q);
 
 				break;
 			case 'string':
 			default:
-				q = $s + ':';
 				switch ($p) {
 				case '^=': /* starts with */
-					q += '"' + $o + '"*';
+					subqueries.push($s + ':' + '"' + $o + '"*');
 					break;
 				case '$=': /* ends with */
-					q += '*"' + $o + '"';
+					subqueries.push($s + ':' + '*"' + $o + '"');
 					break;
 				case '*=': /* contains */
 
 					/* @todo verify wildcard syntax */
-					q += '?"' + $o + '"?';
+					subqueries.push($s + ':' + '?"' + $o + '"?');
 					break;
 				case '==': /* is */
 				default:
-					q += '"' + $o + '"';
+					subqueries.push($s + ':' + '"' + $o + '"');
 				}
-
-				Kendra.Manager.store.addByValue('q', q);
 			}
 		}
+
+		Kendra.Manager.store.addByValue('q', subqueries.join(' AND '));
 	}
 	}
 });
