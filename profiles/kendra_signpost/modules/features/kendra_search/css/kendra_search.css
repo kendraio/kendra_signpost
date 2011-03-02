@@ -56,14 +56,12 @@
 	padding: 1em;
 }
 
-/*
-#kendra-query-builder table,#kendra-query-builder h3,#kendra-query-builder>*
-	{
-	margin: 1em;
-}
-*/
 #kendra-query-builder table tr.draggable {
 	height: 2em;
+}
+
+#kendra-query-builder table tr.draggable > td {
+	vertical-align: middle;
 }
 
 #kendra-query-builder input,#kendra-query-builder select {
@@ -104,14 +102,6 @@
 /**
 * results
 */
-#kendra-search-result {
-	
-}
-
-#kendra-search-navigation {
-	
-}
-
 #kendra-search-pager {
 	margin: 0;
 }
@@ -127,7 +117,7 @@
 	margin-bottom: 1em;
 }
 
-#kendra-search-docs >div {
+#kendra-search-docs>div {
 	margin-bottom: 1em;
 }
 
