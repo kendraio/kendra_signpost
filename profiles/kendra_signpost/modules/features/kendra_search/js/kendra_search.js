@@ -582,7 +582,7 @@ jQuery.extend(Kendra, {
 				case '*=': /* contains */
 
 					/* @todo verify wildcard syntax */
-					subqueries.push($s + ':' + '?"' + $o + '"?');
+					subqueries.push($s + ':' + '"' + $o + '"*');
 					break;
 				case '==': /* is */
 				default:
