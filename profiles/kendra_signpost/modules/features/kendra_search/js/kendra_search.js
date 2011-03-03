@@ -575,8 +575,10 @@ jQuery.extend(Kendra, {
 					subqueries.push($s + ':' + '"' + $o + '"*');
 					break;
 				case '$=': /* ends with */
-					subqueries.push($s + ':' + '*"' + $o + '"');
-					break;
+					/*
+					 * @FIXME - not currently supported within Lucene syntax
+					 * subqueries.push($s + ':' + '*"' + $o + '"'); break;
+					 */
 				case '*=': /* contains */
 
 					/* @todo verify wildcard syntax */
@@ -589,7 +591,11 @@ jQuery.extend(Kendra, {
 			}
 		}
 
-		Kendra.Manager.store.addByValue('q', subqueries.join(' AND '));
+		/**
+		 * @todo allow OR clause grouping
+		 */
+		var q = '+' + subqueries.join(') +(') + ')';
+		Kendra.Manager.store.addByValue('q', q);
 	}
 	}
 });
