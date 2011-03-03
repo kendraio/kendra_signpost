@@ -275,14 +275,14 @@ jQuery.extend(Kendra, {
 			var html = '', dataType = dataType ? dataType.toLowerCase() : 'string', operands = {
 				'string' : {
 					'==' : {
-						'label' : 'is',
-						'isDefault' : true
+						'label' : 'is'
 					},
 					'^=' : {
 						'label' : 'starts with'
 					},
 					'*=' : {
-						'label' : 'contains'
+						'label' : 'contains',
+						'isDefault' : true
 					},
 					'$=' : {
 						'label' : 'ends with'
@@ -332,7 +332,13 @@ jQuery.extend(Kendra, {
 		},
 
 		/**
-		 * buildQueryFormSerialize
+		 * buildQueryFormSerialize: given an HTML table of draggable rows,
+		 * construct an array of triples, each in the form {op1:subject-value,
+		 * op2:predicate-value, op3:object-value}
+		 * 
+		 * @param $form JQuery object
+		 * @return Array of Objects
+		 * @todo transform rows within rows into sub-queries
 		 */
 		buildQueryFormSerialize : function($form) {
 			var filter = {
@@ -347,6 +353,7 @@ jQuery.extend(Kendra, {
 					var $this = $(this), key = $this.attr('class').replace(/.*kendra-filter-(op\d).*/, '$1'), value = $this.val();
 					temp[key] = value;
 				});
+
 				filter.rules.push(temp);
 			});
 
