@@ -278,14 +278,14 @@ jQuery.extend(Kendra, {
 				},
 				'string' : {
 					'==' : {
-						'label' : 'is'
+						'label' : 'is',
+						'isDefault' : true
 					},
 					'^=' : {
 						'label' : 'starts with'
 					},
 					'*=' : {
-						'label' : 'contains',
-						'isDefault' : true
+						'label' : 'contains'
 					},
 					'$=' : {
 						'label' : 'ends with'
