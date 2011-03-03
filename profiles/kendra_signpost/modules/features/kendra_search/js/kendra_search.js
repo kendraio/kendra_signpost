@@ -388,10 +388,14 @@ jQuery.extend(Kendra, {
 			}).find('.kendra-filter-op1,.kendra-filter-op2,.kendra-filter-op3').change(function() {
 				var $this = $(this), key = $this.val();
 
+				/**
+				 * changing the subject selector affects the predicate options
+				 * if the dataType changes, it also clears the object value
+				 */
 				if ($this.hasClass('kendra-filter-op1')) {
 					if (typeof Kendra.mapping.mappings[key] != 'undefined' && Kendra.mapping.mappings[key].dataType) {
 						var dataType = Kendra.util.dataTypeForKey(key), options = Kendra.service.buildQueryMappingTypes(dataType);
-						$this.parents('tr.draggable:eq(0)').find('.kendra-filter-op2').html(options);
+						$this.parents('tr.draggable:eq(0)').find('.kendra-filter-op2').html(options).end().find('.kendra-filter-op3').select().focus();
 					}
 				}
 
