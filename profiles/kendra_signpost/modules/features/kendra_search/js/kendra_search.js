@@ -270,12 +270,7 @@ jQuery.extend(Kendra, {
 		 *            search options depending on the data type provided
 		 */
 		buildQueryMappingTypes : function(dataType, op2) {
-			var html = '', dataType = dataType ? dataType.toLowerCase() : 'default', operands = {
-				'default' : {
-					'==' : {
-						'label' : 'is'
-					}
-				},
+			var html = '', dataType = dataType ? dataType.toLowerCase() : 'string', operands = {
 				'string' : {
 					'==' : {
 						'label' : 'is',
@@ -626,30 +621,27 @@ jQuery.extend(Kendra, {
 					Kendra.util.log(jsonFilter, 'parsed JSON');
 				}
 
-				if (jsonFilter) {
+				if ($form.length == 0) {
+					$('.node-smart_filter .node-content p').hide();
+				}
 
-					if ($form.length == 0) {
-						$('.node-smart_filter .node-content p').hide();
-					}
+				Kendra.service.getTemplate('smart_filter_row.tmpl.html', function() {
+					Kendra.service.applyTemplate('smart_filter_wrapper.tmpl.html', jsonFilter, function(html) {
 
-					Kendra.service.getTemplate('smart_filter_row.tmpl.html', function() {
-						Kendra.service.applyTemplate('smart_filter_wrapper.tmpl.html', jsonFilter, function(html) {
+						Kendra.util.log(html, 'success:html=');
+						$(selector).html(html);
 
-							Kendra.util.log(html, 'success:html=');
-							$(selector).html(html);
-
-							if ($form.length > 0) {
-								Kendra.service.buildQueryFormPostProcess($form);
-							}
-						});
+						if ($form.length > 0) {
+							Kendra.service.buildQueryFormPostProcess($form);
+						}
 					});
+				});
 
-					/**
-					 * run the query
-					 */
-					if (jsonFilter.rules && jsonFilter.rules.length > 0) {
-						Kendra.service.solrQuery(jsonFilter.rules);
-					}
+				/**
+				 * run the query
+				 */
+				if (jsonFilter.rules && jsonFilter.rules.length > 0) {
+					Kendra.service.solrQuery(jsonFilter.rules);
 				}
 
 			}, failure = function(status, data) {
