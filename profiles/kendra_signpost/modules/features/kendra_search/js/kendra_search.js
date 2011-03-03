@@ -212,12 +212,14 @@ jQuery.extend(Kendra, {
 		 * @returns true upon success, false upon failure
 		 */
 		buildQueryFormAddRule : function(el) {
-			var $row = $(el).parents('tr.draggable:eq(0)'), $form = $row.parents('form#node-form');
+			var $row = $(el).parents('tr.draggable:eq(0)'), $form = $row.parents('form#node-form'), index = 0;
 			if ($row.length != 1) {
 				return false;
 			}
-
-			$row.clone(true).insertAfter($row);
+			$copy = $row.clone(true);
+			$copy.find('option[selected=selected]').removeAttr('selected');
+			index = $row.find('.kendra-filter-op1').get(0).selectedIndex;
+			$copy.insertAfter($row).find('.kendra-filter-op1').get(0).selectedIndex = index;
 
 			Kendra.service.filterUpdate($form);
 
