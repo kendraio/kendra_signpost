@@ -386,17 +386,16 @@ jQuery.extend(Kendra, {
 				return true;
 
 			}).find('.kendra-filter-op1,.kendra-filter-op2,.kendra-filter-op3').change(function() {
-				Kendra.service.filterUpdate($form);
-				return true;
-
-			}).filter('.kendra-filter-op1').change(function() {
 				var $this = $(this), key = $this.val();
 
-				if (typeof Kendra.mapping.mappings[key] != 'undefined' && Kendra.mapping.mappings[key].dataType) {
-					var dataType = Kendra.util.dataTypeForKey(key), options = Kendra.service.buildQueryMappingTypes(dataType);
-					$this.parents('tr.draggable:eq(0)').find('.kendra-filter-op2').html(options);
+				if ($this.hasClass('kendra-filter-op1')) {
+					if (typeof Kendra.mapping.mappings[key] != 'undefined' && Kendra.mapping.mappings[key].dataType) {
+						var dataType = Kendra.util.dataTypeForKey(key), options = Kendra.service.buildQueryMappingTypes(dataType);
+						$this.parents('tr.draggable:eq(0)').find('.kendra-filter-op2').html(options);
+					}
 				}
 
+				Kendra.service.filterUpdate($form);
 				return true;
 			});
 
