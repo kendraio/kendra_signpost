@@ -589,7 +589,7 @@ jQuery.extend(Kendra, {
 		/**
 		 * @todo allow OR clause grouping
 		 */
-		var q = '+' + subqueries.join(') +(') + ')';
+		var q = '+(' + subqueries.join(') +(') + ')';
 		Kendra.Manager.store.addByValue('q', q);
 	}
 	}
