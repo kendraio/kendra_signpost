@@ -501,7 +501,18 @@ jQuery.extend(Kendra, {
 	},
 
 	/**
-	 * buildSolrQuery group together the parameters necessary for doing a
+	 * quoteString: quote a string containing whitespace, otherwise return the
+	 * original string useful for quoting substring queries within a Lucene
+	 * query
+	 */
+	quoteString : function(str) {
+		if (/\s+/.test(str))
+			return '"' + str + '"';
+		return str;
+	},
+
+	/**
+	 * buildSolrQuery: group together the parameters necessary for doing a
 	 * faceted search against Apache Solr
 	 * 
 	 * @param query Object
@@ -537,9 +548,11 @@ jQuery.extend(Kendra, {
 					case 'lt': /* less than */
 						subqueries.push($s + ':{* TO ' + $o + '}');
 						break;
+					
 					case 'gt': /* greater than */
 						subqueries.push($s + ':{' + $o + ' TO *}');
 						break;
+				
 					case '==': /* equal to */
 						subqueries.push($s + ':' + $o);
 						break;
@@ -554,9 +567,11 @@ jQuery.extend(Kendra, {
 				case 'lt': /* before */
 					subqueries.push($s + ':{* TO ' + $o + '}');
 					break;
+
 				case 'gt': /* after */
 					subqueries.push($s + ':{' + $o + ' TO *}');
 					break;
+					
 				case '==': /* on */
 					subqueries.push($s + ':[' + $o + ' TO ' + $o + ']');
 					break;
@@ -567,21 +582,20 @@ jQuery.extend(Kendra, {
 			default:
 				switch ($p) {
 				case '^=': /* starts with */
-					subqueries.push($s + ':' + '"' + $o + '"*');
+					subqueries.push($s + ':' + Kendra.service.quoteString($o) + '*');
 					break;
-				case '$=': /* ends with */
-					/*
-					 * @FIXME - not currently supported within Lucene syntax
-					 * subqueries.push($s + ':' + '*"' + $o + '"'); break;
-					 */
-				case '*=': /* contains */
 
-					/* @todo verify wildcard syntax */
-					subqueries.push($s + ':' + '"' + $o + '"*');
+				case '$=': /* ends with */
+					subqueries.push($s + ':*' + Kendra.service.quoteString($o));
 					break;
+
+				case '*=': /* contains */
+					subqueries.push($s + ':*' + Kendra.service.quoteString($o) + '*');
+					break;
+
 				case '==': /* is */
 				default:
-					subqueries.push($s + ':' + '"' + $o + '"');
+					subqueries.push($s + ':' + Kendra.service.quoteString($o));
 				}
 			}
 		}
