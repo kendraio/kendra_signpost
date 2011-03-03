@@ -470,142 +470,143 @@ jQuery.extend(Kendra, {
 
 			Kendra.Manager.init();
 
-			// set the solr query here
-		// Kendra.Manager.store.addByValue('q', '*:*');
-		Kendra.Manager.store.addByValue('q.alt', '*:*');
-		Kendra.Manager.store.addByValue('fq', 'type:kendra_cat');
-
-		/**
-		 * now, build the actual query strings
-		 */
-		Kendra.service.buildSolrQuery(query);
-
-		for ( var name in params) {
-			var val = params[name], multivariate_facets = [ 'fq', 'facet.field', 'facet.query' ];
-
-			if (typeof val == 'object') {
-				if ($.inArray(name, multivariate_facets) >= 0) {
-					for ( var i in val) {
-						Kendra.Manager.store.addByValue(name, val[i]);
-					}
-				} else if (val.length > 0) {
-					Kendra.Manager.store.addByValue(name, val.join(','));
-				} else {
-					Kendra.util.log(val, "Kendra.service.solrQuery: skipping object parameter");
-				}
-			} else {
-				Kendra.Manager.store.addByValue(name, val);
-			}
-		}
-		Kendra.Manager.doRequest();
-	},
-
-	/**
-	 * quoteString: quote a string containing whitespace, otherwise return the
-	 * original string useful for quoting substring queries within a Lucene
-	 * query
-	 */
-	quoteString : function(str) {
-		if (/\s+/.test(str))
-			return '"' + str + '"';
-		return str;
-	},
-
-	/**
-	 * buildSolrQuery: group together the parameters necessary for doing a
-	 * faceted search against Apache Solr
-	 * 
-	 * @param query Object
-	 * @returns Object
-	 * @TODO escape Lucene-specific characters: + - && || ! ( ) { } [ ] ^ " ~ * ? : \
-	 * @TODO add query grouping
-	 * @TODO add support for AND vs OR subqueries
-	 * @TODO decide what to do about leading and trailing whitespace
-	 */
-	buildSolrQuery : function(query) {
-		var i = {}, subqueries = [], $s = $p = $o = dataType = '';
-
-		Kendra.util.log(query, "Kendra.service.buildSolrQuery");
-
-		for ( var i in query) {
-			$s = query[i].op1;
-			$p = query[i].op2;
-			$o = query[i].op3;
+			/**
+			 * set the solr query here
+			 */
+			Kendra.Manager.store.addByValue('q.alt', '*:*');
+			Kendra.Manager.store.addByValue('fq', 'type:kendra_cat');
 
 			/**
-			 * format the operand according to data type
+			 * now, build the actual query strings
 			 */
-			dataType = Kendra.util.dataTypeForKey($s);
+			Kendra.service.buildSolrQuery(query);
 
-			Kendra.util.log(dataType, "Kendra.service.buildSolrQuery:dataType");
+			for ( var name in params) {
+				var val = params[name], multivariate_facets = [ 'fq', 'facet.field', 'facet.query' ];
 
-			switch (dataType) {
-			case 'number':
-				if (isNaN($o)) {
-					Kendra.util.log($o, "Kendra.service.buildSolrQuery:NaN");
+				if (typeof val == 'object') {
+					if ($.inArray(name, multivariate_facets) >= 0) {
+						for ( var i in val) {
+							Kendra.Manager.store.addByValue(name, val[i]);
+						}
+					} else if (val.length > 0) {
+						Kendra.Manager.store.addByValue(name, val.join(','));
+					} else {
+						Kendra.util.log(val, "Kendra.service.solrQuery: skipping object parameter");
+					}
 				} else {
+					Kendra.Manager.store.addByValue(name, val);
+				}
+			}
+			Kendra.Manager.doRequest();
+		},
+
+		/**
+		 * quoteString: quote a string containing whitespace, otherwise return
+		 * the original string useful for quoting substring queries within a
+		 * Lucene query
+		 */
+		quoteString : function(str) {
+			if (/\s+/.test(str))
+				return '"' + str + '"';
+			return str;
+		},
+
+		/**
+		 * buildSolrQuery: group together the parameters necessary for doing a
+		 * faceted search against Apache Solr
+		 * 
+		 * @param query Object
+		 * @returns Object
+		 * @TODO escape Lucene-specific characters: + - && || ! ( ) { } [ ] ^ " ~ * ? : \
+		 * @TODO add query grouping
+		 * @TODO add support for AND vs OR subqueries
+		 * @TODO decide what to do about leading and trailing whitespace
+		 */
+		buildSolrQuery : function(query) {
+			var i = {}, subqueries = [], $s = $p = $o = dataType = '';
+
+			Kendra.util.log(query, "Kendra.service.buildSolrQuery");
+
+			for ( var i in query) {
+				$s = query[i].op1;
+				$p = query[i].op2;
+				$o = query[i].op3;
+
+				/**
+				 * format the operand according to data type
+				 */
+				dataType = Kendra.util.dataTypeForKey($s);
+
+				Kendra.util.log(dataType, "Kendra.service.buildSolrQuery:dataType");
+
+				switch (dataType) {
+				case 'number':
+					if (isNaN($o)) {
+						Kendra.util.log($o, "Kendra.service.buildSolrQuery:NaN");
+					} else {
+						switch ($p) {
+						case 'lt': /* less than */
+							subqueries.push($s + ':{* TO ' + $o + '}');
+							break;
+
+						case 'gt': /* greater than */
+							subqueries.push($s + ':{' + $o + ' TO *}');
+							break;
+
+						case '==': /* equal to */
+							subqueries.push($s + ':' + $o);
+							break;
+						}
+					}
+					break;
+				case 'datetime':
+					/**
+					 * @todo verify that $o is a valid datetime field
+					 */
 					switch ($p) {
-					case 'lt': /* less than */
+					case 'lt': /* before */
 						subqueries.push($s + ':{* TO ' + $o + '}');
 						break;
 
-					case 'gt': /* greater than */
+					case 'gt': /* after */
 						subqueries.push($s + ':{' + $o + ' TO *}');
 						break;
 
-					case '==': /* equal to */
-						subqueries.push($s + ':' + $o);
+					case '==': /* on */
+						subqueries.push($s + ':[' + $o + ' TO ' + $o + ']');
 						break;
 					}
-				}
-				break;
-			case 'datetime':
-				/**
-				 * @todo verify that $o is a valid datetime field
-				 */
-				switch ($p) {
-				case 'lt': /* before */
-					subqueries.push($s + ':{* TO ' + $o + '}');
-					break;
 
-				case 'gt': /* after */
-					subqueries.push($s + ':{' + $o + ' TO *}');
 					break;
-
-				case '==': /* on */
-					subqueries.push($s + ':[' + $o + ' TO ' + $o + ']');
-					break;
-				}
-
-				break;
-			case 'string':
-			default:
-				switch ($p) {
-				case '^=': /* starts with */
-					subqueries.push($s + ':' + Kendra.service.quoteString($o) + '*');
-					break;
-
-				case '$=': /* ends with */
-					subqueries.push($s + ':*' + Kendra.service.quoteString($o));
-					break;
-
-				case '*=': /* contains */
-					subqueries.push($s + ':*' + Kendra.service.quoteString($o) + '*');
-					break;
-
-				case '==': /* is */
+				case 'string':
 				default:
-					subqueries.push($s + ':' + Kendra.service.quoteString($o));
+					switch ($p) {
+					case '^=': /* starts with */
+						subqueries.push($s + ':' + Kendra.service.quoteString($o) + '*');
+						break;
+
+					case '$=': /* ends with */
+						subqueries.push($s + ':*' + Kendra.service.quoteString($o));
+						break;
+
+					case '*=': /* contains */
+						subqueries.push($s + ':*' + Kendra.service.quoteString($o) + '*');
+						break;
+
+					case '==': /* is */
+					default:
+						subqueries.push($s + ':' + Kendra.service.quoteString($o));
+					}
 				}
 			}
-		}
 
-		/**
-		 * @todo allow OR clause grouping
-		 */
-		var q = '+(' + subqueries.join(') +(') + ')';
-		Kendra.Manager.store.addByValue('q', q);
-	}
+			/**
+			 * @todo allow OR clause grouping
+			 */
+			var q = '+(' + subqueries.join(') +(') + ')';
+			Kendra.Manager.store.addByValue('q', q);
+		}
 	}
 });
 
@@ -620,13 +621,6 @@ jQuery.extend(Kendra, {
 				// smart filter editor page
 				$form.find('.body-field-wrapper').hide().before(container);
 			} else {
-				/**
-				 * create the form if it doesn't already exist
-				 * 
-				 * @todo instead of creating a form, should only run the query
-				 *       $form.wrap('<form id="node-form" method="post"/>');
-				 */
-
 				// smart filter view page
 				$('.node-smart_filter .node-content').append(container);
 			}
