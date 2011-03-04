@@ -54,12 +54,37 @@ def get_type_list():
 	return map(strip_result_fields, re.findall(r"(?s)<result>.*?</result>", urllib.urlopen(query_url).read()))
 
 def validate_typed_data_value(name, value):
-    if name == "http://kendra.org.uk/#datetime":
+    typ = name_uri_to_type_uri.get(name, None)
+    if typ == "http://kendra.org.uk/#datetime":
        return re.findall(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:.[0-9]+)?Z$", value) != []
-    if name == "http://kendra.org.uk/#number":
+    if typ == "http://kendra.org.uk/#number":
        return re.findall(r"^[-+]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][-+]?[0-9]+)?$", value) != []
     # Otherwise, everything is valid by default -- will change later
     return 1
+
+# Perform a series of value inferences based on directed arcs
+# Avoid recursion
+def infer_from(name, value):
+#    print "INFER_FROM", name, value
+    out = []
+    pending = [(name, value)]
+    while pending:
+        # Pop an arc off the top
+        name, value = pending[0]
+        pending = pending[1:]
+
+        if not validate_typed_data_value(name, value):
+	   continue
+
+        # Add this one directly to the output
+	out += [(name, value)]
+
+        # Add the rest of the new arcs from it, if any, to the pending pool
+	for n in implies.get(name, []):
+            if (n, value) not in (out + pending):
+		pending += [(n, value)]
+#    print "DONE", out
+    return out
 
 # Process a single XML segment
 def rewrite_stanza(text):
@@ -82,16 +107,17 @@ def rewrite_stanza(text):
 ##          properties[other_name] = value
 
     # Get the property list for this row from SPARQL endpoint
-    properties = {}
+    # and perform inferernce
+    inferred_values = []
     for name, value in get_property_list(row_uri):
-        properties[name] = value
+        inferred_values += infer_from(name, value)
+
+    # deduplicate
+    inferred_values = uniq(inferred_values)
 
     # Bash these metadata fields in, very inefficiently
     # TO DO: make more efficient
-    for name, value in properties.items():
-        # Validate date/time values, numbers, etc.
-        if not validate_typed_data_value(name, value):
-           continue
+    for name, value in inferred_values:
         type_prefix = type_uri_to_prefix(name_uri_to_type_uri.get(name, None))
         text = string.replace(text, "</doc>", '<field name="%s">%s</field></doc>' % (mangle_uri(type_prefix, name), value))
 
