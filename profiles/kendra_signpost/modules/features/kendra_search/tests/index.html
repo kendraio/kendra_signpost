@@ -52,11 +52,18 @@
 	margin: 5px;
 }
 
-#queryform input,#queryform select {
+#queryform input,#queryform select,#queryform textarea {
 	margin: 2px;
 	padding: 2px;
 	border: 1px solid #cccccc;
 	background-color: #eeeeee;
+	width: 185px;
+	overflow: auto;
+}
+
+#queryform textarea {
+	font-size: 0.7em;
+	height: 14em;
 }
 
 #queryform label {
@@ -130,8 +137,8 @@
 <div class="field"><label for="rows">rows</label> <input
 	type="text" name="rows" id="rows" value="100" /></div>
 
-<div class="field"><label for="q">q</label> <input type="text"
-	name="q" id="q" value="" /></div>
+<div class="field"><label for="q">q</label> <textarea name="q"
+	id="q"></textarea></div>
 <div class="field"><label for="qalt">q.alt</label> <input
 	type="text" name="q.alt" id="qalt" value="*:*" /></div>
 <div class="field"><label for="fq">fq</label> <input type="text"

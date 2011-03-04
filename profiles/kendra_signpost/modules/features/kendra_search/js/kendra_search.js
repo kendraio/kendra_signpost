@@ -193,7 +193,7 @@ jQuery.extend(Kendra, {
 		applyTemplate : function(tmplName, data, success, failure) {
 			var success = success || function() {
 			}, failure = failure || function() {
-			};
+			}, data = data || {};
 
 			Kendra.service.getTemplate(tmplName, function() {
 				Kendra.util.log(tmplName, 'rendering template');
@@ -212,12 +212,14 @@ jQuery.extend(Kendra, {
 		 * @returns true upon success, false upon failure
 		 */
 		buildQueryFormAddRule : function(el) {
-			var $row = $(el).parents('tr.draggable:eq(0)'), $form = $row.parents('form#node-form');
+			var $row = $(el).parents('tr.draggable:eq(0)'), $form = $row.parents('form#node-form'), index = 0;
 			if ($row.length != 1) {
 				return false;
 			}
-
-			$row.clone(true).insertAfter($row);
+			$copy = $row.clone(true);
+			$copy.find('option[selected=selected]').removeAttr('selected');
+			index = $row.find('.kendra-filter-op1').get(0).selectedIndex;
+			$copy.insertAfter($row).find('.kendra-filter-op1').get(0).selectedIndex = index;
 
 			Kendra.service.filterUpdate($form);
 
@@ -273,14 +275,14 @@ jQuery.extend(Kendra, {
 			var html = '', dataType = dataType ? dataType.toLowerCase() : 'string', operands = {
 				'string' : {
 					'==' : {
-						'label' : 'is',
-						'isDefault' : true
+						'label' : 'is'
 					},
 					'^=' : {
 						'label' : 'starts with'
 					},
 					'*=' : {
-						'label' : 'contains'
+						'label' : 'contains',
+						'isDefault' : true
 					},
 					'$=' : {
 						'label' : 'ends with'
@@ -330,7 +332,13 @@ jQuery.extend(Kendra, {
 		},
 
 		/**
-		 * buildQueryFormSerialize
+		 * buildQueryFormSerialize: given an HTML table of draggable rows,
+		 * construct an array of triples, each in the form {op1:subject-value,
+		 * op2:predicate-value, op3:object-value}
+		 * 
+		 * @param $form JQuery object
+		 * @return Array of Objects
+		 * @todo transform rows within rows into sub-queries
 		 */
 		buildQueryFormSerialize : function($form) {
 			var filter = {
@@ -345,6 +353,7 @@ jQuery.extend(Kendra, {
 					var $this = $(this), key = $this.attr('class').replace(/.*kendra-filter-(op\d).*/, '$1'), value = $this.val();
 					temp[key] = value;
 				});
+
 				filter.rules.push(temp);
 			});
 
@@ -386,17 +395,20 @@ jQuery.extend(Kendra, {
 				return true;
 
 			}).find('.kendra-filter-op1,.kendra-filter-op2,.kendra-filter-op3').change(function() {
-				Kendra.service.filterUpdate($form);
-				return true;
-
-			}).filter('.kendra-filter-op1').change(function() {
 				var $this = $(this), key = $this.val();
 
-				if (typeof Kendra.mapping.mappings[key] != 'undefined' && Kendra.mapping.mappings[key].dataType) {
-					var dataType = Kendra.util.dataTypeForKey(key), options = Kendra.service.buildQueryMappingTypes(dataType);
-					$this.parents('tr.draggable:eq(0)').find('.kendra-filter-op2').html(options);
+				/**
+				 * changing the subject selector affects the predicate options
+				 * if the dataType changes, it also clears the object value
+				 */
+				if ($this.hasClass('kendra-filter-op1')) {
+					if (typeof Kendra.mapping.mappings[key] != 'undefined' && Kendra.mapping.mappings[key].dataType) {
+						var dataType = Kendra.util.dataTypeForKey(key), options = Kendra.service.buildQueryMappingTypes(dataType);
+						$this.parents('tr.draggable:eq(0)').find('.kendra-filter-op2').html(options).end().find('.kendra-filter-op3').select().focus();
+					}
 				}
 
+				Kendra.service.filterUpdate($form);
 				return true;
 			});
 
@@ -470,128 +482,143 @@ jQuery.extend(Kendra, {
 
 			Kendra.Manager.init();
 
-			// set the solr query here
-		// Kendra.Manager.store.addByValue('q', '*:*');
-		Kendra.Manager.store.addByValue('q.alt', '*:*');
-		Kendra.Manager.store.addByValue('fq', 'type:kendra_cat');
-
-		/**
-		 * now, build the actual query strings
-		 */
-		Kendra.service.buildSolrQuery(query);
-
-		for ( var name in params) {
-			var val = params[name], multivariate_facets = [ 'fq', 'facet.field', 'facet.query' ];
-
-			if (typeof val == 'object') {
-				if ($.inArray(name, multivariate_facets) >= 0) {
-					for ( var i in val) {
-						Kendra.Manager.store.addByValue(name, val[i]);
-					}
-				} else if (val.length > 0) {
-					Kendra.Manager.store.addByValue(name, val.join(','));
-				} else {
-					Kendra.util.log(val, "Kendra.service.solrQuery: skipping object parameter");
-				}
-			} else {
-				Kendra.Manager.store.addByValue(name, val);
-			}
-		}
-		Kendra.Manager.doRequest();
-	},
-
-	/**
-	 * buildSolrQuery group together the parameters necessary for doing a
-	 * faceted search against Apache Solr
-	 * 
-	 * @param query Object
-	 * @returns Object
-	 * @TODO escape Lucene-specific characters: + - && || ! ( ) { } [ ] ^ " ~ * ? : \
-	 * @TODO add query grouping
-	 * @TODO add support for AND vs OR subqueries
-	 * @TODO decide what to do about leading and trailing whitespace
-	 */
-	buildSolrQuery : function(query) {
-		var i = {}, subqueries = [], $s = $p = $o = dataType = '';
-
-		Kendra.util.log(query, "Kendra.service.buildSolrQuery");
-
-		for ( var i in query) {
-			$s = query[i].op1;
-			$p = query[i].op2;
-			$o = query[i].op3;
+			/**
+			 * set the solr query here
+			 */
+			Kendra.Manager.store.addByValue('q.alt', '*:*');
+			Kendra.Manager.store.addByValue('fq', 'type:kendra_cat');
 
 			/**
-			 * format the operand according to data type
+			 * now, build the actual query strings
 			 */
-			dataType = Kendra.util.dataTypeForKey($s);
+			Kendra.service.buildSolrQuery(query);
 
-			Kendra.util.log(dataType, "Kendra.service.buildSolrQuery:dataType");
+			for ( var name in params) {
+				var val = params[name], multivariate_facets = [ 'fq', 'facet.field', 'facet.query' ];
 
-			switch (dataType) {
-			case 'number':
-				if (isNaN($o)) {
-					Kendra.util.log($o, "Kendra.service.buildSolrQuery:NaN");
-				} else {
-					switch ($p) {
-					case 'lt': /* less than */
-						subqueries.push($s + ':{* TO ' + $o + '}');
-						break;
-					case 'gt': /* greater than */
-						subqueries.push($s + ':{' + $o + ' TO *}');
-						break;
-					case '==': /* equal to */
-						subqueries.push($s + ':' + $o);
-						break;
+				if (typeof val == 'object') {
+					if ($.inArray(name, multivariate_facets) >= 0) {
+						for ( var i in val) {
+							Kendra.Manager.store.addByValue(name, val[i]);
+						}
+					} else if (val.length > 0) {
+						Kendra.Manager.store.addByValue(name, val.join(','));
+					} else {
+						Kendra.util.log(val, "Kendra.service.solrQuery: skipping object parameter");
 					}
-				}
-				break;
-			case 'datetime':
-				/**
-				 * @todo verify that $o is a valid datetime field
-				 */
-				switch ($p) {
-				case 'lt': /* before */
-					subqueries.push($s + ':{* TO ' + $o + '}');
-					break;
-				case 'gt': /* after */
-					subqueries.push($s + ':{' + $o + ' TO *}');
-					break;
-				case '==': /* on */
-					subqueries.push($s + ':[' + $o + ' TO ' + $o + ']');
-					break;
-				}
-
-				break;
-			case 'string':
-			default:
-				switch ($p) {
-				case '^=': /* starts with */
-					subqueries.push($s + ':' + '"' + $o + '"*');
-					break;
-				case '$=': /* ends with */
-					/*
-					 * @FIXME - not currently supported within Lucene syntax
-					 * subqueries.push($s + ':' + '*"' + $o + '"'); break;
-					 */
-				case '*=': /* contains */
-
-					/* @todo verify wildcard syntax */
-					subqueries.push($s + ':' + '"' + $o + '"*');
-					break;
-				case '==': /* is */
-				default:
-					subqueries.push($s + ':' + '"' + $o + '"');
+				} else {
+					Kendra.Manager.store.addByValue(name, val);
 				}
 			}
-		}
+			Kendra.Manager.doRequest();
+		},
 
 		/**
-		 * @todo allow OR clause grouping
+		 * quoteString: quote a string containing whitespace, otherwise return
+		 * the original string useful for quoting substring queries within a
+		 * Lucene query
 		 */
-		var q = '+' + subqueries.join(') +(') + ')';
-		Kendra.Manager.store.addByValue('q', q);
-	}
+		quoteString : function(str) {
+			if (/\s+/.test(str))
+				return '"' + str + '"';
+			return str;
+		},
+
+		/**
+		 * buildSolrQuery: group together the parameters necessary for doing a
+		 * faceted search against Apache Solr
+		 * 
+		 * @param query Object
+		 * @returns Object
+		 * @TODO escape Lucene-specific characters: + - && || ! ( ) { } [ ] ^ " ~ * ? : \
+		 * @TODO add query grouping
+		 * @TODO add support for AND vs OR subqueries
+		 * @TODO decide what to do about leading and trailing whitespace
+		 */
+		buildSolrQuery : function(query) {
+			var i = {}, subqueries = [], $s = $p = $o = dataType = '';
+
+			Kendra.util.log(query, "Kendra.service.buildSolrQuery");
+
+			for ( var i in query) {
+				$s = query[i].op1;
+				$p = query[i].op2;
+				$o = query[i].op3;
+
+				/**
+				 * format the operand according to data type
+				 */
+				dataType = Kendra.util.dataTypeForKey($s);
+
+				Kendra.util.log(dataType, "Kendra.service.buildSolrQuery:dataType");
+
+				switch (dataType) {
+				case 'number':
+					if (isNaN($o)) {
+						Kendra.util.log($o, "Kendra.service.buildSolrQuery:NaN");
+					} else {
+						switch ($p) {
+						case 'lt': /* less than */
+							subqueries.push($s + ':{* TO ' + $o + '}');
+							break;
+
+						case 'gt': /* greater than */
+							subqueries.push($s + ':{' + $o + ' TO *}');
+							break;
+
+						case '==': /* equal to */
+							subqueries.push($s + ':' + $o);
+							break;
+						}
+					}
+					break;
+				case 'datetime':
+					/**
+					 * @todo verify that $o is a valid datetime field
+					 */
+					switch ($p) {
+					case 'lt': /* before */
+						subqueries.push($s + ':{* TO ' + $o + '}');
+						break;
+
+					case 'gt': /* after */
+						subqueries.push($s + ':{' + $o + ' TO *}');
+						break;
+
+					case '==': /* on */
+						subqueries.push($s + ':[' + $o + ' TO ' + $o + ']');
+						break;
+					}
+
+					break;
+				case 'string':
+				default:
+					switch ($p) {
+					case '^=': /* starts with */
+						subqueries.push($s + ':' + Kendra.service.quoteString($o) + '*');
+						break;
+
+					case '$=': /* ends with */
+						subqueries.push($s + ':*' + Kendra.service.quoteString($o));
+						break;
+
+					case '*=': /* contains */
+						subqueries.push($s + ':*' + Kendra.service.quoteString($o) + '*');
+						break;
+
+					case '==': /* is */
+					default:
+						subqueries.push($s + ':' + Kendra.service.quoteString($o));
+					}
+				}
+			}
+
+			/**
+			 * @todo allow OR clause grouping
+			 */
+			var q = '+(' + subqueries.join(') +(') + ')';
+			Kendra.Manager.store.addByValue('q', q);
+		}
 	}
 });
 
@@ -599,7 +626,8 @@ jQuery.extend(Kendra, {
 (function($) {
 	$(function() {
 		if ($('body.node-type-smart-filter').length > 0 || $('#edit-smart-filter-node-form').length > 0) {
-			var $form = $('form#node-form'), container = '<div id="kendra-query-builder"><h3>' + 'Loading&hellip;' + '</h3></div>';
+			var container = $('<div id="kendra-query-builder"><h3 class="activity">' + 'Loading&hellip;' + '</h3></div>');
+			var $form = $('form#node-form');
 
 			if ($form.length > 0) {
 				// smart filter editor page
@@ -623,26 +651,32 @@ jQuery.extend(Kendra, {
 
 				if ($form.length == 0) {
 					$('.node-smart_filter .node-content p').hide();
-				}
+				} else {
 
-				Kendra.service.getTemplate('smart_filter_row.tmpl.html', function() {
-					Kendra.service.applyTemplate('smart_filter_wrapper.tmpl.html', jsonFilter, function(html) {
+					Kendra.service.getTemplate('smart_filter_row.tmpl.html', function() {
+						Kendra.service.applyTemplate('smart_filter_wrapper.tmpl.html', jsonFilter, function(html) {
 
-						Kendra.util.log(html, 'success:html=');
-						$(selector).html(html);
+							Kendra.util.log(html, 'success:html=');
+							$(selector).prepend(html).children('.activity').hide();
 
-						if ($form.length > 0) {
-							Kendra.service.buildQueryFormPostProcess($form);
-						}
+							if ($form.length > 0) {
+								Kendra.service.buildQueryFormPostProcess($form);
+							}
+						});
 					});
-				});
+
+				}
 
 				/**
 				 * run the query
 				 */
-				if (jsonFilter.rules && jsonFilter.rules.length > 0) {
-					Kendra.service.solrQuery(jsonFilter.rules);
-				}
+				Kendra.service.applyTemplate('smart_filter_results.tmpl.html', null, function(html) {
+					$(selector).append(html).children('.activity').hide();
+
+					if (jsonFilter.rules && jsonFilter.rules.length > 0) {
+						Kendra.service.solrQuery(jsonFilter.rules);
+					}
+				});
 
 			}, failure = function(status, data) {
 				var html = '';
