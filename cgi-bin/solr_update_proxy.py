@@ -117,8 +117,15 @@ def format_comment(text):
 # now build equivalence classes
 same_as_mappings = get_same_as_list()
 
-##for a, b in same_as_mappings:
-##    make_mapping(a, b)
+# model two-way implication as two one-way ones
+implies = {}
+for a, b in same_as_mappings:
+    implies[a] = implies.get(a, []) + [b]
+    implies[b] = implies.get(b, []) + [a]
+
+# Then prune duplicate arcs
+for a in implies:
+    implies[a] = {}.fromkeys(implies[a]).keys()
 
 name_uri_to_type_uri = dict(get_type_list())
 
