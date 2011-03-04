@@ -71,25 +71,24 @@ def rewrite_stanza(text):
        return text
     row_uri = row_uri[0]
 
-    # Get the property list for this row from SPARQL endpoint
-    property_list = get_property_list(row_uri)
-
     # now modifiy property list to include inferred properties from metadata equivalences
-    mangled_properties = {}
-    for name, value in property_list:
-       other_names = item_synset.get(name, [])
-       if len(other_names) > 1:
-          print >> logfile, "MADE INFERENCE:", name, "->", other_names
-       for other_name in other_names:
-          mangled_properties[other_name] = value
+##    property_list = get_property_list(row_uri):
+##    properties = {}
+##    for name, value in property_list:
+##       other_names = item_synset.get(name, [])
+##       if len(other_names) > 1:
+##          print >> logfile, "MADE INFERENCE:", name, "->", other_names
+##       for other_name in other_names:
+##          properties[other_name] = value
 
-    # exact names override inferred properties, for now, because we don't yet handle multiple values
-    for name, value in property_list:
-        mangled_properties[name] = value
+    # Get the property list for this row from SPARQL endpoint
+    properties = {}
+    for name, value in get_property_list(row_uri):
+        properties[name] = value
 
     # Bash these metadata fields in, very inefficiently
     # TO DO: make more efficient
-    for name, value in mangled_properties.items():
+    for name, value in properties.items():
         # Validate date/time values, numbers, etc.
         if not validate_typed_data_value(name, value):
            continue
@@ -108,23 +107,24 @@ def format_comment(text):
 
 # main
 # equivalence sets of labels
-item_synset = {}
-
-def make_mapping(a, b):
-    ab_synset = uniq(item_synset.get(a, [a]) + item_synset.get(b, [b]))
-    for x in ab_synset:
-       item_synset[x] = ab_synset
+##item_synset = {}
+##
+##def make_mapping(a, b):
+##    ab_synset = uniq(item_synset.get(a, [a]) + item_synset.get(b, [b]))
+##    for x in ab_synset:
+##       item_synset[x] = ab_synset
 
 # now build equivalence classes
 same_as_mappings = get_same_as_list()
-for a, b in same_as_mappings:
-    make_mapping(a, b)
+
+##for a, b in same_as_mappings:
+##    make_mapping(a, b)
 
 name_uri_to_type_uri = dict(get_type_list())
 
 print >> logfile, "<mappings>"
 print >> logfile, "same_as_mappings:", same_as_mappings
-print >> logfile, "item_synset:", item_synset
+## print >> logfile, "item_synset:", item_synset
 print >> logfile, "name_uri_to_type_uri:", name_uri_to_type_uri
 print >> logfile, "sparql endpoint uri", kendra_signpost_utils.get_sparql_endpoint_uri()
 print >> logfile, "</mappings>"
