@@ -48,6 +48,12 @@ def get_same_as_list():
 	return map(strip_result_fields, re.findall(r"(?s)<result>.*?</result>", urllib.urlopen(query_url).read()))
 
 # TODO: Note: assumes that URI is valid: need sanity check here to prevent XSS attacks on SPARQL DB, or assurance this is valid at all callers
+def get_subclass_of_list():
+	query = "SELECT ?subject ?object WHERE {?subject <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?object}"
+	query_url = "%s?default-graph-uri=&query=%s&format=text%%2Frdf+n3&debug=on&timeout=" % (kendra_signpost_utils.get_sparql_endpoint_uri(), urllib.quote_plus(query))
+	return map(strip_result_fields, re.findall(r"(?s)<result>.*?</result>", urllib.urlopen(query_url).read()))
+
+# TODO: Note: assumes that URI is valid: need sanity check here to prevent XSS attacks on SPARQL DB, or assurance this is valid at all callers
 def get_type_list():
 	query = "SELECT ?subject ?object WHERE {?subject <http://kendra.org.uk/#hasType> ?object}"
 	query_url = "%s?default-graph-uri=&query=%s&format=text%%2Frdf+n3&debug=on&timeout=" % (kendra_signpost_utils.get_sparql_endpoint_uri(), urllib.quote_plus(query))
@@ -142,12 +148,16 @@ def format_comment(text):
 
 # now build equivalence classes
 same_as_mappings = get_same_as_list()
+subclass_of_mappings = get_subclass_of_list()
 
 # model two-way implication as two one-way ones
 implies = {}
 for a, b in same_as_mappings:
     implies[a] = implies.get(a, []) + [b]
     implies[b] = implies.get(b, []) + [a]
+
+for a, b in subclass_of_mappings:
+    implies[a] = implies.get(a, []) + [b]
 
 # Then prune duplicate arcs
 for a in implies:
@@ -157,6 +167,7 @@ name_uri_to_type_uri = dict(get_type_list())
 
 print >> logfile, "<mappings>"
 print >> logfile, "same_as_mappings:", same_as_mappings
+print >> logfile, "subclass_of_mappings:", subclass_of_mappings
 ## print >> logfile, "item_synset:", item_synset
 print >> logfile, "name_uri_to_type_uri:", name_uri_to_type_uri
 print >> logfile, "sparql endpoint uri", kendra_signpost_utils.get_sparql_endpoint_uri()
