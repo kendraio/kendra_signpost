@@ -603,7 +603,7 @@ jQuery.extend(Kendra, {
 						break;
 
 					case '*=': /* contains */
-						subqueries.push($s + ':*' + Kendra.service.quoteString($o) + '*');
+						subqueries.push($s + ':?' + Kendra.service.quoteString($o) + '?');
 						break;
 
 					case '==': /* is */
