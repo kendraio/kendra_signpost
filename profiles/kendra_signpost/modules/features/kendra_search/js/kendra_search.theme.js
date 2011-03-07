@@ -22,6 +22,9 @@
 		"ss_cck_field_cat_publisher" : {
 			"label" : "Publisher"
 		},
+		"ss_cck_field_cat_label" : {
+			"label" : "Label"
+		},
 		"url" : {
 			"label" : "URL",
 			"format" : '<a href="__VALUE__">__VALUE__</a>'
