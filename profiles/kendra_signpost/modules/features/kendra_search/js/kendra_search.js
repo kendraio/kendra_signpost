@@ -404,13 +404,33 @@ jQuery.extend(Kendra, {
 				if ($this.hasClass('kendra-filter-op1')) {
 					if (typeof Kendra.mapping.mappings[key] != 'undefined' && Kendra.mapping.mappings[key].dataType) {
 						var dataType = Kendra.util.dataTypeForKey(key), options = Kendra.service.buildQueryMappingTypes(dataType);
-						$this.parents('tr.draggable:eq(0)').find('.kendra-filter-op2').html(options).end().find('.kendra-filter-op3').select().focus();
+
+						$this.parents('tr.draggable:eq(0)').find('.kendra-filter-op2').html(options).end().find('.kendra-filter-op3').each(function() {
+							Kendra.service.initDatepicker(this, dataType);
+						}).select().focus();
 					}
 				}
 
 				Kendra.service.filterUpdate($form);
 				return true;
+
+			}).filter('.kendra-filter-op3').each(function() {
+				var key = $(this).parents('tr.draggable:eq(0)').find('select.kendra-filter-op1').val();
+				Kendra.util.log('inspecting datepicker', key);
+				if (typeof Kendra.mapping.mappings[key] != 'undefined') {
+					var dataType = Kendra.util.dataTypeForKey(key);
+					if (dataType == 'datetime') {
+						Kendra.util.log('init datepicker', dataType);
+						Kendra.service.initDatepicker(this, dataType);
+					} else {
+						Kendra.util.log('dead datepicker', dataType, key);
+					}
+				} else {
+					Kendra.util.log('dead datepicker', key);
+				}
 			});
+
+			Kendra.service.initDatepicker(this, dataType);
 
 			/**
 			 * make the search form rows draggable // skip the next hack
@@ -428,6 +448,23 @@ jQuery.extend(Kendra, {
 				});
 				Kendra.util.log(Drupal.settings.draggableviews, 'initializing draggableviews');
 				Drupal.behaviors.draggableviewsLoad();
+			}
+		},
+
+		/**
+		 * initDatepicker
+		 * 
+		 * @param el JQuery selector or object
+		 * @param dataType String
+		 */
+		initDatepicker : function(el, dataType) {
+			var $op3 = $(el);
+			if (dataType == 'datetime') {
+				$op3.datepicker().datepicker("option", "dateFormat", "yy-mm-ddT00:00:00Z");
+				Kendra.util.log('created datepicker', $op3);
+			} else if ($op3.hasClass('hasDatepicker')) {
+				$op3.datepicker("destroy");
+				Kendra.util.log('destroyed datepicker', $op3);
 			}
 		},
 
@@ -586,6 +623,7 @@ jQuery.extend(Kendra, {
 						break;
 
 					case '==': /* on */
+						/** @todo verify */
 						subqueries.push($s + ':[' + $o + ' TO ' + $o + ']');
 						break;
 					}
@@ -656,7 +694,6 @@ jQuery.extend(Kendra, {
 					Kendra.service.getTemplate('smart_filter_row.tmpl.html', function() {
 						Kendra.service.applyTemplate('smart_filter_wrapper.tmpl.html', jsonFilter, function(html) {
 
-							Kendra.util.log(html, 'success:html=');
 							$(selector).prepend(html).children('.activity').hide();
 
 							if ($form.length > 0) {

@@ -45,7 +45,7 @@ function kendra_mapping_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 		case 'update':
 			// drupal_set_message(print_r($node, TRUE));
 			if ($node->type == 'kendra_map_item') {
-				job_queue_add('_kendra_mapping_send_rdf',
+				job_queue_add('_kendra_mapping_rdf_insert',
           "Send the mapping rdf for node {$node->nid}",
 				array($node->nid, $node->field_map_node[0]['nid']),
           '', TRUE);
@@ -67,6 +67,10 @@ function kendra_mapping_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 				$graph = url("node/{$node->nid}", array('absolute' => TRUE));
 				$result = kendra_rdf_send("CLEAR GRAPH <{$graph}>");
 				cache_clear_all('kendra_search_mappings', 'cache');
+			} else if ($node->type == 'kendra_map_item') {
+				$graph = url("node/{$node->nid}", array('absolute' => TRUE));
+				//$result = kendra_rdf_send("DELETE FROM <{$graph}> { ?s ?p ?o } WHERE { <$s> <$p> <$o> }");
+				cache_clear_all('kendra_search_mappings', 'cache');
 			}
 			break;
 		case 'delete revision':
@@ -77,7 +81,7 @@ function kendra_mapping_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 	}
 }
 
-function _kendra_mapping_send_rdf($nid, $mapnid) {
+function _kendra_mapping_rdf_insert($nid, $mapnid) {
 	$map_item = node_load($nid);
 	$graph = url("node/{$mapnid}", array('absolute' => TRUE));
 	$source = $map_item->field_map_source[0]['value'];
