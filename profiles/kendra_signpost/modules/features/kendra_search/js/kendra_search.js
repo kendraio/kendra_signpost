@@ -460,7 +460,13 @@ jQuery.extend(Kendra, {
 		initDatepicker : function(el, dataType) {
 			var $op3 = $(el);
 			if (dataType == 'datetime') {
-				$op3.datepicker().datepicker("option", "dateFormat", "yy-mm-ddT00:00:00Z");
+				$op3.datepicker( {
+					dateFormat : "yy-mm-ddT00:00:00Z",
+					minDate : new Date(1980, 1, 1),
+					maxDate : "+1Y",
+					yearRange: '-40:+10',
+					showButtonPanel : true
+				});
 				Kendra.util.log('created datepicker', $op3);
 			} else if ($op3.hasClass('hasDatepicker')) {
 				$op3.datepicker("destroy");

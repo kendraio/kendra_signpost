@@ -173,3 +173,7 @@ body.big-bottom {
 	border-width: 3px;
 	padding: 1.3em 8px 0;
 }
+#ui-datepicker-div label {
+font-weight:400;
+display:none;
+}
