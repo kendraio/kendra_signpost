@@ -67,10 +67,12 @@ function kendra_mapping_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 				$graph = url("node/{$node->nid}", array('absolute' => TRUE));
 				$result = kendra_rdf_send("CLEAR GRAPH <{$graph}>");
 				cache_clear_all('kendra_search_mappings', 'cache');
+				apachesolr_rebuild_index_table();
 			} else if ($node->type == 'kendra_map_item') {
 				$graph = url("node/{$node->nid}", array('absolute' => TRUE));
 				$result = kendra_rdf_send("DELETE FROM <{$graph}> { ?s ?p ?o } WHERE { <{$node->field_map_source[0]['value']}> <{$node->field_map_type[0]['value']}> <{$node->field_map_dest[0]['value']}> }");
 				cache_clear_all('kendra_search_mappings', 'cache');
+				apachesolr_rebuild_index_table();
 			}
 			break;
 		case 'delete revision':
