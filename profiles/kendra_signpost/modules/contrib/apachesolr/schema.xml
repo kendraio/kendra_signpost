@@ -540,7 +540,9 @@
    <field name="body" type="text" indexed="true" stored="true" termVectors="true"/>
    <field name="teaser" type="text" indexed="false" stored="true"/>
    <!-- entity is 'node', 'file', 'user', or some other Drupal object type -->
-   <field name="entity" type="string" indexed="true" stored="true"/>
+   <field name="entity" type="string" indexed="true" stored="true" required="true" />
+   <!-- bundle is a node type, or as appropriate for other entity types -->
+   <field name="bundle" type="string" indexed="true" stored="true"/>
    <!-- type is a node type, or can be used flexibly for other entity types -->
    <field name="type" type="string" indexed="true" stored="true"/>
    <field name="type_name" type="string" indexed="true" stored="true"/>
