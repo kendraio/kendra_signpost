@@ -148,3 +148,28 @@ body.big-bottom {
 	background-color: #FFFFFF;
 	z-index: 1000;
 }
+
+#ui-datepicker-div table td,#ui-datepicker-div table th {
+	padding: 0;
+}
+
+#ui-datepicker-div .ui-datepicker-header {
+	font-size: 0.8em;
+}
+
+.ui-datepicker-prev {
+	left: 3px;
+	top: 3px;
+}
+
+.ui-datepicker-next {
+	left: auto !important;
+	right: 3px;
+	top: 3px;
+}
+
+.ui-datepicker-div,#ui-datepicker-div,.ui-datepicker-inline {
+	background: none repeat scroll 0 0 #FFFFFF;
+	border-width: 3px;
+	padding: 1.3em 8px 0;
+}
