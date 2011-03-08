@@ -464,7 +464,7 @@ jQuery.extend(Kendra, {
 					dateFormat : "yy-mm-ddT00:00:00Z",
 					minDate : new Date(1980, 1, 1),
 					maxDate : "+1Y",
-					yearRange: '-40:+10',
+					yearRange: '-50:+10',
 					showButtonPanel : true
 				});
 				Kendra.util.log('created datepicker', $op3);
