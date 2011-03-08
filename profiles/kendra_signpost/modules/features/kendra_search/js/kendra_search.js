@@ -394,6 +394,15 @@ jQuery.extend(Kendra, {
 				Kendra.service.buildQueryFormSerialize($form);
 				return true;
 
+			}).find('table#kendra-smart-filters').sortable( {
+				/**
+				 * make the search form rows draggable
+				 */
+				handle : 'a.tabledrag-handle',
+				items : 'tr.draggable',
+				placeholder : 'ui-state-highlight',
+				forcePlaceholderSize : true
+
 			}).find('.kendra-filter-op1,.kendra-filter-op2,.kendra-filter-op3').change(function() {
 				var $this = $(this), key = $this.val();
 
@@ -432,23 +441,6 @@ jQuery.extend(Kendra, {
 
 			Kendra.service.initDatepicker(this, dataType);
 
-			/**
-			 * make the search form rows draggable // skip the next hack
-			 * 
-			 * @hack this should probably be triggered via a sub-module?
-			 */
-			if (false && typeof Drupal.behaviors.draggableviewsLoad == 'function') {
-				Drupal.settings = $.extend(Drupal.settings, {
-					'draggableviews' : {
-						// table_id:
-						'kendra-smart-filters' : {
-							'parent' : null
-						}
-					}
-				});
-				Kendra.util.log(Drupal.settings.draggableviews, 'initializing draggableviews');
-				Drupal.behaviors.draggableviewsLoad();
-			}
 		},
 
 		/**
@@ -462,7 +454,7 @@ jQuery.extend(Kendra, {
 			if (dataType == 'datetime') {
 				$op3.datepicker( {
 					dateFormat : "yy-mm-ddT00:00:00Z",
-					yearRange: '-50:+10',
+					yearRange : '-50:+10',
 					showButtonPanel : true
 				});
 				Kendra.util.log('created datepicker', $op3);
