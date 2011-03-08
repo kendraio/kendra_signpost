@@ -92,11 +92,3 @@ function _kendra_mapping_rdf_insert($nid, $mapnid) {
 
 	cache_clear_all('kendra_search_mappings', 'cache');
 }
-
-
-
-
-
-
-
-
