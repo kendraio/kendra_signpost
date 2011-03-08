@@ -399,8 +399,17 @@ jQuery.extend(Kendra, {
 				 * make the search form rows draggable
 				 */
 				handle : 'a.tabledrag-handle',
+				containment : 'table#kendra-smart-filters',
 				items : 'tr.draggable',
 				placeholder : 'ui-state-highlight',
+				axis : 'y',
+				change : function() {
+					Kendra.util.log('dropped sortable');
+					Kendra.service.filterUpdate($form);
+				},
+				create : function() {
+					Kendra.util.log('created sortable');
+				},
 				forcePlaceholderSize : true
 
 			}).find('.kendra-filter-op1,.kendra-filter-op2,.kendra-filter-op3').change(function() {
@@ -425,17 +434,11 @@ jQuery.extend(Kendra, {
 
 			}).filter('.kendra-filter-op3').each(function() {
 				var key = $(this).parents('tr.draggable:eq(0)').find('select.kendra-filter-op1').val();
-				Kendra.util.log('inspecting datepicker', key);
 				if (typeof Kendra.mapping.mappings[key] != 'undefined') {
 					var dataType = Kendra.util.dataTypeForKey(key);
 					if (dataType == 'datetime') {
-						Kendra.util.log('init datepicker', dataType);
 						Kendra.service.initDatepicker(this, dataType);
-					} else {
-						Kendra.util.log('dead datepicker', dataType, key);
 					}
-				} else {
-					Kendra.util.log('dead datepicker', key);
 				}
 			});
 
