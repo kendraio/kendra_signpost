@@ -99,6 +99,18 @@
 	color: #cccccc;
 }
 
+.node-type-smart-filter .node-smart_filter .node-content p,.node-type-smart-filter #node-form textarea#edit-body
+	{
+	font-family: monospace;
+	overflow: auto;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+}
+
+.column-side .view-source {
+	margin: 1em 0;
+}
+
 /**
 * results
 */

@@ -458,9 +458,9 @@ jQuery.extend(Kendra, {
 			if (dataType == 'datetime') {
 				$op3.datepicker( {
 					dateFormat : "yy-mm-ddT00:00:00Z",
-					changeMonth: true,
-					changeYear: true,
-					constrainInput: false,
+					changeMonth : true,
+					changeYear : true,
+					constrainInput : false,
 					yearRange : '-50:+10',
 					showButtonPanel : true
 				});
@@ -669,14 +669,20 @@ jQuery.extend(Kendra, {
 		if ($('body.node-type-smart-filter').length > 0 || $('#edit-smart-filter-node-form').length > 0) {
 			var container = $('<div id="kendra-query-builder"><h3 class="activity">' + 'Loading&hellip;' + '</h3></div>');
 			var $form = $('form#node-form');
+			var buttons = ".column-side .buttons,.column-side .node-submitted", $source_field = {};
 
 			if ($form.length > 0) {
 				// smart filter editor page
-				$form.find('.body-field-wrapper').hide().before(container);
+				$source_field = $form.find('.body-field-wrapper').hide().before(container);
 			} else {
 				// smart filter view page
-				$('.node-smart_filter .node-content').append(container);
+				$source_field = $('.node-smart_filter .node-content').append(container).find('p').hide();
 			}
+
+			$('<a href="#">view JSON source</a>').click(function() {
+				$source_field.toggle();
+				return false;
+			}).appendTo(buttons).wrap('<div class="view-source"/>');
 
 			/**
 			 * render output using JQuery templates
@@ -690,10 +696,7 @@ jQuery.extend(Kendra, {
 					Kendra.util.log(jsonFilter, 'parsed JSON');
 				}
 
-				if ($form.length == 0) {
-					$('.node-smart_filter .node-content p').hide();
-				} else {
-
+				if ($form.length > 0) {
 					Kendra.service.getTemplate('smart_filter_row.tmpl.html', function() {
 						Kendra.service.applyTemplate('smart_filter_wrapper.tmpl.html', jsonFilter, function(html) {
 
