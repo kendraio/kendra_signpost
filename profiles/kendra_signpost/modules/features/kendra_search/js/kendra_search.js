@@ -403,6 +403,7 @@ jQuery.extend(Kendra, {
 				items : 'tr.draggable',
 				placeholder : 'ui-state-highlight',
 				axis : 'y',
+
 				change : function() {
 					Kendra.util.log('dropped sortable');
 					Kendra.service.filterUpdate($form);
@@ -457,6 +458,9 @@ jQuery.extend(Kendra, {
 			if (dataType == 'datetime') {
 				$op3.datepicker( {
 					dateFormat : "yy-mm-ddT00:00:00Z",
+					changeMonth: true,
+					changeYear: true,
+					constrainInput: false,
 					yearRange : '-50:+10',
 					showButtonPanel : true
 				});
