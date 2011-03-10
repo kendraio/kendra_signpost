@@ -216,7 +216,11 @@ jQuery.extend(Kendra, {
 			if ($row.length != 1) {
 				return false;
 			}
+
 			$copy = $row.clone(true);
+			/**
+			 * try to preserve the currently selected option
+			 */
 			$copy.find('option[selected=selected]').removeAttr('selected');
 			index = $row.find('.kendra-filter-op1').get(0).selectedIndex;
 			$copy.insertAfter($row).find('.kendra-filter-op1').get(0).selectedIndex = index;
@@ -275,15 +279,13 @@ jQuery.extend(Kendra, {
 			var html = '', dataType = dataType ? dataType.toLowerCase() : 'string', operands = {
 				'string' : {
 					'==' : {
-						'label' : 'is'
+						'label' : 'is',
+						'isDefault' : true
 					},
 					'^=' : {
 						'label' : 'starts with'
 					},
-					'*=' : {
-						'label' : 'contains',
-						'isDefault' : true
-					},
+					//'*=' : { 'label' : 'contains' },
 					'$=' : {
 						'label' : 'ends with'
 					}
@@ -387,10 +389,10 @@ jQuery.extend(Kendra, {
 
 			Kendra.service.buildQueryFormToggleRemoveLinks($form);
 
-			/**
-			 * form onsubmit : serialize the form values into a smart filter
-			 */
 			$form.submit(function() {
+				/**
+				 * form onsubmit : serialize the form values into a smart filter
+				 */
 				Kendra.service.buildQueryFormSerialize($form);
 				return true;
 
@@ -424,7 +426,7 @@ jQuery.extend(Kendra, {
 					if (typeof Kendra.mapping.mappings[key] != 'undefined' && Kendra.mapping.mappings[key].dataType) {
 						var dataType = Kendra.util.dataTypeForKey(key), options = Kendra.service.buildQueryMappingTypes(dataType);
 
-						$this.parents('tr.draggable:eq(0)').find('.kendra-filter-op2').html(options).end().find('.kendra-filter-op3').each(function() {
+						$this.parents('tr.draggable:eq(0)').find('.kendra-filter-op2').html(options).end().find('.kendra-filter-op3').not('.hasDatepicker').each(function() {
 							Kendra.service.initDatepicker(this, dataType);
 						}).select().focus();
 					}
@@ -434,16 +436,16 @@ jQuery.extend(Kendra, {
 				return true;
 
 			}).filter('.kendra-filter-op3').each(function() {
+				/**
+				 * on initial form processing, set up datePicker for each
+				 * datetime rule
+				 */
 				var key = $(this).parents('tr.draggable:eq(0)').find('select.kendra-filter-op1').val();
 				if (typeof Kendra.mapping.mappings[key] != 'undefined') {
 					var dataType = Kendra.util.dataTypeForKey(key);
-					if (dataType == 'datetime') {
-						Kendra.service.initDatepicker(this, dataType);
-					}
+					Kendra.service.initDatepicker(this, dataType);
 				}
 			});
-
-			Kendra.service.initDatepicker(this, dataType);
 
 		},
 
