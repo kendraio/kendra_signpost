@@ -22,7 +22,7 @@
 <p>If you use a different element for the header, specify the header-option with an appropriate selector, eg. header: 'a.header'. The content element must be always next to its header.</p>
 <p>If you have links inside the accordion content and use a-elements as headers, add a class to them and use that as the header, eg. header: 'a.header'.</p>
 <p>Use activate(Number) to change the active content programmatically.</p>
-<div class="editsection" style="float:right;margin-left:5px;">[<a href="http://docs.jquery.com/action/edit/UI/API/1.7.2/Accordion?section=1" title="Edit section: NOTE: If you want multiple sections open at once, don't use an accordion">edit</a>]</div><a name="NOTE:_If_you_want_multiple_sections_open_at_once.2C_don.27t_use_an_accordion"></a><h4>NOTE: If you want multiple sections open at once, don't use an accordion</h4>
+<div class="editsection" style="float:right;margin-left:5px;">[<a href="http://docs.jquery.com/action/edit/UI/API/1.8/Accordion?section=1" title="Edit section: NOTE: If you want multiple sections open at once, don't use an accordion">edit</a>]</div><a name="NOTE:_If_you_want_multiple_sections_open_at_once.2C_don.27t_use_an_accordion"></a><h4>NOTE: If you want multiple sections open at once, don't use an accordion</h4>
 <p>An accordion doesn't allow more than one content panel to be open at the same time, and it takes a lot of effort to do that. If you are looking for a widget that allows more than one content panel to be open, don't use this. Usually it can be written with a few lines of jQuery instead, something like this:</p>
 <pre>jQuery(document).ready(function(){
 	$('.accordion .head').click(function() {
@@ -42,6 +42,7 @@
         <h3>Dependencies</h3>
         <ul>
 <li>UI Core</li>
+<li>UI Widget</li>
 <li>UI Effects Core (Optional - only for non-default animations)</li>
 </ul>
     </div>
@@ -62,9 +63,7 @@ A simple jQuery UI Accordion.<br />
   &lt;link href=&quot;http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot;/&gt;
   &lt;script src=&quot;http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js&quot;&gt;&lt;/script&gt;
   &lt;script src=&quot;http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js&quot;&gt;&lt;/script&gt;
-  &lt;script type=&quot;text/javascript&quot; src=&quot;http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js&quot;&gt;&lt;/script&gt;
-&lt;script type=&quot;text/javascript&quot; src=&quot;http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js&quot;&gt;&lt;/script&gt;
-
+  
   &lt;script&gt;
   $(document).ready(function() {
     $(&quot;#accordion&quot;).accordion();
@@ -642,6 +641,45 @@ $( ".selector" ).accordion( "option", "navigationFilter", function(){ ... } );</
     <h2 class="top-header">Events</h2>
     <ul class="events-list">
       
+<li class="event" id="event-create">
+  <div class="event-header">
+    <h3 class="event-name"><a href="#event-create">create</a></h3>
+    <dl>
+      <dt class="event-type-label">Type:</dt>
+        <dd class="event-type">accordioncreate</dd>
+    </dl>
+  </div>
+  <div class="event-description">
+    <p>This event is triggered when accordion is created.</p>
+  </div>
+  <div class="event-examples">
+    <h4>Code examples</h4>
+    <dl class="event-examples-list">
+    
+<dt>
+  Supply a callback function to handle the <code>create</code> event as an init option.
+</dt>
+<dd>
+<pre><code>$( &quot;.selector&quot; ).accordion({
+   create: function(event, ui) { ... }
+});</code></pre>
+</dd>
+
+    
+<dt>
+  Bind to the <code>create</code> event by type: <code>accordioncreate</code>.
+</dt>
+<dd>
+<pre><code>$( &quot;.selector&quot; ).bind( &quot;accordioncreate&quot;, function(event, ui) {
+  ...
+});</code></pre>
+</dd>
+
+    </dl>
+  </div>
+</li>
+
+
 <li class="event" id="event-change">
   <div class="event-header">
     <h3 class="event-name"><a href="#event-change">change</a></h3>
@@ -892,6 +930,28 @@ $( ".selector" ).accordion( "option", "navigationFilter", function(){ ... } );</
   </div>
 </li>
 
+
+<li class="method" id="method-resize">
+  <div class="method-header">
+    <h3 class="method-name"><a href="#method-resize">resize</a></h3>
+    <dl>
+      <dt class="method-signature-label">Signature:</dt>
+        <dd class="method-signature">.accordion( "resize"
+
+
+
+
+
+
+
+)</dd>
+    </dl>
+  </div>
+  <div class="method-description">
+    <p>Recompute heights of the accordion contents when using the fillSpace option and the container height changed. For example, when the container is a resizable, this method should be called by its resize-event.</p>
+  </div>
+</li>
+
     </ul>
   </div>
   <div id="theming">
@@ -948,10 +1008,10 @@ $( ".selector" ).accordion( "option", "navigationFilter", function(){ ... } );</
 </div>
 
 </p><!-- 
-Pre-expand include size: 35459 bytes
-Post-expand include size: 60792 bytes
-Template argument size: 34406 bytes
+Pre-expand include size: 38033 bytes
+Post-expand include size: 63819 bytes
+Template argument size: 35523 bytes
 Maximum: 2097152 bytes
 -->
 
-<!-- Saved in parser cache with key jqdocs_docs:pcache:idhash:3345-1!1!0!!en!2 and timestamp 20100420211240 -->
+<!-- Saved in parser cache with key jqdocs_docs:pcache:idhash:3773-1!1!0!!en!2 and timestamp 20110315194429 -->

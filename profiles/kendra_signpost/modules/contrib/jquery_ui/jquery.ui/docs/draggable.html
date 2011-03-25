@@ -19,11 +19,16 @@
 <li><b>ui.position</b> - current position of the helper as { top, left } object, relative to the offset element</li>
 <li><b>ui.offset</b> - current absolute position of the helper as { top, left } object, relative to page</li>
 </ul>
+<p><br />
+</p>
+<p>To manipulate the position of a draggable during drag, you can either <a href="http://jsbin.com/etako/edit" class="external text" title="http://jsbin.com/etako/edit">use a wrapper as the draggable helper</a> and position the wrapped element with absolute positioning, or  you can correct internal values like so: <code>$(this).data('draggable').offset.click.top -= x</code>.</p>
     </div>
     <div id="overview-dependencies">
         <h3>Dependencies</h3>
         <ul>
 <li>UI Core</li>
+<li>UI Widget</li>
+<li>UI Mouse</li>
 </ul>
     </div>
     <div id="overview-example">
@@ -43,8 +48,6 @@ Initialize a draggable with default options.<br />
   &lt;link href=&quot;http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot;/&gt;
   &lt;script src=&quot;http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js&quot;&gt;&lt;/script&gt;
   &lt;script src=&quot;http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js&quot;&gt;&lt;/script&gt;
-  &lt;script type=&quot;text/javascript&quot; src=&quot;http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js&quot;&gt;&lt;/script&gt;
-&lt;script type=&quot;text/javascript&quot; src=&quot;http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js&quot;&gt;&lt;/script&gt;
   &lt;style type=&quot;text/css&quot;&gt;
     #draggable { width: 100px; height: 70px; background: silver; }
   &lt;/style&gt;
@@ -419,7 +422,7 @@ $( ".selector" ).draggable( "option", "cursor", 'crosshair' );</code></pre>
     </dl>
   </div>
   <div class="option-description">
-    <p>Moves the dragging helper so the cursor always appears to drag from the same position. Coordinates can be given as a hash using a combination of one or two keys: <code>{ top, left, right, bottom }</code>.</p>
+    <p>Sets the offset of the dragging helper relative to the mouse cursor. Coordinates can be given as a hash using a combination of one or two keys: <code>{ top, left, right, bottom }</code>.</p>
   </div>
   <div class="option-examples">
     <h4>Code examples</h4>
@@ -1167,7 +1170,7 @@ $( ".selector" ).draggable( "option", "snapTolerance", 40 );</code></pre>
     <h3 class="option-name"><a href="#option-stack">stack</a></h3>
     <dl>
       <dt class="option-type-label">Type:</dt>
-        <dd class="option-type">Object</dd>
+        <dd class="option-type">Selector</dd>
       
       <dt class="option-default-label">Default:</dt>
         <dd class="option-default">false</dd>
@@ -1175,7 +1178,7 @@ $( ".selector" ).draggable( "option", "snapTolerance", 40 );</code></pre>
     </dl>
   </div>
   <div class="option-description">
-    <p>Controls the z-Index of the defined group (key 'group' in the hash, accepts jQuery selector) automatically, always brings to front the dragged item. Very useful in things like window managers. Optionally, a 'min' key can be set, so the zIndex cannot go below that value.</p>
+    <p>Controls the z-Index of the set of elements that match the selector, always brings to front the dragged item. Very useful in things like window managers.</p>
   </div>
   <div class="option-examples">
     <h4>Code examples</h4>
@@ -1185,7 +1188,7 @@ $( ".selector" ).draggable( "option", "snapTolerance", 40 );</code></pre>
   Initialize a draggable with the <code>stack</code> option specified.
 </dt>
 <dd>
-<pre><code>$( ".selector" ).draggable({ stack: { group: 'products', min: 50 } });</code></pre>
+<pre><code>$( ".selector" ).draggable({ stack: &quot;.products&quot; });</code></pre>
 </dd>
 
     
@@ -1196,7 +1199,7 @@ $( ".selector" ).draggable( "option", "snapTolerance", 40 );</code></pre>
 <pre><code>//getter
 var stack = $( ".selector" ).draggable( "option", "stack" );
 //setter
-$( ".selector" ).draggable( "option", "stack", { group: 'products', min: 50 } );</code></pre>
+$( ".selector" ).draggable( "option", "stack", &quot;.products&quot; );</code></pre>
 </dd>
 
     </dl>
@@ -1251,6 +1254,45 @@ $( ".selector" ).draggable( "option", "zIndex", 2700 );</code></pre>
     <h2 class="top-header">Events</h2>
     <ul class="events-list">
       
+<li class="event" id="event-create">
+  <div class="event-header">
+    <h3 class="event-name"><a href="#event-create">create</a></h3>
+    <dl>
+      <dt class="event-type-label">Type:</dt>
+        <dd class="event-type">dragcreate</dd>
+    </dl>
+  </div>
+  <div class="event-description">
+    <p>This event is triggered when draggable is created.</p>
+  </div>
+  <div class="event-examples">
+    <h4>Code examples</h4>
+    <dl class="event-examples-list">
+    
+<dt>
+  Supply a callback function to handle the <code>create</code> event as an init option.
+</dt>
+<dd>
+<pre><code>$( &quot;.selector&quot; ).draggable({
+   create: function(event, ui) { ... }
+});</code></pre>
+</dd>
+
+    
+<dt>
+  Bind to the <code>create</code> event by type: <code>dragcreate</code>.
+</dt>
+<dd>
+<pre><code>$( &quot;.selector&quot; ).bind( &quot;dragcreate&quot;, function(event, ui) {
+  ...
+});</code></pre>
+</dd>
+
+    </dl>
+  </div>
+</li>
+
+
 <li class="event" id="event-start">
   <div class="event-header">
     <h3 class="event-name"><a href="#event-start">start</a></h3>
@@ -1526,10 +1568,10 @@ $( ".selector" ).draggable( "option", "zIndex", 2700 );</code></pre>
 </div>
 
 </p><!-- 
-Pre-expand include size: 59800 bytes
-Post-expand include size: 103250 bytes
-Template argument size: 57509 bytes
+Pre-expand include size: 61392 bytes
+Post-expand include size: 107565 bytes
+Template argument size: 58710 bytes
 Maximum: 2097152 bytes
 -->
 
-<!-- Saved in parser cache with key jqdocs_docs:pcache:idhash:3340-1!1!0!!en!2 and timestamp 20100421062535 -->
+<!-- Saved in parser cache with key jqdocs_docs:pcache:idhash:3768-1!1!0!!en!2 and timestamp 20110315194328 -->

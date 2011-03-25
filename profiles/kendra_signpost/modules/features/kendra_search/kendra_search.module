@@ -8,4 +8,4 @@ include_once('kendra_search.help.inc');
 /**
  * JQuery UI module requirements: add to array here
  */
-jquery_ui_add(array('ui.draggable','ui.datepicker'));
+jquery_ui_add(array('ui.widget', 'ui.mouse', 'ui.draggable','ui.datepicker', 'ui.sortable'));

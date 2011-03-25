@@ -12,7 +12,7 @@
     <h2 class="top-header">Overview</h2>
     <div id="overview-main">
         <p>The jQuery UI Datepicker is a highly configurable plugin that adds datepicker functionality to your pages. You can customize the date format and language, restrict the selectable date ranges and add in buttons and other navigation options easily.</p>
-<p>By default, the datepicker calendar opens in a small overlay onFocus and closes automatically onBlur or when a date if selected. For an inline calendar, simply attach the datepicker to a div or span.
+<p>By default, the datepicker calendar opens in a small overlay onFocus and closes automatically onBlur or when a date is selected. For an inline calendar, simply attach the datepicker to a div or span.
 </p><p>You can use keyboard shortcuts to drive the datepicker:
 </p>
 <ul>
@@ -25,18 +25,19 @@
  <li>ctrl+end - close and erase the date</li>
  <li>escape - close the datepicker without selection</li>
 </ul>
-<div class="editsection" style="float:right;margin-left:5px;">[<a href="http://docs.jquery.com/action/edit/UI/API/1.7.2/Datepicker?section=1" title="Edit section: Utility functions">edit</a>]</div><a name="Utility_functions"></a><h3 id="utility-functions">Utility functions</h3>
+<div class="editsection" style="float:right;margin-left:5px;">[<a href="http://docs.jquery.com/action/edit/UI/API/1.8/Datepicker?section=1" title="Edit section: Utility functions">edit</a>]</div><a name="Utility_functions"></a><h3 id="utility-functions">Utility functions</h3>
 <ul>
  <li><a href="http://docs.jquery.com/UI/Datepicker/setDefaults" title="UI/Datepicker/setDefaults">$.datepicker.setDefaults( settings )</a> - Set settings for all datepicker instances.</li>
  <li><a href="http://docs.jquery.com/UI/Datepicker/formatDate" title="UI/Datepicker/formatDate">$.datepicker.formatDate( format, date, settings )</a> - Format a date into a string value with a specified format.</li>
- <li><a href="http://docs.jquery.com/UI/Datepicker/iso8601Week" title="UI/Datepicker/iso8601Week">$.datepicker.iso8601Week( date )</a> - Determine the week of the year for a given date: 1 to 53.</li>
  <li><a href="http://docs.jquery.com/UI/Datepicker/parseDate" title="UI/Datepicker/parseDate">$.datepicker.parseDate( format, value, settings ) </a> - Extract a date from a string value with a specified format.</li>
+ <li><a href="http://docs.jquery.com/UI/Datepicker/iso8601Week" title="UI/Datepicker/iso8601Week">$.datepicker.iso8601Week( date )</a> - Determine the week of the year for a given date: 1 to 53.</li>
+ <li><a href="http://docs.jquery.com/UI/Datepicker/noWeekends" title="UI/Datepicker/noWeekends">$.datepicker.noWeekends</a> - Set as beforeShowDay function to prevent selection of weekends.</li>
 </ul>
-<div class="editsection" style="float:right;margin-left:5px;">[<a href="http://docs.jquery.com/action/edit/UI/API/1.7.2/Datepicker?section=2" title="Edit section: Localization">edit</a>]</div><a name="Localization"></a><h3>Localization</h3>
+<div class="editsection" style="float:right;margin-left:5px;">[<a href="http://docs.jquery.com/action/edit/UI/API/1.8/Datepicker?section=2" title="Edit section: Localization">edit</a>]</div><a name="Localization"></a><h3>Localization</h3>
 <p>Datepicker provides support for localizing its content to cater for different languages
 	and date formats. Each localization is contained within its own file with the 
 	language code appended to the name, e.g. <code>jquery.ui.datepicker-fr.js</code> for French.
-	These files are loaded after the main datepicker code. They add their settings to the set
+	The desired localization file should be include after the main datepicker code. They add their settings to the set
 	of available localizations and automatically apply them as defaults for all instances.</p>
 <p>The <code>$.datepicker.regional</code> attribute holds an array of localizations,
 	indexed by language code, with '' referring to the default (English). Each entry is
@@ -77,9 +78,7 @@ A simple jQuery UI Datepicker.<br />
   &lt;link href=&quot;http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot;/&gt;
   &lt;script src=&quot;http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js&quot;&gt;&lt;/script&gt;
   &lt;script src=&quot;http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js&quot;&gt;&lt;/script&gt;
-  &lt;script type=&quot;text/javascript&quot; src=&quot;http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js&quot;&gt;&lt;/script&gt;
-&lt;script type=&quot;text/javascript&quot; src=&quot;http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js&quot;&gt;&lt;/script&gt;
-&lt;/script&gt;
+  
   &lt;script&gt;
   $(document).ready(function() {
     $(&quot;#datepicker&quot;).datepicker();
@@ -148,7 +147,7 @@ $( ".selector" ).datepicker( "option", "disabled", true );</code></pre>
     <h3 class="option-name"><a href="#option-altField">altField</a></h3>
     <dl>
       <dt class="option-type-label">Type:</dt>
-        <dd class="option-type">String</dd>
+        <dd class="option-type">Selector, jQuery, Element</dd>
       
       <dt class="option-default-label">Default:</dt>
         <dd class="option-default">''</dd>
@@ -534,7 +533,7 @@ $( ".selector" ).datepicker( "option", "changeMonth", true );</code></pre>
     </dl>
   </div>
   <div class="option-description">
-    <p>Allows you to change the year by selecting from a drop-down list. You can enable this feature by setting the attribute to true.</p>
+    <p>Allows you to change the year by selecting from a drop-down list. You can enable this feature by setting the attribute to true. Use the <code><a href="http://docs.jquery.com/UI/Datepicker#option-yearRange" title="UI/Datepicker">yearRange</a></code> option to control which years are made available for selection.</p>
   </div>
   <div class="option-examples">
     <h4>Code examples</h4>
@@ -1206,7 +1205,7 @@ $( ".selector" ).datepicker( "option", "minDate", new Date(2007, 1 - 1, 1) );</c
     </dl>
   </div>
   <div class="option-description">
-    <p>The list of full month names, as used in the month header on each datepicker and as requested via the <code><a href="http://docs.jquery.com/UI/Datepicker#option-dateFormat" title="UI/Datepicker">dateFormat</a></code> setting. This attribute is one of the regionalisation attributes.</p>
+    <p>The list of full month names, for use as requested via the <code><a href="http://docs.jquery.com/UI/Datepicker#option-dateFormat" title="UI/Datepicker">dateFormat</a></code> setting. This attribute is one of the regionalisation attributes.</p>
   </div>
   <div class="option-examples">
     <h4>Code examples</h4>
@@ -1248,7 +1247,7 @@ $( ".selector" ).datepicker( "option", "monthNames", ['Januar','Februar','Marts'
     </dl>
   </div>
   <div class="option-description">
-    <p>The list of abbreviated month names, for use as requested via the <code><a href="http://docs.jquery.com/UI/Datepicker#option-dateFormat" title="UI/Datepicker">dateFormat</a></code> setting. This attribute is one of the regionalisation attributes.</p>
+    <p>The list of abbreviated month names, as used in the month header on each datepicker and as requested via the <code><a href="http://docs.jquery.com/UI/Datepicker#option-dateFormat" title="UI/Datepicker">dateFormat</a></code> setting. This attribute is one of the regionalisation attributes.</p>
   </div>
   <div class="option-examples">
     <h4>Code examples</h4>
@@ -1445,6 +1444,48 @@ $( ".selector" ).datepicker( "option", "prevText", 'Earlier' );</code></pre>
 </li>
 
 
+<li class="option" id="option-selectOtherMonths">
+  <div class="option-header">
+    <h3 class="option-name"><a href="#option-selectOtherMonths">selectOtherMonths</a></h3>
+    <dl>
+      <dt class="option-type-label">Type:</dt>
+        <dd class="option-type">Boolean</dd>
+      
+      <dt class="option-default-label">Default:</dt>
+        <dd class="option-default">false</dd>
+      
+    </dl>
+  </div>
+  <div class="option-description">
+    <p>When true days in other months shown before or after the current month are selectable. This only applies if <code><a href="http://docs.jquery.com/UI/Datepicker#option-showOtherMonths" title="UI/Datepicker">showOtherMonths</a></code> is also true.</p>
+  </div>
+  <div class="option-examples">
+    <h4>Code examples</h4>
+    <dl class="option-examples-list">
+    
+<dt>
+  Initialize a datepicker with the <code>selectOtherMonths</code> option specified.
+</dt>
+<dd>
+<pre><code>$( ".selector" ).datepicker({ selectOtherMonths: true });</code></pre>
+</dd>
+
+    
+<dt>
+  Get or set the <code>selectOtherMonths</code> option, after init.
+</dt>
+<dd>
+<pre><code>//getter
+var selectOtherMonths = $( ".selector" ).datepicker( "option", "selectOtherMonths" );
+//setter
+$( ".selector" ).datepicker( "option", "selectOtherMonths", true );</code></pre>
+</dd>
+
+    </dl>
+  </div>
+</li>
+
+
 <li class="option" id="option-shortYearCutoff">
   <div class="option-header">
     <h3 class="option-name"><a href="#option-shortYearCutoff">shortYearCutoff</a></h3>
@@ -1626,7 +1667,7 @@ $( ".selector" ).datepicker( "option", "showCurrentAtPos", 3 );</code></pre>
     </dl>
   </div>
   <div class="option-description">
-    <p>Whether to show the month after the year in the header.</p>
+    <p>Whether to show the month after the year in the header. This attribute is one of the regionalisation attributes.</p>
   </div>
   <div class="option-examples">
     <h4>Code examples</h4>
@@ -1794,7 +1835,7 @@ $( ".selector" ).datepicker( "option", "showOtherMonths", true );</code></pre>
     </dl>
   </div>
   <div class="option-description">
-    <p>When true a column is added to show the week of the year. The <code><a href="http://docs.jquery.com/UI/Datepicker#option-calculateWeek" title="UI/Datepicker">calculateWeek</a></code> option determines how the week of the year is calculated. You may also want to change the <code>firstDay</code> option.</p>
+    <p>When true a column is added to show the week of the year. The <code><a href="http://docs.jquery.com/UI/Datepicker#option-calculateWeek" title="UI/Datepicker">calculateWeek</a></code> option determines how the week of the year is calculated. You may also want to change the <code><a href="http://docs.jquery.com/UI/Datepicker#option-firstDay" title="UI/Datepicker">firstDay</a></code> option.</p>
   </div>
   <div class="option-examples">
     <h4>Code examples</h4>
@@ -1920,7 +1961,7 @@ $( ".selector" ).datepicker( "option", "weekHeader", 'W' );</code></pre>
     </dl>
   </div>
   <div class="option-description">
-    <p>Control the range of years displayed in the year drop-down: either relative to today's year (-nn:+nn), relative to the currently selected year (c-nn:c+nn), absolute (nnnn:nnnn), or combinations of these formats (nnnn:-nn).</p>
+    <p>Control the range of years displayed in the year drop-down: either relative to today's year (-nn:+nn), relative to the currently selected year (c-nn:c+nn), absolute (nnnn:nnnn), or combinations of these formats (nnnn:-nn). Note that this option only affects what appears in the drop-down, to restrict which dates may be selected use the <code><a href="http://docs.jquery.com/UI/Datepicker#option-minDate" title="UI/Datepicker">minDate</a></code> and/or <code><a href="http://docs.jquery.com/UI/Datepicker#option-maxDate" title="UI/Datepicker">maxDate</a></code> options.</p>
   </div>
   <div class="option-examples">
     <h4>Code examples</h4>
@@ -1996,6 +2037,45 @@ $( ".selector" ).datepicker( "option", "yearSuffix", 'CE' );</code></pre>
     <h2 class="top-header">Events</h2>
     <ul class="events-list">
       
+<li class="event" id="event-create">
+  <div class="event-header">
+    <h3 class="event-name"><a href="#event-create">create</a></h3>
+    <dl>
+      <dt class="event-type-label">Type:</dt>
+        <dd class="event-type">datepickercreate</dd>
+    </dl>
+  </div>
+  <div class="event-description">
+    <p>This event is triggered when datepicker is created.</p>
+  </div>
+  <div class="event-examples">
+    <h4>Code examples</h4>
+    <dl class="event-examples-list">
+    
+<dt>
+  Supply a callback function to handle the <code>create</code> event as an init option.
+</dt>
+<dd>
+<pre><code>$( &quot;.selector&quot; ).datepicker({
+   create: function(event, ui) { ... }
+});</code></pre>
+</dd>
+
+    
+<dt>
+  Bind to the <code>create</code> event by type: <code>datepickercreate</code>.
+</dt>
+<dd>
+<pre><code>$( &quot;.selector&quot; ).bind( &quot;datepickercreate&quot;, function(event, ui) {
+  ...
+});</code></pre>
+</dd>
+
+    </dl>
+  </div>
+</li>
+
+
 <li class="event" id="event-beforeShow">
   <div class="event-header">
     <h3 class="event-name"><a href="#event-beforeShow">beforeShow</a></h3>
@@ -2333,7 +2413,7 @@ $( ".selector" ).datepicker( "option", "yearSuffix", 'CE' );</code></pre>
       <dt class="method-signature-label">Signature:</dt>
         <dd class="method-signature">.datepicker( "hide"
 
-, <span class="optional">[</span>speed<span class="optional">] </span>
+
 
 
 
@@ -2343,8 +2423,7 @@ $( ".selector" ).datepicker( "option", "yearSuffix", 'CE' );</code></pre>
     </dl>
   </div>
   <div class="method-description">
-    <p>Close a previously opened date picker.
-</p><p>speed: The speed at which to close the date picker.</p>
+    <p>Close a previously opened date picker.</p>
   </div>
 </li>
 
@@ -2367,6 +2446,28 @@ $( ".selector" ).datepicker( "option", "yearSuffix", 'CE' );</code></pre>
   </div>
   <div class="method-description">
     <p>Call up a previously attached date picker.</p>
+  </div>
+</li>
+
+
+<li class="method" id="method-refresh">
+  <div class="method-header">
+    <h3 class="method-name"><a href="#method-refresh">refresh</a></h3>
+    <dl>
+      <dt class="method-signature-label">Signature:</dt>
+        <dd class="method-signature">.datepicker( "refresh"
+
+
+
+
+
+
+
+)</dd>
+    </dl>
+  </div>
+  <div class="method-description">
+    <p>Redraw a date picker, after having made some external modifications.</p>
   </div>
 </li>
 
@@ -2410,7 +2511,7 @@ $( ".selector" ).datepicker( "option", "yearSuffix", 'CE' );</code></pre>
     </dl>
   </div>
   <div class="method-description">
-    <p>Sets the current date for the datepicker. The new date may also be a string in the current date format (e.g. '01/26/2009'), a number of days from today (e.g. +7) or a string of values and periods ('y' for years, 'm' for months, 'w' for weeks, 'd' for days, e.g. '+1m +7d'), or null to clear the selected date.</p>
+    <p>Sets the current date for the datepicker. The new date may be a Date object or a string in the current <a href="http://docs.jquery.com/UI/Datepicker#option-dateFormat" title="UI/Datepicker">date format</a> (e.g. '01/26/2009'), a number of days from today (e.g. +7) or a string of values and periods ('y' for years, 'm' for months, 'w' for weeks, 'd' for days, e.g. '+1m +7d'), or null to clear the selected date.</p>
   </div>
 </li>
 
@@ -2460,10 +2561,10 @@ $( ".selector" ).datepicker( "option", "yearSuffix", 'CE' );</code></pre>
 </div>
 
 </p><!-- 
-Pre-expand include size: 94641 bytes
-Post-expand include size: 185781 bytes
-Template argument size: 116117 bytes
+Pre-expand include size: 98753 bytes
+Post-expand include size: 196021 bytes
+Template argument size: 121355 bytes
 Maximum: 2097152 bytes
 -->
 
-<!-- Saved in parser cache with key jqdocs_docs:pcache:idhash:3346-1!1!0!!en!2 and timestamp 20100421062645 -->
+<!-- Saved in parser cache with key jqdocs_docs:pcache:idhash:3774-1!1!0!!en!2 and timestamp 20110315194502 -->
