@@ -217,12 +217,31 @@ jQuery.extend(Kendra, {
 				return false;
 			}
 
+			var $op1 = $row.find('.kendra-filter-op1'), key = $op1.val(), dataType = Kendra.util.dataTypeForKey(key);
+
 			$copy = $row.clone(true);
+
+			/**
+			 * reset the datePicker
+			 * 
+			 * @todo find a better hack
+			 */
+			var ts = new Date().getTime();
+			$copy.find('[id]').each(function(){
+				$(this).attr('id', $(this).attr('id') + ts);
+			});
+			
+			$copy.find('.kendra-filter-op3').each(function() {
+				Kendra.service.initDatepicker(this, dataType);
+			});
+
 			/**
 			 * try to preserve the currently selected option
+			 * 
+			 * @todo find a better hack
 			 */
 			$copy.find('option[selected=selected]').removeAttr('selected');
-			index = $row.find('.kendra-filter-op1').get(0).selectedIndex;
+			index = $op1.get(0).selectedIndex;
 			$copy.insertAfter($row).find('.kendra-filter-op1').get(0).selectedIndex = index;
 
 			Kendra.service.filterUpdate($form);
@@ -416,17 +435,19 @@ jQuery.extend(Kendra, {
 				forcePlaceholderSize : true
 
 			}).find('.kendra-filter-op1,.kendra-filter-op2,.kendra-filter-op3').change(function() {
-				var $this = $(this), key = $this.val();
+				var $this = $(this);
 
 				/**
 				 * changing the subject selector affects the predicate options
 				 * if the dataType changes, it also clears the object value
 				 */
 				if ($this.hasClass('kendra-filter-op1')) {
-					if (typeof Kendra.mapping.mappings[key] != 'undefined' && Kendra.mapping.mappings[key].dataType) {
-						var dataType = Kendra.util.dataTypeForKey(key), options = Kendra.service.buildQueryMappingTypes(dataType);
+					var key = $this.val(), dataType = Kendra.util.dataTypeForKey(key);
 
-						$this.parents('tr.draggable:eq(0)').find('.kendra-filter-op2').html(options).end().find('.kendra-filter-op3').not('.hasDatepicker').each(function() {
+					if (dataType) {
+						var options = Kendra.service.buildQueryMappingTypes(dataType);
+
+						$this.parents('tr.draggable:eq(0)').find('.kendra-filter-op2').html(options).end().find('.kendra-filter-op3').each(function() {
 							Kendra.service.initDatepicker(this, dataType);
 						}).select().focus();
 					}
@@ -457,6 +478,10 @@ jQuery.extend(Kendra, {
 		 */
 		initDatepicker : function(el, dataType) {
 			var $op3 = $(el);
+			if ($op3.hasClass('hasDatepicker')) {
+				$op3.datepicker("destroy");
+			}
+
 			if (dataType == 'datetime') {
 				$op3.datepicker( {
 					dateFormat : "yy-mm-ddT00:00:00Z",
@@ -466,11 +491,7 @@ jQuery.extend(Kendra, {
 					yearRange : '-50:+10',
 					showButtonPanel : true
 				});
-				Kendra.util.log('created datepicker', $op3);
-			} else if ($op3.hasClass('hasDatepicker')) {
-				$op3.datepicker("destroy");
-				Kendra.util.log('destroyed datepicker', $op3);
-			}
+			} 
 		},
 
 		/**
