@@ -616,12 +616,14 @@
 	<!-- KENDRA:START -->
 	<!--
 	special indexing of ss_kendra_* and sm_kendra_* fields
-    use "text_rev" fieldType to support wildcard queries
 	-->
+   <dynamicField name="ss_kendra_*"  type="textgen"    indexed="true"  stored="true" multiValued="false"/>
+   <dynamicField name="sm_kendra_*"  type="textgen"    indexed="true"  stored="true" multiValued="true"/>
 
+	<!-- TEST:
    <dynamicField name="ss_kendra_*"  type="text_rev"    indexed="true"  stored="true" multiValued="false"/>
    <dynamicField name="sm_kendra_*"  type="text_rev"    indexed="true"  stored="true" multiValued="true"/>
-	
+	-->	
 	<!-- KENDRA:END -->
 
    <dynamicField name="is_*"  type="integer" indexed="true"  stored="true" multiValued="false"/>
