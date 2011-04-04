@@ -427,7 +427,7 @@
    -->
     <fieldtype name="geohash" class="solr.GeoHashField"/>
 
-    <!-- KENDRA FIELD TYPES -->
+	<!-- KENDRA:START -->
 
     <fieldType name="integer" class="solr.IntField" omitNorms="true"/>
 
@@ -464,6 +464,8 @@
         -->
       </analyzer>
     </fieldType>
+
+	<!-- KENDRA:END -->
 
     <!-- Edge N gram type - for example for matching against queries with results 
         KeywordTokenizer leaves input string intact as a single term.
@@ -610,6 +612,17 @@
         EXAMPLE:  name="*_i" will match any field ending in _i (like myid_i, z_i)
         Longer patterns will be matched first.  if equal size patterns
         both match, the first appearing in the schema will be used.  -->
+
+	<!-- KENDRA:START -->
+	<!--
+	special indexing of ss_kendra_* and sm_kendra_* fields
+    use "text_rev" fieldType to support wildcard queries
+	-->
+
+   <dynamicField name="ss_kendra_*"  type="text_rev"    indexed="true"  stored="true" multiValued="false"/>
+   <dynamicField name="sm_kendra_*"  type="text_rev"    indexed="true"  stored="true" multiValued="true"/>
+	
+	<!-- KENDRA:END -->
 
    <dynamicField name="is_*"  type="integer" indexed="true"  stored="true" multiValued="false"/>
    <dynamicField name="im_*"  type="integer" indexed="true"  stored="true" multiValued="true"/>
