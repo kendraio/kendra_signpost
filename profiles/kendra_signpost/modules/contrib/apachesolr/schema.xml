@@ -617,22 +617,19 @@
 	<!--
 	special indexing of ss_kendra_* and sm_kendra_* fields
 	-->
-	<!-- DEFAULT: string
-		works for "is", "starts with"
+	<!-- DEFAULT:
    <dynamicField name="ss_kendra_*"  type="string"    indexed="true"  stored="true" multiValued="false"/>
    <dynamicField name="sm_kendra_*"  type="string"    indexed="true"  stored="true" multiValued="true"/>
 	-->	
-	<!-- TEST: textgen
+	<!-- TEST:
    <dynamicField name="ss_kendra_*"  type="textgen"    indexed="true"  stored="true" multiValued="false"/>
    <dynamicField name="sm_kendra_*"  type="textgen"    indexed="true"  stored="true" multiValued="true"/>
 	-->	
-	<!-- TEST: text_rev
-		works for "contains"
-	-->	
+	<!-- TEST:
    <dynamicField name="ss_kendra_*"  type="text_rev"    indexed="true"  stored="true" multiValued="false"/>
    <dynamicField name="sm_kendra_*"  type="text_rev"    indexed="true"  stored="true" multiValued="true"/>
-
-	<!-- TEST: sortString
+	-->	
+	<!-- TEST:
    <dynamicField name="ss_kendra_*"  type="sortString"    indexed="true"  stored="true" multiValued="false"/>
    <dynamicField name="sm_kendra_*"  type="sortString"    indexed="true"  stored="true" multiValued="true"/>
 	-->	
