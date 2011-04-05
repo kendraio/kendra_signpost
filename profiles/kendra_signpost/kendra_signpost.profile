@@ -32,6 +32,9 @@ function kendra_signpost_profile_modules() {
   
   	// rdf / sparql
   	'rdfdb',
+  	
+  	// feeds
+  	'feeds', 'feeds_ui', 'p2pnext_feeds', 
 
     // kendra mapping feature requirements
     'nodereference_url', 'context', 'context_ui', 
