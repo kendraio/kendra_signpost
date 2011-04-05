@@ -1,0 +1,6 @@
+name = P2PNext Feeds
+description = Implemenation of various Feeds plugins for p2pnext compatibility.
+core = 6.x
+package = "Kendra"
+dependencies[] = "feeds"
+

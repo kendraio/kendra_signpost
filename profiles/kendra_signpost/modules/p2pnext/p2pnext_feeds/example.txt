@@ -1,0 +1,138 @@
+SimpleXMLElement Object
+(
+    [Description] => Array
+        (
+            [0] => SimpleXMLElement Object
+                (
+                    [CreationInformation] => SimpleXMLElement Object
+                        (
+                            [Creation] => SimpleXMLElement Object
+                                (
+                                    [Title] => Boilersuit Live at Paradiso
+                                    [TitleMedia] => SimpleXMLElement Object
+                                        (
+                                            [TitleImage] => SimpleXMLElement Object
+                                                (
+                                                    [MediaUri] => http://130.188.225.162/fabchannel/images/boilersuit.png
+                                                )
+
+                                        )
+
+                                    [Abstract] => SimpleXMLElement Object
+                                        (
+                                            [FreeTextAnnotation] => Artist: Boilersuit. Date: 2007-01-03. Location: Paradiso - Small Hall. Genre: Rock. Home: Netherlands.
+                                        )
+
+                                    [Creator] => Array
+                                        (
+                                            [0] => SimpleXMLElement Object
+                                                (
+                                                    [Role] => SimpleXMLElement Object
+                                                        (
+                                                            [@attributes] => Array
+                                                                (
+                                                                    [href] => urn:mpeg:mpeg7:cs:RoleCS:2001:PRODUCER
+                                                                )
+
+                                                        )
+
+                                                    [Agent] => SimpleXMLElement Object
+                                                        (
+                                                            [Name] => Fabchannel
+                                                        )
+
+                                                )
+
+                                            [1] => SimpleXMLElement Object
+                                                (
+                                                    [Role] => SimpleXMLElement Object
+                                                        (
+                                                            [@attributes] => Array
+                                                                (
+                                                                    [href] => urn:mpeg:mpeg7:cs:RoleCS:2001:DISSEMINATOR
+                                                                )
+
+                                                        )
+
+                                                    [Agent] => SimpleXMLElement Object
+                                                        (
+                                                            [Name] => P2P-Next
+                                                        )
+
+                                                )
+
+                                        )
+
+                                    [CopyrightString] => Copyright 2007 Fabchannel
+                                )
+
+                            [RelatedMaterial] => SimpleXMLElement Object
+                                (
+                                    [MaterialType] => SimpleXMLElement Object
+                                        (
+                                            [Name] => torrent
+                                        )
+
+                                    [MediaLocator] => SimpleXMLElement Object
+                                        (
+                                            [MediaUri] => http://130.188.225.162/fabchannel/tstream/fablive.ts.tstream
+                                        )
+
+                                )
+
+                        )
+
+                )
+
+            [1] => SimpleXMLElement Object
+                (
+                    [MultimediaContent] => SimpleXMLElement Object
+                        (
+                            [Video] => SimpleXMLElement Object
+                                (
+                                    [MediaTime] => SimpleXMLElement Object
+                                        (
+                                            [MediaTimePoint] => T00:00:00
+                                            [MediaDuration] => PT0H45M0S
+                                        )
+
+                                )
+
+                        )
+
+                )
+
+            [2] => SimpleXMLElement Object
+                (
+                    [UsageInformation] => SimpleXMLElement Object
+                        (
+                            [Availability] => SimpleXMLElement Object
+                                (
+                                    [InstanceRef] => SimpleXMLElement Object
+                                        (
+                                            [@attributes] => Array
+                                                (
+                                                    [href] => http://130.188.225.162/fabchannel/feed/live-1.xml
+                                                )
+
+                                        )
+
+                                    [AvailabilityPeriod] => SimpleXMLElement Object
+                                        (
+                                            [@attributes] => Array
+                                                (
+                                                    [type] => live
+                                                )
+
+                                            [TimePoint] => 2010-11-24T10:00:00+02:00
+                                        )
+
+                                )
+
+                        )
+
+                )
+
+        )
+
+)

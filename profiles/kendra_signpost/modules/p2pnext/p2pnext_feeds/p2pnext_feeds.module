@@ -1,0 +1,98 @@
+<?php
+
+function p2pnext_feeds_feeds_plugins() {
+  $info = array();
+  $info['P2PNextAtom'] = array(
+    'name' => 'P2PNext Atom',
+    'description' => 'Parses P2PNext Atom feeds.',
+    'handler' => array(
+      'parent' => 'FeedsSyndicationParser',
+      'class' => 'P2PNextAtomParser',
+      'file' => 'P2PNextAtomParser.inc',
+      'path' => drupal_get_path('module', 'p2pnext_feeds'),
+    ),
+  );
+  $info['DebugProcessor'] = array(
+    'name' => 'Debug processor',
+    'description' => 'Create watchdog messages.',
+    'help' => 'Create debug messages from parsed content.',
+    'handler' => array(
+      'parent' => 'FeedsNodeProcessor',
+      'class' => 'DebugProcessor',
+      'file' => 'DebugProcessor.inc',
+      'path' => drupal_get_path('module', 'p2pnext_feeds'),
+    ),
+  );
+  return $info; 
+}
+
+
+function test_test() {
+  $source = "http://130.188.225.162/fabchannel/feed/live-1.xml";
+  $response = drupal_http_request($source);
+  $xml = new SimpleXMLElement($response->data);
+  $attr = $xml->Description[0]->CreationInformation->Creation->Creator->Role->attributes();
+  print_r($attr['href']);
+  print "\n";
+}
+
+
+function get_mpeg_data_from_url($url) {
+  $data = array();
+  $response = drupal_http_request($url);
+  if ($response->code == 200) {
+    $xml = new SimpleXMLElement($response->data);
+    if (!empty($xml)) {
+      $data['title'] = 
+        "{$xml->Description[0]->CreationInformation->Creation->Title}";
+      $data['title_image'] = 
+        "{$xml->Description[0]->CreationInformation->Creation->TitleMedia->TitleImage->MediaUri}";
+      $data['abstract'] = 
+        "{$xml->Description[0]->CreationInformation->Creation->Abstract->FreeTextAnnotation}";
+      foreach ($xml->Description[0]->CreationInformation->Creation->Creator as $creator) {
+        $attr = $creator->Role->attributes();
+        $attr = strtolower(
+          substr("{$attr['href']}", strrpos("{$attr['href']}", ':') + 1 - strlen("{$attr['href']}")));
+        if (!empty($attr)) {
+          $data[$attr] = "{$creator->Agent->Name}";
+        }
+      }  
+      $data['copyright'] = 
+        "{$xml->Description[0]->CreationInformation->Creation->CopyrightString}";
+      $data['torrent'] = 
+        "{$xml->Description[0]->CreationInformation->RelatedMaterial->MediaLocator->MediaUri}";
+      $data['duration'] = 
+        "{$xml->Description[1]->MultimediaContent->Video->MediaTime->MediaDuration}";         
+      watchdog('Feed Item', '<pre>'. print_r($data, TRUE) .'</pre>');
+    } else {
+      watchdog('Feed Item', "Failed to parse MPEG7 for this item: {$item['url']}");
+    }
+  } else {
+    watchdog('Feed Item', "Failed to fetch MPEG7 data for this feed item: {$item['url']}");
+  }
+  return $data;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,6 @@
+; $Id$
+name = P2P-Next programme feed
+description = Provides a Feeds plugin extension to parse P2P-Next programmes.
+package = P2P-Next
+core = 6.x
+dependencies[] = feeds
