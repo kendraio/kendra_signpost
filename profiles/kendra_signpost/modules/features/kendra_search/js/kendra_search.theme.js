@@ -10,6 +10,9 @@
 		"ss_cck_field_cat_artist" : {
 			"label" : "Artist"
 		},
+		"ss_cck_field_cat_remixer" : {
+			"label" : "Remixer"
+		},
 		"ss_cck_field_cat_date" : {
 			"label" : "Date"
 		},
