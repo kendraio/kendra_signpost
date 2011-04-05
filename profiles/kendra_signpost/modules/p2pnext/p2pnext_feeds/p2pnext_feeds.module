@@ -14,7 +14,7 @@ function p2pnext_feeds_feeds_plugins() {
   );
   $info['DebugProcessor'] = array(
     'name' => 'Debug processor',
-    'description' => 'Create watchdog messages.',
+    'description' => 'Node Processor with added watchdog messages and CSV file creation.',
     'help' => 'Create debug messages from parsed content.',
     'handler' => array(
       'parent' => 'FeedsNodeProcessor',
