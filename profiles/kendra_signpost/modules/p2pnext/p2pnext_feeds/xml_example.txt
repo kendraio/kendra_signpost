@@ -1,0 +1,62 @@
+
+
+<pre><!--?xml version="1.0" encoding="UTF-8"?-->
+<mpeg7 xmlns="urn:mpeg:mpeg7:schema:2001" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <description xsi:type="CreationDescriptionType">
+    <creationinformation>
+      <creation>
+        <title type="main" xml:lang="en">Wouter Hamel Live at Paradiso</title>
+        <titlemedia xsi:type="TitleMediaType">
+          <titleimage>
+            <mediauri>http://130.188.225.162/fabchannel/images/wouterhamel.png</mediauri>
+          </titleimage>
+        </titlemedia>
+        <abstract>
+          <freetextannotation>Artist: Wouter Hamel. Date: 2007-11-25. Location: Paradiso - Main Hall. Genre: Jazz. Home: Netherlands.</freetextannotation>
+        </abstract>
+        <creator>
+          <role href="urn:mpeg:mpeg7:cs:RoleCS:2001:PRODUCER">
+          <agent xsi:type="OrganizationType">
+            <name>Fabchannel</name>
+          </agent>
+        </role></creator>
+        <creator>
+          <role href="urn:mpeg:mpeg7:cs:RoleCS:2001:DISSEMINATOR">
+          <agent xsi:type="OrganizationType">
+            <name>P2P-Next</name>
+          </agent>
+        </role></creator>
+        <copyrightstring>Copyright 2007 Fabchannel</copyrightstring>
+      </creation>
+      <relatedmaterial>
+        <materialtype>
+          <name>torrent</name>
+        </materialtype>
+        <medialocator>
+          <mediauri>http://130.188.225.162/fabchannel/tstream/fablive.ts.tstream</mediauri>
+        </medialocator>
+      </relatedmaterial>
+    </creationinformation>
+  </description>
+  <description xsi:type="ContentEntityType">
+    <multimediacontent xsi:type="VideoType">
+      <video>
+        <mediatime>
+          <mediatimepoint>T00:00:00</mediatimepoint>
+          <mediaduration>PT1H29M0S</mediaduration>
+        </mediatime>
+      </video>
+    </multimediacontent>
+  </description>
+  <description xsi:type="UsageDescriptionType">
+    <usageinformation>
+      <availability>
+        <instanceref href="http://130.188.225.162/fabchannel/feed/live-17.xml">
+        <availabilityperiod type="live">
+          <timepoint>2010-11-24T21:17:00+02:00</timepoint>
+        </availabilityperiod>
+      </instanceref></availability>
+    </usageinformation>
+  </description>
+</mpeg7>
+</pre>
