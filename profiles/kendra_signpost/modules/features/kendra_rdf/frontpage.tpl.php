@@ -10,4 +10,5 @@
 <li><?php print l('View all mappings', 'mappings'); ?>.</li>
 <li><?php print l('View all smart filters', 'smart-filters'); ?> and use them to search uploaded content via the mappings.</li>
 <li><?php print l('Create a smart filter', 'node/add/smart-filter'); ?> using the mappings.</li>
+<li><?php print l('Import P2P-Next Atom Feed', 'import'); ?>.</li>
 </ol>
