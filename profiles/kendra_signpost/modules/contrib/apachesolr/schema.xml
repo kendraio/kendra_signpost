@@ -632,7 +632,7 @@
 	<!-- TEST:
    <dynamicField name="ss_kendra_*"  type="sortString"    indexed="true"  stored="true" multiValued="false"/>
    <dynamicField name="sm_kendra_*"  type="sortString"    indexed="true"  stored="true" multiValued="true"/>
-	-->	
+	-->
 
 	<!-- KENDRA:END -->
 
