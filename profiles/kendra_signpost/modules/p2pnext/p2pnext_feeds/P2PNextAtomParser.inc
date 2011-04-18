@@ -3,8 +3,8 @@
 class P2PNextAtomParser extends FeedsSyndicationParser {
 
   public function parse(FeedsImportBatch $batch, FeedsSource $source) {
-    watchdog('Parse Atom', $batch->getLink());
     parent::parse($batch, $source);
+    watchdog('Parse Atom', $batch->getLink());
     $items = array();
     while ($item = $batch->shiftItem()) { 
       $data = get_mpeg_data_from_url($item['url']);      
@@ -16,7 +16,7 @@ class P2PNextAtomParser extends FeedsSyndicationParser {
       $item['disseminator'] = $data['disseminator'];
       $item['copyright'] = $data['copyright'];
       $item['duration'] = $data['duration'];
-      $item['time_point'] = $item['p2pnext:timePoint'];
+      //$item['time_point'] = $item['p2pnext:timePoint'];
       $item['channel'] = $batch->getTitle();
       $items[] = $item;
     }
