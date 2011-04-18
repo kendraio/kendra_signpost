@@ -16,7 +16,6 @@ class P2PNextAtomParser extends FeedsSyndicationParser {
       $item['disseminator'] = $data['disseminator'];
       $item['copyright'] = $data['copyright'];
       $item['duration'] = $data['duration'];
-      //$item['time_point'] = $item['p2pnext:timePoint'];
       $item['channel'] = $batch->getTitle();
       $items[] = $item;
     }
