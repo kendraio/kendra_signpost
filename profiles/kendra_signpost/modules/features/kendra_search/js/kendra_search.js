@@ -73,10 +73,10 @@ jQuery.extend(Kendra, {
 		 * dataTypeForKey
 		 * 
 		 * @param key String munged URI key for a mapping item
-		 * @returns String 'string'|'number'|'datetime'
+		 * @returns String 'string'|'number'|'datetime' (default 'string')
 		 */
 		dataTypeForKey : function(key) {
-			return (!Kendra.mapping.mappings[key] || !Kendra.mapping.mappings[key].dataType) ? null : Kendra.mapping.mappings[key].dataType.split('#').pop();
+			return (!Kendra.mapping.mappings[key] || !Kendra.mapping.mappings[key].dataType) ? 'string' : Kendra.mapping.mappings[key].dataType.split('#').pop();
 		}
 
 	},
@@ -196,9 +196,7 @@ jQuery.extend(Kendra, {
 			}, data = data || {};
 
 			Kendra.service.getTemplate(tmplName, function() {
-				Kendra.util.log(tmplName, 'rendering template');
 				var result = $.tmpl(tmplName, data);
-				Kendra.util.log(result, 'rendered template');
 
 				success(result);
 
@@ -227,10 +225,10 @@ jQuery.extend(Kendra, {
 			 * @todo find a better hack
 			 */
 			var ts = new Date().getTime();
-			$copy.find('[id]').each(function(){
+			$copy.find('[id]').each(function() {
 				$(this).attr('id', $(this).attr('id') + ts);
 			});
-			
+
 			$copy.find('.kendra-filter-op3').each(function() {
 				Kendra.service.initDatepicker(this, dataType);
 			});
@@ -336,7 +334,7 @@ jQuery.extend(Kendra, {
 				}
 			};
 
-			Kendra.util.log('buildQueryMappingTypes:' + (operands[dataType] && operands[dataType][op2] ? operands[dataType][op2].label : 'undefined'));
+			Kendra.util.log('buildQueryMappingTypes:' + (operands[dataType] && operands[dataType][op2] ? operands[dataType][op2].label : operands[dataType]+'/'+op2));
 
 			for ( var key in operands[dataType]) {
 				html += '<option value="' + key + '"';
@@ -491,7 +489,7 @@ jQuery.extend(Kendra, {
 					yearRange : '-50:+10',
 					showButtonPanel : true
 				});
-			} 
+			}
 		},
 
 		/**
@@ -612,8 +610,6 @@ jQuery.extend(Kendra, {
 				 * format the operand according to data type
 				 */
 				dataType = Kendra.util.dataTypeForKey($s);
-
-				Kendra.util.log(dataType, "Kendra.service.buildSolrQuery:dataType");
 
 				switch (dataType) {
 				case 'number':
