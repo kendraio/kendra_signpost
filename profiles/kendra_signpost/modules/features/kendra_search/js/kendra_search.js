@@ -296,13 +296,15 @@ jQuery.extend(Kendra, {
 			var html = '', dataType = dataType ? dataType.toLowerCase() : 'string', operands = {
 				'string' : {
 					'==' : {
-						'label' : 'is',
-						'isDefault' : true
+						'label' : 'is'
 					},
 					'^=' : {
 						'label' : 'starts with'
 					},
-					//'*=' : { 'label' : 'contains' },
+					'*=' : {
+						'label' : 'contains',
+						'isDefault' : true
+					},
 					'$=' : {
 						'label' : 'ends with'
 					}
@@ -334,7 +336,7 @@ jQuery.extend(Kendra, {
 				}
 			};
 
-			Kendra.util.log('buildQueryMappingTypes:' + (operands[dataType] && operands[dataType][op2] ? operands[dataType][op2].label : operands[dataType]+'/'+op2));
+			Kendra.util.log('buildQueryMappingTypes:' + (operands[dataType] && operands[dataType][op2] ? operands[dataType][op2].label : operands[dataType] + '/' + op2));
 
 			for ( var key in operands[dataType]) {
 				html += '<option value="' + key + '"';
@@ -653,15 +655,20 @@ jQuery.extend(Kendra, {
 				default:
 					switch ($p) {
 					case '^=': /* starts with */
-						subqueries.push($s + ':' + Kendra.service.quoteString($o) + '*');
+						var substring = $o.split(/\s+/, 1).shift();
+						subqueries.push($s + ':' + substring + '*');
 						break;
 
 					case '$=': /* ends with */
-						subqueries.push($s + ':*' + Kendra.service.quoteString($o));
+						var substring = $o.split(/\s+/).pop();
+						subqueries.push($s + ':*' + substring);
 						break;
 
 					case '*=': /* contains */
-						subqueries.push($s + ':?' + Kendra.service.quoteString($o) + '?');
+						var substring = '', substrings = $o.split(/\s+/);
+						for (substring in substrings) {
+							subqueries.push($s + ':*' + substring + '*');
+						}
 						break;
 
 					case '==': /* is */
