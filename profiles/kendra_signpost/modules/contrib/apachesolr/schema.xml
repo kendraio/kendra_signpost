@@ -615,34 +615,26 @@
 
 	<!-- KENDRA:START -->
 	<!--
-	special indexing of ss_kendra_* and sm_kendra_* fields
+	indexing of ss_kendra_* and sm_kendra_* fields
 	-->
-	<!-- DEFAULT:
+    <!-- DEFAULT:
+      currently	using "string" indexing	type
+    -->
    <dynamicField name="ss_kendra_*"  type="string"    indexed="true"  stored="true" multiValued="false"/>
    <dynamicField name="sm_kendra_*"  type="string"    indexed="true"  stored="true" multiValued="true"/>
-	-->	
-	<!-- TEST:
 
+	<!-- TEST: sortString // same as default "string" with added features for sorting
    <dynamicField name="ss_kendra_*"  type="sortString"    indexed="true"  stored="true" multiValued="false"/>
    <dynamicField name="sm_kendra_*"  type="sortString"    indexed="true"  stored="true" multiValued="true"/>
 	-->
-	<!-- TEST:
-	enable more efficient leading wildcard queries
-	wildcard searches return entire catalog, phrase searches work as expected but "is" syntax returns also partial matches
-	
+	<!-- TEST: text_rev // enable more efficient leading wildcard queries
    <dynamicField name="ss_kendra_*"  type="text_rev"    indexed="true"  stored="true" multiValued="false"/>
    <dynamicField name="sm_kendra_*"  type="text_rev"    indexed="true"  stored="true" multiValued="true"/>
 	-->	
-	<!-- TEST:
-   	same as "text_rev" without the fancy reverse indexing
-
+	<!-- TEST: textgen // same as "text_rev" without the fancy reverse indexing, language-neutral
    <dynamicField name="ss_kendra_*"  type="textgen"    indexed="true"  stored="true" multiValued="false"/>
    <dynamicField name="sm_kendra_*"  type="textgen"    indexed="true"  stored="true" multiValued="true"/>
 	-->	
-
-	<!-- current: text_rev -->
-   <dynamicField name="ss_kendra_*"  type="text_rev"    indexed="true"  stored="true" multiValued="false"/>
-   <dynamicField name="sm_kendra_*"  type="text_rev"    indexed="true"  stored="true" multiValued="true"/>
 
 	<!-- KENDRA:END -->
 
