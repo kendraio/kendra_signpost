@@ -70,7 +70,8 @@
 
     <!-- boolean type: "true" or "false" -->
     <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true" omitNorms="true"/>
-    <!--Binary data type. The data should be sent/retrieved in as Base64 encoded Strings -->
+    <!--Binary data type. The data should be sent/retrieved in as Base64 encoded Strings
+-->
     <fieldtype name="binary" class="solr.BinaryField"/>
 
     <!-- The optional sortMissingLast and sortMissingFirst attributes are
@@ -134,7 +135,8 @@
       -->
     <fieldType name="date" class="solr.TrieDateField" omitNorms="true" precisionStep="0" positionIncrementGap="0"/>
 
-    <!-- A Trie based date field for faster date range queries and date faceting. -->
+    <!-- A Trie based date field for faster date range queries and date faceting.
+-->
     <fieldType name="tdate" class="solr.TrieDateField" omitNorms="true" precisionStep="6" positionIncrementGap="0"/>
 
 
@@ -202,7 +204,8 @@
     </fieldType>
     -->
 
-    <!-- A text field that only splits on whitespace for exact matching of words -->
+    <!-- A text field that only splits on whitespace for exact matching of words
+-->
     <fieldType name="text_ws" class="solr.TextField" positionIncrementGap="100">
       <analyzer>
         <tokenizer class="solr.WhitespaceTokenizerFactory"/>
@@ -255,7 +258,8 @@
 
 
     <!-- Less flexible matching, but less false matches.  Probably not ideal for product names,
-         but may be good for SKUs.  Can insert dashes in the wrong place and still match. -->
+         but may be good for SKUs.  Can insert dashes in the wrong place and still match.
+-->
     <fieldType name="textTight" class="solr.TextField" positionIncrementGap="100" >
       <analyzer>
         <tokenizer class="solr.WhitespaceTokenizerFactory"/>
@@ -266,13 +270,15 @@
         <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt"/>
         <filter class="solr.EnglishMinimalStemFilterFactory"/>
         <!-- this filter can remove any duplicate tokens that appear at the same position - sometimes
-             possible with WordDelimiterFilter in conjuncton with stemming. -->
+             possible with WordDelimiterFilter in conjuncton with stemming.
+-->
         <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
       </analyzer>
     </fieldType>
 
 
-    <!-- A general unstemmed text field - good if one does not know the language of the field -->
+    <!-- A general unstemmed text field - good if one does not know the language of the field
+-->
     <fieldType name="textgen" class="solr.TextField" positionIncrementGap="100">
       <analyzer type="index">
         <tokenizer class="solr.WhitespaceTokenizerFactory"/>
@@ -296,7 +302,8 @@
 
     <!-- A general unstemmed text field that indexes tokens normally and also
          reversed (via ReversedWildcardFilterFactory), to enable more efficient 
-	 leading wildcard queries. -->
+	 leading wildcard queries.
+-->
     <fieldType name="text_rev" class="solr.TextField" positionIncrementGap="100">
       <analyzer type="index">
         <tokenizer class="solr.WhitespaceTokenizerFactory"/>
@@ -418,7 +425,8 @@
      -->
     <fieldType name="point" class="solr.PointType" dimension="2" subFieldSuffix="_d"/>
 
-    <!-- A specialized field for geospatial search. If indexed, this fieldType must not be multivalued. -->
+    <!-- A specialized field for geospatial search. If indexed, this fieldType must not be multivalued.
+-->
     <fieldType name="location" class="solr.LatLonType" subFieldSuffix="_coordinate"/>
 
    <!--
@@ -526,13 +534,15 @@
    -->
 
 <!-- The document id is derived from a site-spcific key (hash) and the node ID like:
-     $document->id = $hash . '/node/' . $node->nid; -->
+     $document->id = $hash . '/node/' . $node->nid;
+-->
 
    <field name="id" type="string" indexed="true" stored="true" required="true" />
 
 <!-- These are the fields that correspond to a Drupal node. The beauty of having
      Lucene store title, body, type, etc., is that we retrieve them with the search
-     result set and don't need to go to the database with a node_load. -->
+     result set and don't need to go to the database with a node_load.
+-->
 
    <field name="site" type="string" indexed="true" stored="true"/>
    <field name="hash" type="string" indexed="true" stored="true"/>
@@ -541,11 +551,13 @@
    <field name="sort_title" type="sortString" indexed="true" stored="false"/>
    <field name="body" type="text" indexed="true" stored="true" termVectors="true"/>
    <field name="teaser" type="text" indexed="false" stored="true"/>
-   <!-- entity is 'node', 'file', 'user', or some other Drupal object type -->
+   <!-- entity is 'node', 'file', 'user', or some other Drupal object type
+-->
    <field name="entity" type="string" indexed="true" stored="true" required="true" />
    <!-- bundle is a node type, or as appropriate for other entity types -->
    <field name="bundle" type="string" indexed="true" stored="true"/>
-   <!-- type is a node type, or can be used flexibly for other entity types -->
+   <!-- type is a node type, or can be used flexibly for other entity types
+-->
    <field name="type" type="string" indexed="true" stored="true"/>
    <field name="type_name" type="string" indexed="true" stored="true"/>
    <field name="path" type="string" indexed="true" stored="true"/>
@@ -571,16 +583,19 @@
    <field name="taxonomy_names" type="text" indexed="true" stored="false" termVectors="true" multiValued="true" omitNorms="true"/>
    <!-- The string version of the title is used for sorting -->
    <copyField source="title" dest="sort_title"/>
-   <!-- The string versions of the name used for sorting/multi-site facets -->
+   <!-- The string versions of the name used for sorting/multi-site facets
+-->
    <copyField source="name" dest="sname"/>
    <copyField source="name" dest="sort_name"/>
-   <!-- Copy terms to a single field that contains all taxonomy term names -->
+   <!-- Copy terms to a single field that contains all taxonomy term names
+-->
    <copyField source="ts_vid_*" dest="taxonomy_names"/>
    <!-- The teaser can be used when a better snippet is not available -->
    <copyField source="body" dest="teaser" maxChars="300"/>
   
    <!-- A set of fields to contain text extracted from tag contents which we
-        can boost at query time. -->
+        can boost at query time.
+-->
    <field name="tags_h1" type="text" indexed="true" stored="false" omitNorms="true"/>
    <field name="tags_h2_h3" type="text" indexed="true" stored="false" omitNorms="true"/>
    <field name="tags_h4_h5_h6" type="text" indexed="true" stored="false" omitNorms="true"/>
@@ -671,13 +686,15 @@
    <copyField source="ss_*" dest="sort_ss_*"/>
   <!-- A random sort field -->
    <dynamicField name="random_*" type="rand" indexed="true" stored="true"/>
-   <!-- This field is used to store node access records, as opposed to CCK field data -->
+   <!-- This field is used to store node access records, as opposed to CCK field data
+-->
    <dynamicField name="nodeaccess*" type="integer" indexed="true" stored="false" multiValued="true"/>
 
    <!-- The following causes solr to ignore any fields that don't already match an existing
         field name or dynamic field, rather than reporting them as an error.
         Alternately, change the type="ignored" to some other type e.g. "text" if you want
-        unknown fields indexed and/or stored by default -->
+        unknown fields indexed and/or stored by default
+-->
    <dynamicField name="*" type="ignored" multiValued="true" />
    
    
@@ -700,7 +717,8 @@
    -->
  <uniqueKey>id</uniqueKey>
 
- <!-- field for the QueryParser to use when an explicit fieldname is absent -->
+ <!-- field for the QueryParser to use when an explicit fieldname is absent
+-->
  <defaultSearchField>text</defaultSearchField>
 
  <!-- SolrQueryParser configuration: defaultOperator="AND|OR" -->
@@ -724,14 +742,16 @@
 	   
    <!-- <copyField source="*_t" dest="text" maxChars="3000"/> -->
 
-   <!-- copy name to alphaNameSort, a field designed for sorting by name -->
+   <!-- copy name to alphaNameSort, a field designed for sorting by name
+-->
    <!-- <copyField source="name" dest="alphaNameSort"/> -->
  
 
  <!-- Similarity is the scoring routine for each document vs. a query.
       A custom similarity may be specified here, but the default is fine
       for most applications.  -->
- <!-- <similarity class="org.apache.lucene.search.DefaultSimilarity"/> -->
+ <!-- <similarity class="org.apache.lucene.search.DefaultSimilarity"/>
+-->
  <!-- ... OR ...
       Specify a SimilarityFactory class name implementation
       allowing parameters to be used.
