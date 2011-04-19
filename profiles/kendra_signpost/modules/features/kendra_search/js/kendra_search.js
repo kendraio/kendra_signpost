@@ -665,9 +665,9 @@ jQuery.extend(Kendra, {
 						break;
 
 					case '*=': /* contains */
-						var substring = '', substrings = $o.split(/\s+/);
-						for (substring in substrings) {
-							subqueries.push($s + ':*' + substring + '*');
+						var substrings = $o.split(/\s+/);
+						for (i = 0, j = substrings.length; i < j; ++i) {
+							subqueries.push($s + ':*' + substrings[i] + '*');
 						}
 						break;
 
