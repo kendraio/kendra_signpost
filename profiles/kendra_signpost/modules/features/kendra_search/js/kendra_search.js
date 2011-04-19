@@ -617,9 +617,7 @@ jQuery.extend(Kendra, {
 
 				switch (dataType) {
 				case 'number':
-					if (isNaN($o)) {
-						Kendra.util.log($o, "Kendra.service.buildSolrQuery:NaN");
-					} else {
+					if (!isNaN($o)) {
 						switch ($p) {
 						case 'lt': /* less than */
 							subqueries.push($s + ':{* TO ' + $o + '}');
