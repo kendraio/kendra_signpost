@@ -3,9 +3,14 @@
 	 * define fields to be displayed
 	 */
 	var output_formats = {
-		"url" : {
-			"label" : "URL",
-			"format" : '<a href="__VALUE__">__VALUE__</a>'
+		"Url" : {
+			"format" : "url"
+		},
+		"Mpeg File" : {
+			"format" : "url"
+		},
+		"Release Date" : {
+			"format" : "date"
 		}
 	};
 
@@ -61,11 +66,30 @@
 			var label = labels[i], key = dict[label];
 			output += '<dt class="' + key + '">' + label + '</dt>';
 
-			if (typeof output_formats[key] != 'undefined' && typeof output_formats[key].format != 'undefined') {
-				output += '<dd class="' + key + '">' + output_formats[key].format.replace(/__VALUE__/g, doc[key]) + '</dd>';
+			output += '<dd class="' + key + '">';
+
+			if (typeof output_formats[label] != 'undefined' && typeof output_formats[label].format != 'undefined') {
+
+				switch (output_formats[label].format) {
+				case 'url':
+					output += '<a href="' + doc[key] + '" title="' + doc[key] + '">' + doc[key] + '</a>';
+					break;
+				case 'date':
+					var timestamp = Date.parse(doc[key]), d = doc[key];
+
+					if (isNaN(timestamp) == false) {
+						d = new Date(timestamp).toLocaleDateString();
+					}
+					output += '<abbr class="date" title="' + doc[key] + '">' + d + '</a>';
+					break;
+				default:
+					output += doc[key];
+				}
 			} else {
-				output += '<dd class="' + key + '">' + doc[key] + '</dd>';
+				output += doc[key];
 			}
+
+			output += '</dd>';
 		}
 
 		output += '</dl> ';
