@@ -1,33 +1,8 @@
 (function($) {
-
-	var props = {
-		"title" : {
-			"label" : "Title"
-		},
-		"ss_cck_field_cat_album" : {
-			"label" : "Album"
-		},
-		"ss_cck_field_cat_artist" : {
-			"label" : "Artist"
-		},
-		"ss_cck_field_cat_remixer" : {
-			"label" : "Remixer"
-		},
-		"ss_cck_field_cat_date" : {
-			"label" : "Date"
-		},
-		"ss_cck_field_cat_isrc" : {
-			"label" : "ISRC"
-		},
-		"ss_cck_field_cat_no" : {
-			"label" : "Catalogue #"
-		},
-		"ss_cck_field_cat_publisher" : {
-			"label" : "Publisher"
-		},
-		"ss_cck_field_cat_label" : {
-			"label" : "Label"
-		},
+	/**
+	 * define fields to be displayed
+	 */
+	var output_formats = {
 		"url" : {
 			"label" : "URL",
 			"format" : '<a href="__VALUE__">__VALUE__</a>'
@@ -42,31 +17,38 @@
 	};
 
 	AjaxSolr.theme.prototype.snippet = function(doc) {
-		var output = '';
-		if (doc.body && doc.body.length > 300) {
-			if (doc.dateline)
-				output += doc.dateline + ' ';
-			// output += doc.body.substring(0, 300);
+		var output = '', parentDoc = doc.ss_cck_field_cat_rowuri;
+		if (typeof parentDoc != 'undefined')
+			parentDoc = parentDoc.replace(/\/rows#\d*$/, '');
 
-			output += '<dl class="dict">';
-			for ( var prop in props) {
-				if (typeof doc[prop] != 'undefined') {
-					output += '<dt class="' + prop + '">' + props[prop].label + '</dt>';
-					if (typeof props[prop].format != 'undefined') {
-						output += '<dd class="' + prop + '">' + props[prop].format.replace(/__VALUE__/g, doc[prop]) + '</dd>';
+		if (doc.dateline)
+			output += doc.dateline + ' ';
+
+		output += '<dl class="dict">';
+		for ( var key in doc) {
+
+			if (key.indexOf('_kendra_') === 2) {
+
+				var unmangled_key = decodeURIComponent(key.substring(10).replace(/_/g, '%'));
+
+				if (unmangled_key.indexOf(parentDoc) === 0) {
+
+					var label = decodeURIComponent(unmangled_key.substr(parentDoc.length + '/relation#'.length)).replace(/\+/g, ' ');
+
+					output += '<dt class="' + key + '">' + label + '</dt>';
+
+					if (typeof output_formats[key] != 'undefined' && typeof output_formats[key].format != 'undefined') {
+						output += '<dd class="' + key + '">' + output_formats[key].format.replace(/__VALUE__/g, doc[key]) + '</dd>';
 					} else {
-						output += '<dd class="' + prop + '">' + doc[prop] + '</dd>';
+						output += '<dd class="' + key + '">' + doc[key] + '</dd>';
 					}
 				}
 			}
-			output += '</dl> ';
-			output += '<span style="display:none;">' + doc.body + '</span> ';
-			output += '<a href="#" class="more">more</a>';
-		} else {
-			if (doc.dateline)
-				output += doc.dateline + ' ';
-			output += doc.body;
 		}
+		output += '</dl> ';
+		output += '<span style="display:none;">' + doc.body + '</span> ';
+		output += '<a href="#" class="more">more</a>';
+
 		return output;
 	};
 
