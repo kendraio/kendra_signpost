@@ -106,6 +106,12 @@
 	white-space: pre-wrap;
 	word-wrap: break-word;
 }
+.node-type-smart-filter .column-main {
+    width: 90%;
+}
+.node-type-smart-filter .column-side {
+    width: 10%;
+}
 
 .column-side .view-source {
 	margin: 1em 0;
