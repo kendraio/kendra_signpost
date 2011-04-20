@@ -136,7 +136,9 @@
 }
 
 #kendra-search-docs>div {
-	margin-bottom: 1em;
+    clear: left;
+    float: none;
+    margin-bottom: 3em;
 }
 
 #kendra-search-docs dl dt {
