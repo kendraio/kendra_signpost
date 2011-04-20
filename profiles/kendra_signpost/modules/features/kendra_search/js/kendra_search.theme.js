@@ -17,14 +17,17 @@
 	};
 
 	AjaxSolr.theme.prototype.snippet = function(doc) {
-		var output = '', parentDoc = doc.ss_cck_field_cat_rowuri;
+		var output = '', parentDoc = doc.ss_cck_field_cat_rowuri, labels = [], dict = {};
+
 		if (typeof parentDoc != 'undefined')
 			parentDoc = parentDoc.replace(/\/rows#\d*$/, '');
 
 		if (doc.dateline)
 			output += doc.dateline + ' ';
 
-		output += '<dl class="dict">';
+		/**
+		 * parse the labels
+		 */
 		for ( var key in doc) {
 
 			if (key.indexOf('_kendra_') === 2) {
@@ -33,21 +36,44 @@
 
 				if (unmangled_key.indexOf(parentDoc) === 0) {
 
-					var label = decodeURIComponent(unmangled_key.substr(parentDoc.length + '/relation#'.length)).replace(/\+/g, ' ');
+					// extract the field label from the URL fragment identifier
+					var label = decodeURIComponent(unmangled_key.substr(parentDoc.length + '/relation#'.length));
 
-					output += '<dt class="' + key + '">' + label + '</dt>';
+					// convert +pluses+ and _underscores_ to spaces and CamelCase the label
+					label = label.replace(/_/g, ' ').replace(/\++/g, ' ').replace(/\b([a-z])/g, function(t, word) {
+						return word.toUpperCase();
+					});
 
-					if (typeof output_formats[key] != 'undefined' && typeof output_formats[key].format != 'undefined') {
-						output += '<dd class="' + key + '">' + output_formats[key].format.replace(/__VALUE__/g, doc[key]) + '</dd>';
-					} else {
-						output += '<dd class="' + key + '">' + doc[key] + '</dd>';
-					}
+					dict[label] = key;
+					labels.push(label);
 				}
 			}
 		}
+
+		labels.sort();
+		
+		/**
+		 * output
+		 */
+		output += '<dl class="dict">';
+
+		for ( var i in labels) {
+			var label = labels[i], key = dict[label];
+			output += '<dt class="' + key + '">' + label + '</dt>';
+
+			if (typeof output_formats[key] != 'undefined' && typeof output_formats[key].format != 'undefined') {
+				output += '<dd class="' + key + '">' + output_formats[key].format.replace(/__VALUE__/g, doc[key]) + '</dd>';
+			} else {
+				output += '<dd class="' + key + '">' + doc[key] + '</dd>';
+			}
+		}
+		
 		output += '</dl> ';
-		output += '<span style="display:none;">' + doc.body + '</span> ';
-		output += '<a href="#" class="more">more</a>';
+
+		/*
+		 * output += '<span style="display:none;">' + doc.body + '</span> ';
+		 * output += '<a href="#" class="more">more</a>';
+		 */
 
 		return output;
 	};
