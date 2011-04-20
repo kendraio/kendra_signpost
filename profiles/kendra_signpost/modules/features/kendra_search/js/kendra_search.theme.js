@@ -10,9 +10,9 @@
 	};
 
 	AjaxSolr.theme.prototype.result = function(doc, snippet) {
-		var output = '<div><h2 class="title">' + doc.title + '</h2>';
-		output += '<p id="links_' + doc.id + '" class="links"></p>';
-		output += '<p>' + snippet + '</p></div>';
+		var output = '<div class="doc">';
+		//output += '<p id="links_' + doc.id + '" class="links"></p>';
+		output += '<div>' + snippet + '</div></div>';
 		return output;
 	};
 
@@ -51,7 +51,7 @@
 		}
 
 		labels.sort();
-		
+
 		/**
 		 * output
 		 */
@@ -67,7 +67,7 @@
 				output += '<dd class="' + key + '">' + doc[key] + '</dd>';
 			}
 		}
-		
+
 		output += '</dl> ';
 
 		/*

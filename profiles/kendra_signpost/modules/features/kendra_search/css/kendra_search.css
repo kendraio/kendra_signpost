@@ -135,10 +135,12 @@
 	margin-bottom: 1em;
 }
 
-#kendra-search-docs>div {
+#kendra-search-docs div.doc {
+    border-top: 1px dotted #CCCCCC;
     clear: left;
     float: none;
-    margin-bottom: 3em;
+    margin: 1em 0;
+    padding: 1em 0;
 }
 
 #kendra-search-docs dl dt {
@@ -146,7 +148,7 @@
   	float: left;
 	font-weight: 700;
 	font-style: normal;
-	width: 10em;
+	width: 20em;
 }
 
 #kendra-search-docs dl dd {

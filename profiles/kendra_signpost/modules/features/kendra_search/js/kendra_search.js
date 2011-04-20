@@ -703,9 +703,9 @@ jQuery.extend(Kendra, {
 				$source_field = $('.node-smart_filter .node-content').append(container).find('p').hide();
 			}
 
-			$('<a href="#">view JSON source</a>').click(function() {
+			$('<a href="#edit-body-wrapper">view JSON source</a>').click(function() {
 				$source_field.toggle();
-				return false;
+				return true;
 			}).appendTo(buttons).wrap('<div class="view-source"/>');
 
 			/**
