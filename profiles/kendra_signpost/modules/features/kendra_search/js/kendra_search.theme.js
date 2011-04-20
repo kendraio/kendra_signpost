@@ -80,7 +80,7 @@
 					if (isNaN(timestamp) == false) {
 						d = new Date(timestamp).toLocaleDateString();
 					}
-					output += '<abbr class="date" title="' + doc[key] + '">' + d + '</a>';
+					output += '<abbr class="date" title="' + doc[key] + '">' + d + '</abbr>';
 					break;
 				default:
 					output += doc[key];
