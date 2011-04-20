@@ -140,7 +140,8 @@
 }
 
 #kendra-search-docs dl dt {
-	float: left;
+  clear: left;
+  	float: left;
 	font-weight: 700;
 	font-style: normal;
 	width: 10em;
