@@ -10,7 +10,7 @@
 			"format" : "url"
 		},
 		"Release Date" : {
-			"format" : "date"
+			"format" : "datetime"
 		}
 	};
 
@@ -22,10 +22,12 @@
 	};
 
 	AjaxSolr.theme.prototype.snippet = function(doc) {
-		var output = '', parentDoc = doc.ss_cck_field_cat_rowuri, labels = [], dict = {};
+		var output = '', parentDoc = '', rowURI = doc.ss_cck_field_cat_rowuri, labels = [], dict = {};
 
-		if (typeof parentDoc != 'undefined')
-			parentDoc = parentDoc.replace(/\/rows#\d*$/, '');
+		if (typeof rowURI != 'undefined')
+			parentDoc = rowURI.replace(/\/rows#\d*$/, '');
+		else
+			return '';
 
 		if (doc.dateline)
 			output += doc.dateline + ' ';
@@ -60,33 +62,41 @@
 		/**
 		 * output
 		 */
-		output += '<dl class="dict">';
+		output += '<dl class="dict" about="' + rowURI + '">';
 
 		for ( var i in labels) {
-			var label = labels[i], key = dict[label];
-			output += '<dt class="' + key + '">' + label + '</dt>';
+			var label = labels[i], key = dict[label], format = '';
+			output += '<dt class="label">' + label + '</dt>';
 
-			output += '<dd class="' + key + '">';
+			output += '<dd class="value">';
 
 			if (typeof output_formats[label] != 'undefined' && typeof output_formats[label].format != 'undefined') {
-
-				switch (output_formats[label].format) {
-				case 'url':
-					output += '<a href="' + doc[key] + '" title="' + doc[key] + '">' + doc[key] + '</a>';
-					break;
-				case 'date':
-					var timestamp = Date.parse(doc[key]), d = doc[key];
-
-					if (isNaN(timestamp) == false) {
-						d = new Date(timestamp).toLocaleDateString();
-					}
-					output += '<abbr class="date" title="' + doc[key] + '">' + d + '</abbr>';
-					break;
-				default:
-					output += doc[key];
-				}
+				format = output_formats[label].format;
 			} else {
-				output += doc[key];
+				format = Kendra.util.dataTypeForKey(key);
+			}
+
+			switch (format) {
+
+			case 'url':
+				output += '<a property="' + key + '" href="' + doc[key] + '" title="' + doc[key] + '">' + doc[key] + '</a>';
+				break;
+
+			case 'datetime':
+				var timestamp = Date.parse(doc[key]), d = doc[key];
+
+				if (isNaN(timestamp) == false) {
+					d = new Date(timestamp).toLocaleDateString();
+				}
+				output += '<span class="datetime" property="' + key + '" title="' + doc[key] + '" content="' + doc[key] + '" datatype="xsd:dateTime">' + d + '</span>';
+				break;
+
+			case 'number':
+				output += '<span property="' + key + '" title="' + key + '" datatype="xsd:float">' + doc[key] + '</span>';
+				break;
+
+			default:
+				output += '<span property="' + key + '" title="' + key + '">' + doc[key] + '</span>';
 			}
 
 			output += '</dd>';
