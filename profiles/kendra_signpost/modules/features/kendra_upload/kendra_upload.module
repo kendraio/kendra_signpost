@@ -5,9 +5,9 @@ include_once('kendra_upload.features.inc');
 function kendra_upload_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 	switch ($op) {
 		case 'insert':
-		// only create triples on insert
-		// TODO: handle update event
-		//case 'update':
+			// only create triples on insert
+			// TODO: handle update event
+			//case 'update':
 			if ($node->type == 'kendra_import') {
 				if (module_exists('krumo')
 				&& 	(($handle = fopen($node->field_upload_file[0]['filepath'], 'r')) !== FALSE)
@@ -22,7 +22,7 @@ function kendra_upload_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 				}
 			}
 			if ($node->type == 'kendra_format') {
-			  _kendra_upload_process_format($node->nid);
+				_kendra_upload_process_format($node->nid);
 			}
 			break;
 		case 'view':
@@ -32,10 +32,10 @@ function kendra_upload_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 				$node->content['sparql_result'] = array(
           '#value' => $result->data,
 				);
-			  $node->content['atom_feed'] = array(
+				$node->content['atom_feed'] = array(
 			    '#value' => l('<strong>Atom Feed</strong>'. theme('image', 'misc/feed.png'), "node/{$node->nid}/atom", array('html' => TRUE)),
           '#weight' => -10,
-			  );
+				);
 			}
 			if ($node->type == 'kendra_format') {
 				$graph = url("node/{$node->nid}", array('absolute' => TRUE));
@@ -54,16 +54,16 @@ function array_trim(&$value, $key) {
 }
 
 function _kendra_upload_process_format($nid) {
-  $node = node_load($nid);
+	$node = node_load($nid);
 	$graph = url("node/{$nid}", array('absolute' => TRUE));
 	$query = "";
-  $triples = "";
-  foreach ($node->field_format_prop as $key => $prop) {
+	$triples = "";
+	foreach ($node->field_format_prop as $key => $prop) {
 		$row_uri = $graph ."/property#{$key}";
 		$relation = $prop['value']; // TODO: filter user input
 		$triples .= "\n<{$row_uri}> <{$relation}> \"\" .\n";
-  }
-  watchdog('kendra_format', "triples: \n\n". $triples ."\n\n from \n\n". print_r($node, TRUE));
+	}
+	watchdog('kendra_format', "triples: \n\n". $triples ."\n\n from \n\n". print_r($node, TRUE));
 	if (!empty($triples)) {
 		job_queue_add('kendra_rdf_insert', "insert for graph {$graph}", array($graph, $triples), '', TRUE);
 	}
@@ -77,23 +77,29 @@ function _kendra_upload_process_csv($nid) {
 
 		// remove whitespace from column headers
 		array_walk($headers, 'array_trim');
-		
+
 		$row = 1;
+		$triple_no = 0;
+
 		$graph = url("node/{$nid}", array('absolute' => TRUE));
 		$query = "";
 		$triples = array();
-    $triple_no = 0;
-    $triples[$triple_no] = "";
+		$triples[$triple_no] = "";
+
 		while (($data = fgetcsv($handle, 1000, ',', '"')) !== FALSE) {
 			foreach ($data as $key => $value) {
 				if (!empty($value)) {
-					$row_uri = $graph ."/rows#{$row}";
-					$relation = $graph .'/relation#'. urlencode($headers[$key]);
-					// Encode value as a string
-					$triples[$triple_no] .= "\n<{$row_uri}> <{$relation}> \"". addslashes($value) ."\" .\n";
-					if (mb_strlen($triples[$triple_no]) > 4000) {
-            $triple_no++;
-          }
+					/**
+					 * build the SPARQL query
+					 * note: value is encoded as a string
+					 */
+					$row_uri = sprintf("%s/rows#%s", $graph, $row);
+					$relation = sprintf("%s/relation#%s", $graph, urlencode($headers[$key]));
+					$triples[$triple_no] .= sprintf("\n<%s> <%s> \"%s\".", $row_uri, $relation, addslashes($value));
+
+					if (mb_strlen($triples[$triple_no]) > SPARQL_TRIPLE_LIMIT) {
+						$triple_no++;
+					}
 				}
 			}
 
@@ -101,23 +107,20 @@ function _kendra_upload_process_csv($nid) {
 			$data['source_nid'] = $nid;
 			$data['source_row'] = $row;
 			_kendra_uploads_add_cat_node($headers, $data);
-			//watchdog('kendra_upload', 'data: '. print_r($data, TRUE));
-			//watchdog('kendra_upload', 'headers: '. print_r($headers, TRUE));
 
 			$row++;
-			//Temp limit of 5 rows for debugging: if ($row > 5) break;
 		}
 
 		if (!empty($triples)) {
+			/**
+			 * empty out any existing RDF graph prior to insertion of the new triples
+			 */
 			//$response = kendra_rdf_send("DROP GRAPH <{$graph}> ");
 			$response = kendra_rdf_send("CLEAR GRAPH <{$graph}> ");
 			$response = kendra_rdf_send("CREATE GRAPH <{$graph}> ");
+
 			foreach ($triples as $triple_s) {
-  			//$query = "INSERT DATA INTO GRAPH <{$graph}> \n{ {$triple_s} }";
-			  //watchdog('kendra_upload', 'length: '. mb_strlen($query));
-			  //watchdog('kendra_upload', 'query: '. print_r($query, TRUE));
-  			//$response = kendra_rdf_insert($graph, $triple_s);
-  			job_queue_add('kendra_rdf_insert', "insert for graph {$graph}", array($graph, $triple_s), '', TRUE);
+				job_queue_add('kendra_rdf_insert', "insert for graph {$graph}", array($graph, $triple_s), '', TRUE);
 			}
 		}
 	}

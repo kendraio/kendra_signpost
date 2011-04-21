@@ -1,5 +1,7 @@
 <?php
 
+define('SPARQL_TRIPLE_LIMIT', 4000);
+
 /**
  * Implementation of hook_ctools_plugin_api().
  */
