@@ -63,7 +63,7 @@ function _kendra_upload_process_format($nid) {
 		$relation = $prop['value']; // TODO: filter user input
 		$triples .= "\n<{$row_uri}> <{$relation}> \"\" .\n";
 	}
-	watchdog('kendra_format', "triples: \n\n". $triples ."\n\n from \n\n". print_r($node, TRUE));
+	//watchdog('kendra_format', "triples: \n\n". $triples ."\n\n from \n\n". print_r($node, TRUE));
 	if (!empty($triples)) {
 		job_queue_add('kendra_rdf_insert', "insert for graph {$graph}", array($graph, $triples), '', TRUE);
 	}
@@ -78,14 +78,16 @@ function _kendra_upload_process_csv($nid) {
 		// remove whitespace from column headers
 		array_walk($headers, 'array_trim');
 
-		$row = 1;
-		$triple_no = 0;
+		$triples = array();
 
 		$graph = url("node/{$nid}", array('absolute' => TRUE));
 		$query = "";
-		$triples = array();
-		$triples[$triple_no] = "";
+		$current_triple = "";
 
+		$row = 1;
+		$triple_no = 0;
+		$current_triple_strlen = 0;
+		
 		while (($data = fgetcsv($handle, 1000, ',', '"')) !== FALSE) {
 			foreach ($data as $key => $value) {
 				if (!empty($value)) {
@@ -95,10 +97,21 @@ function _kendra_upload_process_csv($nid) {
 					 */
 					$row_uri = sprintf("%s/rows#%s", $graph, $row);
 					$relation = sprintf("%s/relation#%s", $graph, urlencode($headers[$key]));
-					$triples[$triple_no] .= sprintf("\n<%s> <%s> \"%s\".", $row_uri, $relation, addslashes($value));
+					$current_triple = sprintf("\n<%s> <%s> \"%s\".", $row_uri, $relation, addslashes($value));
+					
+					if ($current_triple_strlen === 0) {
+						$triples[$triple_no] = "";
+					}
 
-					if (mb_strlen($triples[$triple_no]) > SPARQL_TRIPLE_LIMIT) {
-						$triple_no++;
+					$triples[$triple_no] .= $current_triple;
+					$current_triple_strlen += mb_strlen($current_triple);
+
+					/**
+					 * limit the length of each SPARQL query
+					 */
+					if ($current_triple_strlen > SPARQL_TRIPLE_LIMIT) {
+						++$triple_no;
+						$current_triple_strlen = 0;
 					}
 				}
 			}
@@ -106,6 +119,7 @@ function _kendra_upload_process_csv($nid) {
 			// creation of cat nodes for solr testing
 			$data['source_nid'] = $nid;
 			$data['source_row'] = $row;
+
 			_kendra_uploads_add_cat_node($headers, $data);
 
 			$row++;
