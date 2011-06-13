@@ -312,7 +312,7 @@ function rubik_preprocess_node(&$vars) {
   // Other subthemes will need to manage template suggestions on their own.
   global $theme_key;
   if (in_array($theme_key, array('rubik', 'cube'), TRUE)) {
-    $vars['template_files'] = array();
+    //$vars['template_files'] = array();
   }
 }
 
