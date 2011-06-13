@@ -1,5 +1,3 @@
-<!--  node-kendra_cat.tpl.php -->
-
 <?php if (!empty($content) || !empty($title)): ?>
 
 <?php if (!empty($pre_object)) print $pre_object ?>
