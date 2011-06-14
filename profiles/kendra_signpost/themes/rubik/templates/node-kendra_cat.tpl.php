@@ -1,4 +1,13 @@
-<?php if (!empty($content) || !empty($title)): ?>
+<?php 
+/**
+ * Microdata spec
+ * currently using Schema.org's type definitions
+ * see http://schema.org/docs/full.html
+ */
+$typeURI = "http://schema.org/CreativeWork";
+
+?>
+ <?php if (!empty($content) || !empty($title)): ?>
 
 <?php if (!empty($pre_object)) print $pre_object ?>
 
@@ -30,7 +39,7 @@
   <?php endif; ?>
 
   <?php if (!empty($content)): ?>
-    <div class='<?php print $hook ?>-content clear-block <?php if (!empty($is_prose)) print 'prose' ?>'>
+    <div class='<?php print $hook ?>-content clear-block <?php if (!empty($is_prose)) print 'prose' ?>' itemscope itemtype="<?php print $typeURI; ?>">
       <?php print $content ?>
     </div>
   <?php endif; ?>
