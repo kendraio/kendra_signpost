@@ -3,8 +3,8 @@
 include_once('kendra_cat.features.inc');
 
 function kendra_cat_add_node($headers, $data) {
-  // Default node -> csv heading mappings
-  $mappings = array(
+	// Default node -> csv heading mappings
+	$mappings = array(
     'title' => array('Track', 'Title', 'Name', 'track_name', 'title'),
     'field_cat_artist' => array('Artist', 'track_artist'),
     'field_cat_label' => array('Label', 'producer'),
@@ -13,103 +13,245 @@ function kendra_cat_add_node($headers, $data) {
     'field_cat_album' => array('Album/ep title', 'Album', 'Album', 'album_title'),
     'field_cat_publisher' => array('Publisher', 'publisher', 'disseminator'),
     'field_cat_isrc' => array('ISRC Code', 'isrc_code'),
-  );
-  
-  // drupal_set_message(print_r($data, TRUE));
-  global $user;
-  $node = new stdClass();
-  $node->uid = $user->uid;
-  $node->type = 'kendra_cat';
+	);
 
-  foreach ($mappings as $field => $names) {
-    foreach ($names as $name) {
-      $pos = array_search($name, $headers);
-      if ($pos !== FALSE) {
-        // titles are not field values:
-        if ($field == 'title') {
-          $node->$field = $data[$pos];
-        } else {
-          $node->$field = array(array('value' => $data[$pos]));
-        }
-      }
-    }
-  }
-  $node->field_cat_rowuri[0]['value'] = url("node/{$data['source_nid']}", array('absolute' => TRUE)) 
-    ."/rows#{$data['source_row']}";
-  $node->field_cat_importnode[0]['nid'] = $data['source_nid'];
-  node_save($node);  
+	// drupal_set_message(print_r($data, TRUE));
+	global $user;
+	$node = new stdClass();
+	$node->uid = $user->uid;
+	$node->type = 'kendra_cat';
+
+	foreach ($mappings as $field => $names) {
+		foreach ($names as $name) {
+			$pos = array_search($name, $headers);
+			if ($pos !== FALSE) {
+				// titles are not field values:
+				if ($field == 'title') {
+					$node->$field = $data[$pos];
+				} else {
+					$node->$field = array(array('value' => $data[$pos]));
+				}
+			}
+		}
+	}
+	$node->field_cat_rowuri[0]['value'] = url("node/{$data['source_nid']}", array('absolute' => TRUE))
+	."/rows#{$data['source_row']}";
+	$node->field_cat_importnode[0]['nid'] = $data['source_nid'];
+	node_save($node);
 }
 
 /*
  * Make rowuri available to solr
  */
 function kendra_cat_apachesolr_cck_fields_alter(&$mappings) {
-  $mappings['text']['text_textfield'] = array(
+	$mappings['text']['text_textfield'] = array(
     'callback' => 'kendra_cat_textfield_callback',
     'index_type' => 'string',
-    // This callback seems to keep changing. Here some code 
-    // in prepration for changes in apachesolr.module v2
+	// This callback seems to keep changing. Here some code
+	// in prepration for changes in apachesolr.module v2
     'indexing_callback' => 'kendra_cat_textfield_callback',
     'display_callback' => 'kendra_cat_textfield_display_callback',
-  );
-  //watchdog('kendra_cat_mappings', 'mappings: '. print_r($mappings, TRUE));
+	);
+	//watchdog('kendra_cat_mappings', 'mappings: '. print_r($mappings, TRUE));
 }
 
 /**
-* A function that gets called during indexing.
-* @node The current node being indexed
-* @fieldname The current field being indexed
-*
-* @return an array of arrays. Each inner array is a value, and must be
-* keyed 'safe' => $value
-*
-function kendra_cat_textfield_callback($node, $fieldname) {
-  $fields = array();
-  foreach ($node->$fieldname as $field) {
-    $fields[] = array('safe' => check_plain($field['value']));
-  }
-  return $fields;
-}
-*/
+ * A function that gets called during indexing.
+ * @node The current node being indexed
+ * @fieldname The current field being indexed
+ *
+ * @return an array of arrays. Each inner array is a value, and must be
+ * keyed 'safe' => $value
+ *
+ function kendra_cat_textfield_callback($node, $fieldname) {
+ $fields = array();
+ foreach ($node->$fieldname as $field) {
+ $fields[] = array('safe' => check_plain($field['value']));
+ }
+ return $fields;
+ }
+ */
 function kendra_cat_textfield_callback($node, $field_name, $cck_info = '') {
-  // $fields is an array because we send back a key => value pair for every
-  // value of the field.
-  $fields = array();
-  // Don't do anything if this node doesn't have this field.
-  if (isset($node->$field_name)) {
-    // Get the index key based on the $cck_info.
-    $index_key = apachesolr_index_key($cck_info);
-    foreach ($node->$field_name as $field) {
-      // For every field, add a key => value pair to the $fields array.
-      $fields[] = array(
+	// $fields is an array because we send back a key => value pair for every
+	// value of the field.
+	$fields = array();
+	// Don't do anything if this node doesn't have this field.
+	if (isset($node->$field_name)) {
+		// Get the index key based on the $cck_info.
+		$index_key = apachesolr_index_key($cck_info);
+		foreach ($node->$field_name as $field) {
+			// For every field, add a key => value pair to the $fields array.
+			$fields[] = array(
         'key' => $index_key,
         'value' => check_plain($field['value']),
-      );
-    }
-  }
-  //watchdog('kendra_cat_field', 'indexing field: '. print_r($fields, TRUE));
-  return $fields;
+			);
+		}
+	}
+	//watchdog('kendra_cat_field', 'indexing field: '. print_r($fields, TRUE));
+	return $fields;
 }
 
 /**
-* Determines what to display in facet links for this field.
-*
-* @param $facet
-*   The raw value (from the index) of this facet field. This corresponds to
-*   'value' from the indexing callback.
-* @param $options
-*   CCK info. In this example it will be an array with a "delta" key with either a
-*   "filefile" or "imagefield" value. Here we ignore it and just return the $facet.
-*/
+ * Determines what to display in facet links for this field.
+ *
+ * @param $facet
+ *   The raw value (from the index) of this facet field. This corresponds to
+ *   'value' from the indexing callback.
+ * @param $options
+ *   CCK info. In this example it will be an array with a "delta" key with either a
+ *   "filefile" or "imagefield" value. Here we ignore it and just return the $facet.
+ */
 function kendra_cat_textfield_display_callback($facet, $options) {
-  return $facet;
+	return $facet;
 }
 
+/**
+ *
+ */
+function _kendra_cat_determine_item_attributes(&$vars) {
+	//$atts = array('itemtype' => 'http://schema.org/MusicRecording', 'itemprop' => 'tracks');
+	$atts = array('itemtype' => 'http://schema.org/VideoObject', 'itemprop' => 'video');
 
+	foreach ($vars as $key => $field) {
+		//echo sprintf("\n" . '<h5><code>%s = %s</code></h5>', $key, var_dump($field,1));
+	}
 
+	return $atts;
+}
 
+/**
+ *
+ */
+function _kendra_cat_determine_property_type($label) {
+	switch($label) {
+		case 'abstract':
+		case 'description':
+			$label = 'description';
+			break;
+		case 'album':
+			$label = 'MusicAlbum';
+			break;
+		case 'albumEpTitle':
+		case 'albumTitle':
+		case 'name':
+		case 'title':
+		case 'trackName':
+		case 'track':
+			$label = 'name';
+			break;
+		case 'albumArtist':
+		case 'artist':
+		case 'trackArtist':
+			$label = 'byArtist';
+			break;
+		case 'authorName':
+		case 'composer':
+			$label = 'author';
+			break;
+		case 'duration':
+			$label = 'duration';
+			break;
+		case 'genre':
+			$label = 'genre';
+			break;
+		case 'producer':
+			$label = 'producer';
+			break;
+		case 'publisher':
+			$label = 'publisher';
+			break;
+		case 'releaseDate':
+			$label = 'datePublished';
+			break;
+		case 'tags':
+			$label = 'keywords';
+			break;
+		case 'titleImage':
+			$label = 'thumbnail';
+			break;
+		case 'trackCount':
+			$label = 'numTracks';
+			break;
+		case 'trackNumberOfAlbumEp':
+			$label = 'trackNumber';
+			break;
+		case 'url':
+			$label = 'url';
+			break;
+		case 'year':
+			$label = 'datePublished';
+			break;
 
+		case 'caeNumber':
+		case 'catalogueNumber':
+		case 'channel':
+		case 'collectionSociety':
+		case 'copyright':
+		case 'disseminator':
+		case 'distributionNumber':
+		case 'domains':
+		case 'engineer':
+		case 'guid':
+		case 'isrcCode':
+		case 'label':
+		case 'lyricCredits':
+		case 'mpegFile':
+		case 'musicCredits':
+		case 'otherCredits':
+		case 'prsMemberName':
+		case 'prsWorkNumber':
+		case 'releaseId':
+		case 'remixArtistName':
+		case 'remixer':
+		case 'time':
+		case 'timestamp':
+		case 'torrent':
+		case 'trackId':
+		case 'trackNumber':
+		default:
+			//print(sprintf('<h5>label for %s (%s) not set</h5>', $label, $vars['label']));
+			$label = null;
+	}
 
+	return $label;
+}
 
+/**
+ * Preprocessor for theme('content_field').
+ */
+function kendra_cat_preprocess_content_field(&$vars) {
+	//echo '<pre>'; die(print_r($vars,1));
+	/*
+	* $vars['node']['items']
+	foreach (array('label','field_name','field_type_css','field_name_css') as $field) {
+	echo sprintf('<h5><pre>%s = %s</pre></h5>', $field, $vars[$field]);
+	}
+	*/
+	/*
+	 * format keys camelCased alphanumeric, but first character is lower case
+	 */
+	$label = $vars['label'];
+	$label = mb_convert_case($label, MB_CASE_TITLE);
+	$label = preg_replace('/[\W_]/', '', $label); // remove non-alphanumeric and underscore characters
+	$label = mb_strtolower(mb_substr($label, 0, 1)) . mb_substr($label, 1);
 
+	$label = _kendra_cat_determine_property_type($label);
+
+	if (!empty($label)) {
+		$vars['itemprop'] = $label;
+		//print(sprintf('<h5>label for %s = %s</h5>', $vars['label'], $label));
+	}
+}
+
+/**
+ * Preprocessor for theme('node').
+ */
+function kendra_cat_preprocess_node(&$vars) {
+
+	$attributes = _kendra_cat_determine_item_attributes($vars);
+
+	if (!empty($attributes)) {
+		$vars = array_merge($vars, $attributes);
+	}
+}
 
