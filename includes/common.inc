@@ -1,5 +1,4 @@
 <?php
-// $Id: common.inc,v 1.756.2.106 2010/12/15 21:11:22 goba Exp $
 
 /**
  * @file
@@ -201,7 +200,7 @@ function drupal_get_feeds($delimiter = "\n") {
 }
 
 /**
- * @name HTTP handling
+ * @defgroup http_handling HTTP handling
  * @{
  * Functions to properly handle HTTP responses.
  */
@@ -653,7 +652,7 @@ function drupal_error_handler($errno, $message, $filename, $line, $context) {
       }
     }
 
-    $entry = $types[$errno] .': '. $message .' in '. $filename .' on line '. $line .'.';
+    $entry = check_plain($types[$errno]) .': '. filter_xss($message) .' in '. check_plain($filename) .' on line '. check_plain($line) .'.';
 
     // Force display of error messages in update.php.
     if (variable_get('error_level', 1) == 1 || strstr($_SERVER['SCRIPT_NAME'], 'update.php')) {
@@ -1639,7 +1638,8 @@ function drupal_page_footer() {
  *   A linear array.
  * @param $function
  *   A name of a function to apply to all values before output.
- * @result
+ *
+ * @return
  *   An associative array.
  */
 function drupal_map_assoc($array, $function = NULL) {
@@ -2497,60 +2497,9 @@ function drupal_to_js($var) {
       return $var;
     case 'resource':
     case 'string':
-      // Always use Unicode escape sequences (\u0022) over JSON escape
-      // sequences (\") to prevent browsers interpreting these as
-      // special characters.
-      $replace_pairs = array(
-        // ", \ and U+0000 - U+001F must be escaped according to RFC 4627.
-        '\\' => '\u005C',
-        '"' => '\u0022',
-        "\x00" => '\u0000',
-        "\x01" => '\u0001',
-        "\x02" => '\u0002',
-        "\x03" => '\u0003',
-        "\x04" => '\u0004',
-        "\x05" => '\u0005',
-        "\x06" => '\u0006',
-        "\x07" => '\u0007',
-        "\x08" => '\u0008',
-        "\x09" => '\u0009',
-        "\x0a" => '\u000A',
-        "\x0b" => '\u000B',
-        "\x0c" => '\u000C',
-        "\x0d" => '\u000D',
-        "\x0e" => '\u000E',
-        "\x0f" => '\u000F',
-        "\x10" => '\u0010',
-        "\x11" => '\u0011',
-        "\x12" => '\u0012',
-        "\x13" => '\u0013',
-        "\x14" => '\u0014',
-        "\x15" => '\u0015',
-        "\x16" => '\u0016',
-        "\x17" => '\u0017',
-        "\x18" => '\u0018',
-        "\x19" => '\u0019',
-        "\x1a" => '\u001A',
-        "\x1b" => '\u001B',
-        "\x1c" => '\u001C',
-        "\x1d" => '\u001D',
-        "\x1e" => '\u001E',
-        "\x1f" => '\u001F',
-        // Prevent browsers from interpreting these as as special.
-        "'" => '\u0027',
-        '<' => '\u003C',
-        '>' => '\u003E',
-        '&' => '\u0026',
-        // Prevent browsers from interpreting the solidus as special and
-        // non-compliant JSON parsers from interpreting // as a comment.
-        '/' => '\u002F',
-        // While these are allowed unescaped according to ECMA-262, section
-        // 15.12.2, they cause problems in some JSON parsers.
-        "\xe2\x80\xa8" => '\u2028', // U+2028, Line Separator.
-        "\xe2\x80\xa9" => '\u2029', // U+2029, Paragraph Separator.
-      );
-
-      return '"'. strtr($var, $replace_pairs) .'"';
+      return '"'. str_replace(array("\r", "\n", "<", ">", "&"),
+                              array('\r', '\n', '\x3c', '\x3e', '\x26'),
+                              addslashes($var)) .'"';
     case 'array':
       // Arrays in JSON can't be associative. If the array is empty or if it
       // has sequential whole number keys starting with 0, it's not associative
@@ -2573,7 +2522,6 @@ function drupal_to_js($var) {
       return 'null';
   }
 }
-
 
 /**
  * Return data in JSON format.
