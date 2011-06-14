@@ -1,9 +1,8 @@
 <?php
-// $Id: nodereference_url.install,v 1.2 2009/07/25 23:40:04 quicksketch Exp $
 
 /**
  * @file
- * Implementation of hook_install().
+ * Implements hook_install().
  */
 function nodereference_url_install() {
   drupal_load('module', 'content');
@@ -11,7 +10,7 @@ function nodereference_url_install() {
 }
 
 /**
- * Implementation of hook_uninstall().
+ * Implements hook_uninstall().
  */
 function nodereference_url_uninstall() {
   drupal_load('module', 'content');
@@ -19,7 +18,7 @@ function nodereference_url_uninstall() {
 }
 
 /**
- * Implementation of hook_enable().
+ * Implements hook_enable().
  *
  * Notify content module when this module is enabled.
  */
@@ -29,7 +28,7 @@ function nodereference_url_enable() {
 }
 
 /**
- * Implementation of hook_disable().
+ * Implements hook_disable().
  *
  * Notify content module when this module is disabled.
  */
