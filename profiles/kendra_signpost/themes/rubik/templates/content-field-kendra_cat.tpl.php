@@ -27,7 +27,7 @@
 
 ?>
 <?php if (!$field_empty) : ?>
-<div class="field field-type-<?php print $field_type_css ?> field-<?php print $field_name_css ?>">
+<div class="field field-type-<?php print $field_type_css ?> field-<?php print $field_name_css ?>" itemscope itemtype="http://schema.org/CreativeWork">
   <?php if ($label_display == 'above') : ?>
     <div class="field-label"><?php print t($label) ?>:&nbsp;</div>
   <?php endif;?>
