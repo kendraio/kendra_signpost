@@ -32,9 +32,6 @@
   <?php if (!empty($content)): ?>
     <div class='<?php print $hook ?>-content clear-block <?php if (!empty($is_prose)) print 'prose' ?>'<?php if ($itemtype) : ?> itemscope itemprop="<?php print $itemprop; ?>" itemtype="<?php print $itemtype; ?>"<?php endif; ?>>
       <?php print $content ?>
-	  <?php if (!empty($metadata)): ?>
-	  <?php print_r($metadata,1) ?>
-	  <?php endif; ?>
 
     </div>
   <?php endif; ?>
