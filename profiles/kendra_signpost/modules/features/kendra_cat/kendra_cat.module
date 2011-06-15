@@ -166,6 +166,10 @@ function kendra_cat_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
  *
  */
 function _kendra_cat_determine_property_type($label) {
+	$label = mb_convert_case($label, MB_CASE_TITLE);
+	$label = preg_replace('/[\W_]/', '', $label); // remove non-alphanumeric and underscore characters
+	$label = mb_strtolower(mb_substr($label, 0, 1)) . mb_substr($label, 1);
+	
 	switch($label) {
 		case 'abstract':
 		case 'description':
@@ -276,9 +280,6 @@ function kendra_cat_preprocess_content_field(&$vars) {
 	 * format keys camelCased alphanumeric, but first character is lower case
 	 */
 	$label = $vars['label'];
-	$label = mb_convert_case($label, MB_CASE_TITLE);
-	$label = preg_replace('/[\W_]/', '', $label); // remove non-alphanumeric and underscore characters
-	$label = mb_strtolower(mb_substr($label, 0, 1)) . mb_substr($label, 1);
 
 	$label = _kendra_cat_determine_property_type($label);
 
