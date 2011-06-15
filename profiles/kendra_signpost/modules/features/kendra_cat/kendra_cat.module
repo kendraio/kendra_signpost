@@ -137,11 +137,12 @@ function kendra_cat_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 					$graph = url("node/{$node->field_cat_importnode[0]['nid']}", array('absolute' => TRUE));
 					$query = "SELECT * FROM <{$graph}> WHERE {<{$node->field_cat_rowuri[0]['safe']}> ?p ?o}";
 					$result = kendra_rdf_send($query);
-					
-					//$node->content;
-					echo sprintf("\n<div><code>");
-					echo sprintf("\n%s", var_dump($result->data,1));
-					echo sprintf("\n</code></div>");
+					/*
+					 echo sprintf("\n<div><code>");
+					 echo sprintf("\n%s", var_dump($result->data,1));
+					 echo sprintf("\n</code></div>");
+					 */
+					$node->metadata = $result->data;
 				}
 			}
 			break;
