@@ -134,15 +134,26 @@ function kendra_cat_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 				 * @todo fetch metadata from Virtuoso
 				 */
 				if (function_exists('kendra_rdf_send')) {
+					$metadata = array();
+						
 					$graph = url("node/{$node->field_cat_importnode[0]['nid']}", array('absolute' => TRUE));
 					$query = "SELECT * FROM <{$graph}> WHERE {<{$node->field_cat_rowuri[0]['safe']}> ?p ?o}";
-					$result = kendra_rdf_send($query);
+					$result = kendra_rdf_send($query, "application/sparql-results+json");
+					$result_list = json_decode($map->data);
+						
+					if (!empty($result_list->results->bindings) && function_exists('kendra_search_map_alter_value')) {
+						foreach ($result_list->results->bindings as $binding) {
+							$metadata[$binding->p->value] = kendra_search_map_alter_value($binding->o->value);
+						}
+					}
+
 					/*
 					 echo sprintf("\n<div><code>");
 					 echo sprintf("\n%s", var_dump($result->data,1));
 					 echo sprintf("\n</code></div>");
 					 */
-					$node->metadata = $result->data;
+
+					$node->metadata = $metadata;
 				}
 			}
 			break;
