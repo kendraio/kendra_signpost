@@ -32,7 +32,11 @@
   <?php if (!empty($content)): ?>
     <div class='<?php print $hook ?>-content clear-block <?php if (!empty($is_prose)) print 'prose' ?>'<?php if ($itemtype) : ?> itemscope itemprop="<?php print $itemprop; ?>" itemtype="<?php print $itemtype; ?>"<?php endif; ?>>
       <?php print $content ?>
-
+	  <?php if (!empty($metadata)): ?>
+      <?php foreach($metadata as $key => $value) { ?>
+        <meta itemprop="<?php print $key ?>" content="<?php print $value ?>" />
+	  <?php } ?>
+	  <?php endif; ?>
     </div>
   <?php endif; ?>
 
