@@ -148,20 +148,14 @@ function kendra_cat_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 							if (function_exists('kendra_search_map_alter_value')) {
 								$key = kendra_search_map_alter_value($key);
 							}
-							//$key = 'field_'	. preg_replace('/\W/', '', mb_strtolower($key));
-							//$node->$key = array(array('value'=>$value));
+
+							$label = _kendra_cat_determine_property_type($key);
+							if (!empty($label)) $key = $label;
 							$metadata[$key] = $value;
 						}
 					}
 
-					/*
-					 echo sprintf("\n<div><code>");
-					 echo sprintf("\n%s", var_dump($result->data,1));
-					 echo sprintf("\n</code></div>");
-					 */
-
 					$node->metadata = $metadata;
-					//die(print_r($node,1));
 				}
 			}
 			break;
