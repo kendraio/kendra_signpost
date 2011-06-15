@@ -118,7 +118,32 @@ function _kendra_cat_determine_item_attributes(&$vars) {
 	}
 	echo sprintf("\n</code></div>");
 	*/
+	///	$vars['title'] = menu_get_object() === $vars['node'] ? '' : $vars['title'];
+
 	return $atts;
+}
+
+/**
+ *
+ */
+function kendra_cat_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
+	switch ($op) {
+		case 'view':
+			if ($node->type == 'kendra_cat') {
+				/**
+				 * @todo fetch metadata from Virtuoso
+				 */
+				if (function_exists('kendra_rdf_send')) {
+					$graph = url("node/{$node->nid}", array('absolute' => TRUE));
+					$result = kendra_rdf_send("SELECT * FROM <{$graph}> WHERE {?s ?p ?o}");
+					//$node->content;
+					echo sprintf("\n<div><code>");
+					echo sprintf("\n%s", var_dump($result->data,1));
+					echo sprintf("\n</code></div>");
+				}
+			}
+			break;
+	}
 }
 
 /**
