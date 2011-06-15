@@ -27,7 +27,7 @@
 
 ?>
 <?php if (!$field_empty) : ?>
-<div class="field field-type-<?php print $field_type_css ?> field-<?php print $field_name_css ?>" itemscope itemtype="http://schema.org/CreativeWork">
+<div class="field field-type-<?php print $field_type_css ?> field-<?php print $field_name_css ?>"<?php if ($itemprop) : ?> itemprop="<?php print t($itemprop) ?>"<?php endif; ?>>
   <?php if ($label_display == 'above') : ?>
     <div class="field-label"><?php print t($label) ?>:&nbsp;</div>
   <?php endif;?>
@@ -35,7 +35,7 @@
     <?php $count = 1;
     foreach ($items as $delta => $item) :
       if (!$item['empty']) : ?>
-        <div class="field-item <?php print ($count % 2 ? 'odd' : 'even') ?>"<?php if ($itemprop) : ?> itemprop="<?php print t($itemprop) ?>"<?php endif; ?>><?php if ($label_display == 'inline') { ?><div class="field-label-inline<?php print($delta ? '' : '-first')?>"><?php print t($label) ?>:&nbsp;</div><?php } ?><?php print $item['view'] ?></div>
+        <div class="field-item <?php print ($count % 2 ? 'odd' : 'even') ?>"><?php if ($label_display == 'inline') { ?><div class="field-label-inline<?php print($delta ? '' : '-first')?>"><?php print t($label) ?>:&nbsp;</div><?php } ?><?php print $item['view'] ?></div>
       <?php $count++;
       endif;
     endforeach;?>

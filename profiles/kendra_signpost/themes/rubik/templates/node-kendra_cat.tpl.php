@@ -2,7 +2,7 @@
 
 <?php if (!empty($pre_object)) print $pre_object ?>
 
-<div <?php if (!empty($attr)) print drupal_attributes($attr) ?>>
+<div <?php if (!empty($attr)) print drupal_attributes($attr) ?> itemscope itemtype="http://schema.org/CreativeWork">
   <?php if ($layout && (!empty($submitted) || !empty($links))): ?>
     <div class='column-side'><div class='column-wrapper'>
   <?php endif; ?>
