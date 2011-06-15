@@ -111,13 +111,13 @@ function kendra_cat_textfield_display_callback($facet, $options) {
 function _kendra_cat_determine_item_attributes(&$vars) {
 	$atts = array('itemtype' => 'http://schema.org/MusicRecording', 'itemprop' => 'tracks');
 	//$atts = array('itemtype' => 'http://schema.org/VideoObject', 'itemprop' => 'video');
-/*
+	/*
 	echo sprintf("\n<div><code>");
 	foreach ($vars as $key => $field) {
-		echo sprintf("\n" . '%s = %s', $key, var_dump($field,1));
+	echo sprintf("\n" . '%s = %s', $key, var_dump($field,1));
 	}
 	echo sprintf("\n</code></div>");
-*/	
+	*/
 	return $atts;
 }
 
@@ -135,6 +135,8 @@ function _kendra_cat_determine_property_type($label) {
 			break;
 		case 'albumEpTitle':
 		case 'albumTitle':
+			$label = 'inAlbum';
+			break;
 		case 'name':
 		case 'title':
 		case 'trackName':
