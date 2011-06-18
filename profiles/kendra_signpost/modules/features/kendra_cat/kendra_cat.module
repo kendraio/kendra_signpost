@@ -109,57 +109,17 @@ function kendra_cat_textfield_display_callback($facet, $options) {
  *
  */
 function _kendra_cat_determine_item_attributes(&$vars) {
-	$atts = array('itemtype' => 'http://schema.org/MusicRecording', 'itemprop' => 'tracks');
-	//$atts = array('itemtype' => 'http://schema.org/VideoObject', 'itemprop' => 'video');
-	/*
-	echo sprintf("\n<div><code>");
-	foreach ($vars as $key => $field) {
-	echo sprintf("\n" . '%s = %s', $key, var_dump($field,1));
+	if (!empty($vars['node']->metadata)) {
+		if (!empty($vars['node']->metadata['mpeg_file'])) {
+			$atts = array('itemtype' => 'http://schema.org/VideoObject', 'itemprop' => 'video');
+		} else if (!empty($vars['node']->metadata['track_id'])) {
+			$atts = array('itemtype' => 'http://schema.org/MusicRecording', 'itemprop' => 'tracks');
+		} else {
+			$atts = array('itemtype' => 'http://schema.org/CreativeWork');
+		}
 	}
-	echo sprintf("\n</code></div>");
-	*/
-	///	$vars['title'] = menu_get_object() === $vars['node'] ? '' : $vars['title'];
 
 	return $atts;
-}
-
-/**
- *
- */
-function kendra_cat_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
-	switch ($op) {
-		case 'view':
-			if ($node->type == 'kendra_cat') {
-				/**
-				 * @todo fetch metadata from Virtuoso
-				 */
-				if (function_exists('kendra_rdf_send')) {
-					$metadata = array();
-
-					$graph = url("node/{$node->field_cat_importnode[0]['nid']}", array('absolute' => TRUE));
-					$query = "SELECT * FROM <{$graph}> WHERE {<{$node->field_cat_rowuri[0]['safe']}> ?p ?o}";
-					$map = kendra_rdf_send($query, "application/sparql-results+json");
-					$result_list = json_decode($map->data);
-
-					if (!empty($result_list->results->bindings) ) {
-						foreach ($result_list->results->bindings as $binding) {
-							$key = $binding->p->value;
-							$value = $binding->o->value;
-							if (function_exists('kendra_search_map_alter_value')) {
-								$key = kendra_search_map_alter_value($key);
-							}
-
-							$label = _kendra_cat_determine_property_type($key);
-							if (!empty($label)) $key = $label;
-							$metadata[$key] = $value;
-						}
-					}
-
-					$node->metadata = $metadata;
-				}
-			}
-			break;
-	}
 }
 
 /**
@@ -169,7 +129,7 @@ function _kendra_cat_determine_property_type($label) {
 	$label = mb_convert_case($label, MB_CASE_TITLE);
 	$label = preg_replace('/[\W_]/', '', $label); // remove non-alphanumeric and underscore characters
 	$label = mb_strtolower(mb_substr($label, 0, 1)) . mb_substr($label, 1);
-	
+
 	switch($label) {
 		case 'abstract':
 		case 'description':
@@ -293,6 +253,34 @@ function kendra_cat_preprocess_content_field(&$vars) {
  * Preprocessor for theme('node').
  */
 function kendra_cat_preprocess_node(&$vars) {
+	$metadata = array();
+
+	/**
+	 * @todo fetch metadata from Virtuoso
+	 */
+	if (function_exists('kendra_rdf_send')) {
+
+		$graph = url("node/{$node->field_cat_importnode[0]['nid']}", array('absolute' => TRUE));
+		$query = "SELECT * FROM <{$graph}> WHERE {<{$node->field_cat_rowuri[0]['safe']}> ?p ?o}";
+		$map = kendra_rdf_send($query, "application/sparql-results+json");
+		$result_list = json_decode($map->data);
+
+		if (!empty($result_list->results->bindings) ) {
+			foreach ($result_list->results->bindings as $binding) {
+				$key = $binding->p->value;
+				$value = $binding->o->value;
+				if (function_exists('kendra_search_map_alter_value')) {
+					$key = kendra_search_map_alter_value($key);
+				}
+
+				$label = _kendra_cat_determine_property_type($key);
+				if (!empty($label)) $key = $label;
+				$metadata[$key] = $value;
+			}
+		}
+
+		$vars['node']->metadata = $metadata;
+	}
 
 	$attributes = _kendra_cat_determine_item_attributes($vars);
 
