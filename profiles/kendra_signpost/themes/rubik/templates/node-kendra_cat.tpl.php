@@ -2,7 +2,7 @@
 
 <?php if (!empty($pre_object)) print $pre_object ?>
 
-<div <?php if (!empty($attr)) print drupal_attributes($attr) ?>>
+<div <?php if (!empty($attr)) print drupal_attributes($attr) ?> itemscope itemtype="http://schema.org/CreativeWork">
   <?php if ($layout && (!empty($submitted) || !empty($links))): ?>
     <div class='column-side'><div class='column-wrapper'>
   <?php endif; ?>
@@ -30,9 +30,8 @@
   <?php endif; ?>
 
   <?php if (!empty($content)): ?>
-    <div class='<?php print $hook ?>-content clear-block <?php if (!empty($is_prose)) print 'prose' ?>'<?php if ($itemtype) : ?> itemscope itemtype="<?php print $itemtype; ?>"<?php endif; if ($itemprop) : ?> itemprop="<?php print $itemprop; ?>"<?php endif; ?>>
+    <div class='<?php print $hook ?>-content clear-block <?php if (!empty($is_prose)) print 'prose' ?>'<?php if ($itemtype) : ?> itemscope itemprop="<?php print $itemprop; ?>" itemtype="<?php print $itemtype; ?>"<?php endif; ?>>
       <?php print $content ?>
-      <!-- supplementary rich snippets metadata -->
 	  <?php if (!empty($metadata)): ?>
       <?php foreach($metadata as $key => $value) { ?>
         <meta itemprop="<?php print $key ?>" content="<?php print $value ?>" />
