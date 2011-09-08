@@ -1,0 +1,3 @@
+<?php
+
+include_once('nextshare_importer.features.inc');
