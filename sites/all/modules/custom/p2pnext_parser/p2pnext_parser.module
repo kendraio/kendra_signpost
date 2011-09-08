@@ -1,0 +1,29 @@
+<?php
+
+function p2pnext_parser_ctools_plugin_api($owner, $api) {
+  if ($owner == 'feeds' && $api == 'plugins') {
+    return array('version' => 1);
+  }
+}
+
+function p2pnext_parser_enable() {
+  cache_clear_all('plugins:feeds:plugins', 'cache');
+}
+
+function p2pnext_parser_feeds_plugins() {
+  $path = drupal_get_path('module', 'p2pnext_parser');
+  $info = array();
+  $info['FeedsP2PNextParser'] = array(
+    'name' => 'P2PNext parser',
+    'description' => 'Parse data from P2PNext feeds.',
+    'handler' => array(
+      'parent' => 'FeedsParser',
+      'class' => 'FeedsP2PNextParser',
+      'file' => 'FeedsP2PNextParser.inc',
+      'path' => $path,
+    ),
+  );
+  return $info;
+}
+
+

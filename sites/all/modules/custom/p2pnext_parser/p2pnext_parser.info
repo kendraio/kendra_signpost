@@ -1,0 +1,6 @@
+name = P2PNext Parser
+description = Parser for extracting MPEG7 data from P2PNext feeds
+core = 6.x 
+package = feeds
+dependencies[] = feeds
+

@@ -1,0 +1,29 @@
+<?php
+
+function nextshare_parser_ctools_plugin_api($owner, $api) {
+  if ($owner == 'feeds' && $api == 'plugins') {
+    return array('version' => 1);
+  }
+}
+
+function nextshare_parser_enable() {
+  cache_clear_all('plugins:feeds:plugins', 'cache');
+}
+
+function nextshare_parser_feeds_plugins() {
+  $path = drupal_get_path('module', 'nextshare_parser');
+  $info = array();
+  $info['FeedsNextShareParser'] = array(
+    'name' => 'NextShare parser',
+    'description' => 'Parse data from NextShare core.',
+    'handler' => array(
+      'parent' => 'FeedsParser',
+      'class' => 'FeedsNextShareParser',
+      'file' => 'FeedsNextShareParser.inc',
+      'path' => $path,
+    ),
+  );
+  return $info;
+}
+
+

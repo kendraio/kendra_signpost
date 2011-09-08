@@ -1,0 +1,28 @@
+<?php
+
+function filefield_processor_ctools_plugin_api($owner, $api) {
+  if ($owner == 'feeds' && $api == 'plugins') {
+    return array('version' => 1);
+  }
+}
+
+function filefield_processor_enable() {
+  cache_clear_all('plugins:feeds:plugins', 'cache');
+}
+
+function filefield_processor_feeds_plugins() {
+  $path = drupal_get_path('module', 'filefield_processor');
+  $info = array();
+  $info['FeedsFileFieldProcessor'] = array(
+    'name' => 'FileField processor',
+    'description' => 'Export data to a CCK FileField.',
+    'handler' => array(
+      'parent' => 'FeedsProcessor',
+      'class' => 'FeedsFileFieldProcessor',
+      'file' => 'FeedsFileFieldProcessor.inc',
+      'path' => $path,
+    ),
+  );
+  return $info;
+}
+
