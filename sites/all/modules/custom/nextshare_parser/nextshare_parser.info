@@ -1,0 +1,6 @@
+name = NextShare Parser
+description = Parse the data format extracted from NextShare core
+core = 6.x
+package = Feeds
+dependencies[] = feeds
+

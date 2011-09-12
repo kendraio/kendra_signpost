@@ -1,0 +1,6 @@
+name = FileField Processor
+description = Feeds processor plugin that exports data to a file and attachs to node using in a filefield.
+core = 6.x
+package = Feeds
+dependencies[] = feeds
+

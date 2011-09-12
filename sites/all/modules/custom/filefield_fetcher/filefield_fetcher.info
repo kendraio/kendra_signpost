@@ -1,0 +1,6 @@
+name = Feeds FileField Fetcher
+description = Feed fetcher plugin to extract a file from a FileField
+core = 6.x 
+package = Feeds
+dependencies[] = feeds
+

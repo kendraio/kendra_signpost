@@ -1,0 +1,29 @@
+<?php
+
+function filefield_fetcher_ctools_plugin_api($owner, $api) {
+  if ($owner == 'feeds' && $api == 'plugins') {
+    return array('version' => 1);
+  }
+}
+
+function filefield_fetcher_enable() {
+  cache_clear_all('plugins:feeds:plugins', 'cache');
+}
+
+function filefield_fetcher_feeds_plugins() {
+  $path = drupal_get_path('module', 'filefield_fetcher');
+  $info = array();
+  $info['FeedsFileFieldFetcher'] = array(
+    'name' => 'FileField fetcher',
+    'description' => 'Fetch data from a CCK FileField.',
+    'handler' => array(
+      'parent' => 'FeedsFileFetcher',
+      'class' => 'FeedsFileFieldFetcher',
+      'file' => 'FeedsFileFieldFetcher.inc',
+      'path' => $path,
+    ),
+  );
+  return $info;
+}
+
+
