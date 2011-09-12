@@ -1,3 +1,8 @@
+body.front #content ol {
+	list-style-type: decimal;
+	padding-left: 3em;
+}
+
 #field_format_prop_values input {
 	width: 100%;
 }
