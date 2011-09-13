@@ -1,5 +1,4 @@
 <?php
-// $Id: features.node.inc,v 1.1.2.26 2010/07/24 21:37:51 yhahn Exp $
 
 /**
  * Implementation of hook_features_api().
