@@ -28,7 +28,7 @@ function nextshare_importer_feeds_importer_default() {
     'processor' => array(
       'plugin_key' => 'FeedsNodeProcessor',
       'config' => array(
-        'content_type' => 'nextshare_content',
+        'content_type' => 'kendra_cat',
         'input_format' => '0',
         'update_existing' => '2',
         'expire' => '-1',
@@ -45,7 +45,7 @@ function nextshare_importer_feeds_importer_default() {
           ),
           2 => array(
             'source' => 'TitleImage',
-            'target' => 'field_nextshare_image',
+            'target' => 'field_cat_image',
             'unique' => FALSE,
           ),
           3 => array(
@@ -55,22 +55,17 @@ function nextshare_importer_feeds_importer_default() {
           ),
           4 => array(
             'source' => 'Producer',
-            'target' => 'field_nextshare_producer',
+            'target' => 'field_cat_publisher',
             'unique' => FALSE,
           ),
           5 => array(
-            'source' => 'Disseminator',
-            'target' => 'field_nextshare_disseminator',
+            'source' => 'Duration',
+            'target' => 'field_cat_duration',
             'unique' => FALSE,
           ),
           6 => array(
-            'source' => 'Duration',
-            'target' => 'field_nextshare_duration',
-            'unique' => FALSE,
-          ),
-          7 => array(
-            'source' => 'Identifier',
-            'target' => 'field_nextshare_identifier',
+            'source' => 'LastSeen',
+            'target' => 'field_cat_date',
             'unique' => FALSE,
           ),
         ),
