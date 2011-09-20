@@ -17,6 +17,7 @@ function kendra_signpost_profile_modules() {
     // cck modules
     'content', 'nodereference', 'text', 'optionwidgets',
     'filefield', 'transliteration',
+    'imagecache', 'imagefield', 'imagecache_ui', 'imageapi', 'imageapi_gd', 
     
     // utility modules
     'job_queue',
@@ -34,7 +35,11 @@ function kendra_signpost_profile_modules() {
   	'rdfdb',
   	
   	// feeds
-  	'feeds', 'feeds_ui', 'p2pnext_feeds', 
+  	'job_scheduler', 'poormanscron', 
+  	'feeds', 'feeds_ui', 'p2pnext_parser', 'nextshare_parser', 'filefield_processor', 'filefield_fetcher',
+  	
+  	// nextshare feature
+  	'nextshare_importer',
 
     // kendra mapping feature requirements
     'nodereference_url', 'context', 'context_ui', 
