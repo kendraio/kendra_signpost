@@ -1,7 +1,5 @@
 <?php
 
-define('SPARQL_TRIPLE_LIMIT', 4000);
-
 /**
  * Implementation of hook_ctools_plugin_api().
  */
@@ -33,6 +31,17 @@ function kendra_upload_node_info() {
     ),
     'kendra_import' => array(
       'name' => t('Kendra Import'),
+      'module' => 'features',
+      'description' => '',
+      'has_title' => '1',
+      'title_label' => t('Title'),
+      'has_body' => '0',
+      'body_label' => '',
+      'min_word_count' => '0',
+      'help' => '',
+    ),
+    'p2pnext_atom' => array(
+      'name' => t('P2P-Next Atom Feed'),
       'module' => 'features',
       'description' => '',
       'has_title' => '1',
