@@ -16,7 +16,7 @@ class FeedsNextShareParser extends FeedsParser {
       $identifier = str_replace(array("\n", ' ', '&lt;dii:Identifier&gt;','&lt;/dii:Identifier&gt;'), '', $identifier);
       $header = explode('-->', $item);
       $matches2 = array();
-      preg_match_all('/.*([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]).*/', $header[0], $matches2);
+      preg_match_all('/.*(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).*/', $header[0], $matches2);
       $lastseen = $matches2[1][0];
       try {
         $matches = array();
