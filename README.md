@@ -51,9 +51,9 @@ The instructions below offer a step by step procedure for installing Apache Solr
 
 ### install Drupal Solr module
 
-    cd /var/www/dev.kendra.org.uk/
+    cd /var/www/html/
     drush dl apachesolr
-    cd /var/www/dev.kendra.org.uk/sites/all/modules/apachesolr
+    cd /var/www/html/sites/all/modules/apachesolr
 
 ### get the PHP Solr module
 
