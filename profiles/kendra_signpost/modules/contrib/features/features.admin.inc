@@ -1,5 +1,4 @@
 <?php
-// $Id: features.admin.inc,v 1.1.2.68 2010/08/20 14:51:38 yhahn Exp $
 
 /**
  * Form callback for features export form. Acts as a router based on the form_state.

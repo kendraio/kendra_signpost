@@ -5,6 +5,7 @@
  */
 function kendra_upload_strongarm() {
   $export = array();
+
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
@@ -17,8 +18,8 @@ function kendra_upload_strongarm() {
     'menu' => '34',
     'path' => '38',
   );
-
   $export['content_extra_weights_kendra_format'] = $strongarm;
+
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
@@ -26,7 +27,16 @@ function kendra_upload_strongarm() {
   $strongarm->value = array(
     0 => 'status',
   );
-
   $export['node_options_kendra_format'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'node_options_p2pnext_atom';
+  $strongarm->value = array(
+    0 => 'status',
+  );
+  $export['node_options_p2pnext_atom'] = $strongarm;
+
   return $export;
 }

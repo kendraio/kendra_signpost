@@ -16,7 +16,7 @@ class FeedsNextShareParser extends FeedsParser {
       $identifier = str_replace(array("\n", ' ', '&lt;dii:Identifier&gt;','&lt;/dii:Identifier&gt;'), '', $identifier);
       $header = explode('-->', $item);
       $matches2 = array();
-      preg_match_all('/.*([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]).*/', $header[0], $matches2);
+      preg_match_all('/.*(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}).*/', $header[0], $matches2);
       $lastseen = $matches2[1][0];
       try {
         $matches = array();
@@ -38,6 +38,7 @@ class FeedsNextShareParser extends FeedsParser {
           'Producer' => (string)$xml->Description[0]->CreationInformation->Creation->Creator[0]->Agent->Name,
           'Disseminator' => (string)$xml->Description[0]->CreationInformation->Creation->Creator[1]->Agent->Name,
           'Duration' => (string)$xml->Description[1]->MultimediaContent->Video->MediaTime->MediaDuration, 
+          'MediaURI' => url('media-link', array('absolute' => TRUE)) .'/'. $identifier, 
           'LastSeen' => strtotime(str_replace(' ', 'T', $lastseen)),       
         );
         unset($xml);  
@@ -60,6 +61,7 @@ class FeedsNextShareParser extends FeedsParser {
       'Disseminator' => array('name' => 'Disseminator'),
       'Duration' => array('name' => 'Duration'),
       'LastSeen' => array('name' => 'Last Seen'),
+      'MediaURI' => array('name' => 'Media URI'),
     );
   }
   
