@@ -1,0 +1,9 @@
+.htaccess-default
+.pydevproject
+.twill-history
+profiles/kendra_signpost/modules/contrib/drupalforfirebug/
+sites/all/modules/devel/
+sites/all/modules/devel_themer/
+sites/all/modules/krumo/
+sites/default/files/
+sites/default/settings.php
