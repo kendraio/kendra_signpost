@@ -529,6 +529,12 @@ function apachesolr_index_updated($updated = NULL) {
  * Implementation of hook_cron().
  */
 function apachesolr_cron() {
+
+  // Indexes in read-only mode do not change the index, so will not update, delete, or optimize during cron.
+  if (variable_get('apachesolr_read_only', APACHESOLR_READ_WRITE) == APACHESOLR_READ_ONLY) {
+    return;
+  }
+
   // Mass update and delete functions are in the include file.
   module_load_include('inc', 'apachesolr', 'apachesolr.index');
   apachesolr_cron_check_node_table();

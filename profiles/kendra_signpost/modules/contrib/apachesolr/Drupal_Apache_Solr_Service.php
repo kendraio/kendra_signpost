@@ -301,7 +301,7 @@ class Drupal_Apache_Solr_Service extends Apache_Solr_Service {
       return $this->_sendRawGet($this->_searchUrl . $this->_queryDelimiter . $queryString);
     }
     else if ($method == self::METHOD_POST) {
-      return $this->_sendRawPost($this->_searchUrl, $queryString, FALSE, 'application/x-www-form-urlencoded');
+      return $this->_sendRawPost($this->_searchUrl, $queryString, FALSE, 'application/x-www-form-urlencoded; charset=UTF-8');
     }
     else {
       throw new Exception("Unsupported method '$method', please use the Apache_Solr_Service::METHOD_* constants");

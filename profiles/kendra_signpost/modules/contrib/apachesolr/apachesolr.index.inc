@@ -60,7 +60,7 @@ function apachesolr_node_to_document($nid, $namespace) {
       // exclude 'comment' for a type to skip indexing its comments.
       if (empty($exclude_nodeapi[$module])) {
         $function = $module .'_nodeapi';
-        if ($output = $function($node, 'update index', FALSE, FALSE)) {
+        if ($output = $function($node, 'update index', NULL, NULL)) {
           $extra[$module] = $output;
         }
       }
@@ -183,7 +183,8 @@ function apachesolr_add_taxonomy_to_document($document, $node) {
         $document->setMultiValue('im_vid_'. $ancestor->vid, $ancestor->tid);
         $name = apachesolr_clean_text($ancestor->name);
         $document->setMultiValue('vid', $ancestor->vid);
-        $document->{'ts_vid_'. $ancestor->vid .'_names'} .= ' '. $name;
+        $ts_vid = 'ts_vid_' . $ancestor->vid . '_names';
+        $document->{$ts_vid} = isset($document->{$ts_vid}) ? $document->{$ts_vid} . ' ' . $name : $name;
         // We index each name as a string for cross-site faceting
         // using the vocab name rather than vid in field construction .
         $document->setMultiValue('sm_vid_'. apachesolr_vocab_name($ancestor->vid), $name);

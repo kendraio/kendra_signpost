@@ -719,7 +719,7 @@ function apachesolr_config_files_overview() {
   $xml = NULL;
   try {
     $solr = apachesolr_get_solr();
-    $response = $solr->makeServletRequest('admin/file');
+    $response = $solr->makeServletRequest('admin/file', array('wt' => 'xml'));
     $xml = simplexml_load_string($response->getRawResponse());
   }
   catch (Exception $e) {
@@ -752,7 +752,7 @@ function apachesolr_config_file($name) {
     $solr = apachesolr_get_solr();
     $response = $solr->makeServletRequest('admin/file', array('file' => $name));
     $raw_file = $response->getRawResponse();
-    
+
     $output = '<pre>' . check_plain($raw_file) . '</pre>';
     drupal_set_title(check_plain($name));
   }

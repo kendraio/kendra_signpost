@@ -1216,7 +1216,7 @@ function apachesolr_get_parent_terms($tids) {
   $parent_terms = array();
   $new_tids = $tids;
   do {
-    $result = db_query(db_rewrite_sql("SELECT t.tid, t.parent FROM {term_hierarchy} t WHERE t.tid IN (". db_placeholders($new_tids) .")", 't', 'tid'), $new_tids);
+    $result = db_query(db_rewrite_sql("SELECT th.tid, th.parent FROM {term_hierarchy} th WHERE th.tid IN (". db_placeholders($new_tids) .")", 'th', 'tid'), $new_tids);
     $new_tids = array();
     while ($term = db_fetch_object($result)) {
       $parent_terms[$term->tid] = $term;

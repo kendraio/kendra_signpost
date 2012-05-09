@@ -1,5 +1,4 @@
 <?php
-// $Id: json_server.module,v 1.8.4.2 2010/05/04 20:00:36 skyredwang Exp $
 
 /**
  *
@@ -80,7 +79,7 @@ function json_load() {
 
 function drupal_parse_json($v) {
   // PHP 5 only
-  if (function_exists('json_decode')) {
+  if (function_exists('json_decode') && ($v{0} == '"' || $v{0} == '{' || $v{0} == '[') ) {
     return json_decode($v);
   }
   if ($v{0} == '"') {

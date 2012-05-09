@@ -1,4 +1,3 @@
-// $Id: ajax_view.js,v 1.19.2.5 2010/03/25 18:25:28 merlinofchaos Exp $
 
 /**
  * @file ajaxView.js
@@ -47,12 +46,14 @@ Drupal.behaviors.ViewsAjaxView = function() {
       ajax_path = ajax_path[0];
     }
     $.each(Drupal.settings.views.ajaxViews, function(i, settings) {
-      var view = '.view-dom-id-' + settings.view_dom_id;
-      if (!$(view).size()) {
-        // Backward compatibility: if 'views-view.tpl.php' is old and doesn't
-        // contain the 'view-dom-id-#' class, we fall back to the old way of
-        // locating the view:
-        view = '.view-id-' + settings.view_name + '.view-display-id-' + settings.view_display_id;
+      if (settings.view_dom_id) {
+        var view = '.view-dom-id-' + settings.view_dom_id;
+        if (!$(view).size()) {
+          // Backward compatibility: if 'views-view.tpl.php' is old and doesn't
+          // contain the 'view-dom-id-#' class, we fall back to the old way of
+          // locating the view:
+          view = '.view-id-' + settings.view_name + '.view-display-id-' + settings.view_display_id;
+        }
       }
 
 
@@ -163,34 +164,4 @@ Drupal.behaviors.ViewsAjaxView = function() {
       }); // $view.filter().each
     }); // .each Drupal.settings.views.ajaxViews
   } // if
-};
-
-/**
- * Display error in a more fashion way
- */
-Drupal.Views.Ajax.handleErrors = function (xhr, path) {
-  var error_text = '';
-
-  if ((xhr.status == 500 && xhr.responseText) || xhr.status == 200) {
-    error_text = xhr.responseText;
-
-    // Replace all &lt; and &gt; by < and >
-    error_text = error_text.replace("/&(lt|gt);/g", function (m, p) {
-      return (p == "lt")? "<" : ">";
-    });
-
-    // Now, replace all html tags by empty spaces
-    error_text = error_text.replace(/<("[^"]*"|'[^']*'|[^'">])*>/gi,"");
-
-    // Fix end lines
-    error_text = error_text.replace(/[\n]+\s+/g,"\n");
-  }
-  else if (xhr.status == 500) {
-    error_text = xhr.status + ': ' + Drupal.t("Internal server error. Please see server or PHP logs for error information.");
-  }
-  else {
-    error_text = xhr.status + ': ' + xhr.statusText;
-  }
-
-  alert(Drupal.t("An error occurred at @path.\n\nError Description: @error", {'@path': path, '@error': error_text}));
 };
