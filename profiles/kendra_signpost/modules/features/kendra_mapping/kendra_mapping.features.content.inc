@@ -205,7 +205,7 @@ function kendra_mapping_content_default_fields() {
     'text_processing' => '0',
     'max_length' => '64',
     'allowed_values' => 'http://www.w3.org/2002/07/owl#sameAs|sameAs
-http://kendra.org.uk/#hasType|hasType
+http://kendra.org/#hasType|hasType
 http://www.w3.org/2000/01/rdf-schema#subClassOf|subClassOf
 http://www.w3.org/2000/01/rdf-schema#subPropertyOf|subPropertyOf',
     'allowed_values_php' => '',

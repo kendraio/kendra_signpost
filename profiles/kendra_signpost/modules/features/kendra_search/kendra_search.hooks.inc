@@ -105,7 +105,7 @@ function kendra_search_get_array() {
 		$tempMaps = array();
 
 		// fetch mappings for data types
-		$map = kendra_rdf_send("SELECT DISTINCT ?s, ?o WHERE {?s <http://kendra.org.uk/#hasType> ?o}", "application/sparql-results+json");
+		$map = kendra_rdf_send("SELECT DISTINCT ?s, ?o WHERE {?s <http://kendra.org/#hasType> ?o}", "application/sparql-results+json");
 		$result_list = json_decode($map->data);
 		if (!empty($result_list->results->bindings)) {
 			foreach ($result_list->results->bindings as $binding) {
