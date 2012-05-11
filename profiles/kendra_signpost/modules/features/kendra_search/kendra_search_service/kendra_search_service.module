@@ -12,7 +12,7 @@ define('KENDRA_SEARCH_CACHE_PREFIX', 'kendra_search_tmpl_');
 /**
  * Implementation of hook_perm()
  **/
-function KENDRA_SEARCH_SERVICE_PERM() {
+function kendra_search_service_perm() {
 	return array(KENDRA_SEARCH_SERVICE_PERM);
 }
 

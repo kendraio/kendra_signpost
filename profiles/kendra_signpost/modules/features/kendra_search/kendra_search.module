@@ -9,5 +9,5 @@ include_once('kendra_search.help.inc');
  * JQuery UI module requirements: add to array here
  */
 if (function_exists('jquery_ui_add')) {
-jquery_ui_add(array('ui.widget', 'ui.mouse', 'ui.draggable','ui.datepicker', 'ui.sortable'));
+jquery_ui_add(array('ui.draggable','ui.datepicker', 'ui.sortable'));
 }
