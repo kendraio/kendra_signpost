@@ -134,7 +134,7 @@ jQuery.extend(Kendra, {
 
 			Kendra.util.log('getMappings');
 			Kendra.service.connect(function() {
-				Kendra.util.log('connected');
+				Kendra.util.log('connected OK');
 				//return;
 				Drupal.service('kendra_search.get_mappings_array', {
 					sessid : Kendra.service.sessid
