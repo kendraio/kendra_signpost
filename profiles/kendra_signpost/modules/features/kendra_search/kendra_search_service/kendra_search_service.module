@@ -1,6 +1,5 @@
 <?php
 // $Id$
-
 /**
  * @file
  * The module which exposes services related to kendra_search
@@ -13,115 +12,117 @@ define('KENDRA_SEARCH_CACHE_PREFIX', 'kendra_search_tmpl_');
  * Implementation of hook_perm()
  **/
 function kendra_search_service_perm() {
-	return array(KENDRA_SEARCH_SERVICE_PERM);
+  return array(KENDRA_SEARCH_SERVICE_PERM);
 }
 
 /**
  * Function to check user access
  **/
 function kendra_search_service_access($account) {
-	return user_access(KENDRA_SEARCH_SERVICE_PERM, $account);
+  return user_access(KENDRA_SEARCH_SERVICE_PERM, $account);
 }
 
 /**
  * Implementation of hook_services_resources()
  **/
 function kendra_search_services_resources() {
-    return array(
-        'kendra_search' => array(
-            'get_mappings_array' => array(
-                'help' => t('Returns an associative array in $mapping["URI"] => $mapping["printable_name"] format.'),
-                'file' => array('file' => 'inc', 'module' => 'kendra_search_service'),
-                'callback' => 'kendra_search_service_get_mappings_array',
-                'access callback' => 'kendra_search_service_access',
-                'access arguments' => array('administer nodes'),
-                'access arguments append' => TRUE,
-                'args' => array(
-                  array(
-                    'name' => 'first element value',
-                    'type' => 'string',
-                    'description' => t("The value of the first element in the array (defaults to '')"),
-                    'optional' => TRUE,
-                  ),
-                  array(
-                    'name' => 'first element label',
-                    'type' => 'string',
-                    'description' => t("The label of the first value in the array (defaults to 'Please Choose')"),
-                    'optional' => TRUE,
-                  ),
-            ),
-            'get_template' => array(
-                'help' => t('Returns a JQuery template.'),
-                'file' => array('file' => 'inc', 'module' => 'kendra_search_service'),
-                'callback' => 'kendra_search_service_get_template',
-                'access callback' => 'kendra_search_service_access',
-                'access arguments' => array('administer nodes'),
-                'access arguments append' => TRUE,
-                'args' => array(
-                  array(
-                    'name' => 'template_name',
-                    'type' => 'string',
-                    'description' => t("The name of the JQuery template"),
-                    'optional' => FALSE,
-                  ),
-                  array(
-                    'name' => 'parent_type',
-                    'type' => 'string',
-                    'description' => t("parent item type (i.e. theme, theme_engine, module, profile)"),
-                    'optional' => TRUE,
-                  ),
-                  array(
-                    'name' => 'parent_name',
-                    'type' => 'string',
-                    'description' => t("parent item name (i.e. module or theme name)"),
-                    'optional' => TRUE,
-                  ),
-                  array(
-                    'name' => 'subdirectory',
-                    'type' => 'string',
-                    'description' => t("directory within the parent container; should have leading and trailing slashes"),
-                    'optional' => TRUE,
-                  ),
-            )
-        )
-	);
+  return array(
+    'kendra_search' => array(
+      'get_mappings_array' => array(
+        'help' => t('Returns an associative array in $mapping["URI"] => $mapping["printable_name"] format.'),
+        'file' => array('file' => 'inc', 'module' => 'kendra_search_service'),
+        'callback' => 'kendra_search_service_get_mappings_array',
+        'access callback' => 'kendra_search_service_access',
+        'access arguments' => array('administer nodes'),
+        'access arguments append' => TRUE,
+        'args' => array(
+          array(
+            'name' => 'first element value',
+            'type' => 'string',
+            'description' => t("The value of the first element in the array (defaults to '')"),
+            'optional' => TRUE,
+          ),
+          array(
+            'name' => 'first element label',
+            'type' => 'string',
+            'description' => t("The label of the first value in the array (defaults to 'Please Choose')"),
+            'optional' => TRUE,
+          ),
+        ),
+      ),
+      'get_template' => array(
+        'help' => t('Returns a JQuery template.'),
+        'file' => array('file' => 'inc', 'module' => 'kendra_search_service'),
+        'callback' => 'kendra_search_service_get_template',
+        'access callback' => 'kendra_search_service_access',
+        'access arguments' => array('administer nodes'),
+        'access arguments append' => TRUE,
+        'args' => array(
+          array(
+            'name' => 'template_name',
+            'type' => 'string',
+            'description' => t("The name of the JQuery template"),
+            'optional' => FALSE,
+          ),
+          array(
+            'name' => 'parent_type',
+            'type' => 'string',
+            'description' => t("parent item type (i.e. theme, theme_engine, module, profile)"),
+            'optional' => TRUE,
+          ),
+          array(
+            'name' => 'parent_name',
+            'type' => 'string',
+            'description' => t("parent item name (i.e. module or theme name)"),
+            'optional' => TRUE,
+          ),
+          array(
+            'name' => 'subdirectory',
+            'type' => 'string',
+            'description' => t("directory within the parent container; should have leading and trailing slashes"),
+            'optional' => TRUE,
+          ),
+        ),
+      ),
+    ),
+  );
 }
 
 /**
  * Implementation of hook_init().
  */
-function kendra_search_service_init() {
-}
+function kendra_search_service_init() {}
 
 /**
  * Implementation of hook_disable()
  **/
 function kendra_search_disable() {
-	cache_clear_all('services:methods', 'cache');
-	cache_clear_all(KENDRA_SEARCH_CACHE_PREFIX, 'cache', true);
+  cache_clear_all('services:methods', 'cache');
+  cache_clear_all(KENDRA_SEARCH_CACHE_PREFIX, 'cache', TRUE);
 }
 
 /**
  * Implementation of hook_enable()
  **/
 function kendra_search_enable() {
-	cache_clear_all('services:methods', 'cache');
-	cache_clear_all(KENDRA_SEARCH_CACHE_PREFIX, 'cache', true);
+  cache_clear_all('services:methods', 'cache');
+  cache_clear_all(KENDRA_SEARCH_CACHE_PREFIX, 'cache', TRUE);
 }
 
 /**
  * Implementation of hook_help()
  */
 function kendra_search_service_help($path, $arg) {
-	// switch over section
-	switch ($path) {
-		case 'admin/help#kendra_search_service':
-			$content = '<p>' . t("Please see !module_url", array('!module_url'=> l("the Kendra Atrium", "http://atrium.kendra.org.uk/dev/kendra-signpost"))) . '</p>';
-			$content = '<p>' . t("Requires kendra_search_service.module.") . '</p>';
+  // switch over section
+  switch ($path) {
+    case 'admin/help#kendra_search_service':
+      $content = '<p>' . t("Please see !module_url", array('!module_url' => l("the Kendra Atrium", "http://atrium.kendra.org.uk/dev/kendra-signpost"))) . '</p>';
+      $content = '<p>' . t("Requires kendra_search_service.module.") . '</p>';
+      break;
 
-			break;
-		default:
-			$content = "";
-	}
-	return $content;
+    default:
+      $content = "";
+  }
+  return $content;
 }
+
