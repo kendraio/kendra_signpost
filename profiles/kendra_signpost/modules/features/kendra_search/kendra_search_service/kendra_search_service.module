@@ -28,59 +28,67 @@ function kendra_search_service_access($account) {
 function kendra_search_services_resources() {
   return array(
     'kendra_search' => array(
-      'get_mappings_array' => array(
-        'help' => t('Returns an associative array in $mapping["URI"] => $mapping["printable_name"] format.'),
-        'file' => array('file' => 'inc', 'module' => 'kendra_search_service'),
-        'callback' => 'kendra_search_service_get_mappings_array',
-        'access callback' => 'kendra_search_service_access',
-        'access arguments' => array('administer nodes'),
-        'access arguments append' => TRUE,
-        'args' => array(
-          array(
-            'name' => 'first element value',
-            'type' => 'string',
-            'description' => t("The value of the first element in the array (defaults to '')"),
-            'optional' => TRUE,
-          ),
-          array(
-            'name' => 'first element label',
-            'type' => 'string',
-            'description' => t("The label of the first value in the array (defaults to 'Please Choose')"),
-            'optional' => TRUE,
+      'actions' => array(
+        'get_mappings_array' => array(
+          'help' => t('Returns an associative array in $mapping["URI"] => $mapping["printable_name"] format.'),
+          'file' => array('file' => 'inc', 'module' => 'kendra_search_service'),
+          'callback' => 'kendra_search_service_get_mappings_array',
+          'access callback' => 'kendra_search_service_access',
+          'access arguments' => array('administer nodes'),
+          'access arguments append' => TRUE,
+          'args' => array(
+            array(
+              'name' => 'first element value',
+              'source' => array('data' => 'value'),
+              'type' => 'string',
+              'description' => t("The value of the first element in the array (defaults to '')"),
+              'optional' => TRUE,
+            ),
+            array(
+              'name' => 'first element label',
+              'source' => array('data' => 'label'),
+              'type' => 'string',
+              'description' => t("The label of the first value in the array (defaults to 'Please Choose')"),
+              'optional' => TRUE,
+            ),
           ),
         ),
-      ),
-      'get_template' => array(
-        'help' => t('Returns a JQuery template.'),
-        'file' => array('file' => 'inc', 'module' => 'kendra_search_service'),
-        'callback' => 'kendra_search_service_get_template',
-        'access callback' => 'kendra_search_service_access',
-        'access arguments' => array('administer nodes'),
-        'access arguments append' => TRUE,
-        'args' => array(
-          array(
-            'name' => 'template_name',
-            'type' => 'string',
-            'description' => t("The name of the JQuery template"),
-            'optional' => FALSE,
-          ),
-          array(
-            'name' => 'parent_type',
-            'type' => 'string',
-            'description' => t("parent item type (i.e. theme, theme_engine, module, profile)"),
-            'optional' => TRUE,
-          ),
-          array(
-            'name' => 'parent_name',
-            'type' => 'string',
-            'description' => t("parent item name (i.e. module or theme name)"),
-            'optional' => TRUE,
-          ),
-          array(
-            'name' => 'subdirectory',
-            'type' => 'string',
-            'description' => t("directory within the parent container; should have leading and trailing slashes"),
-            'optional' => TRUE,
+        'get_template' => array(
+          'help' => t('Returns a JQuery template.'),
+          'file' => array('file' => 'inc', 'module' => 'kendra_search_service'),
+          'callback' => 'kendra_search_service_get_template',
+          'access callback' => 'kendra_search_service_access',
+          'access arguments' => array('administer nodes'),
+          'access arguments append' => TRUE,
+          'args' => array(
+            array(
+              'name' => 'template_name',
+              'source' => array('data' => 'template_name'),
+              'type' => 'string',
+              'description' => t("The name of the JQuery template"),
+              'optional' => FALSE,
+            ),
+            array(
+              'name' => 'parent_type',
+              'source' => array('data' => 'parent_type'),
+              'type' => 'string',
+              'description' => t("parent item type (i.e. theme, theme_engine, module, profile)"),
+              'optional' => TRUE,
+            ),
+            array(
+              'name' => 'parent_name',
+              'source' => array('data' => 'parent_name'),
+              'type' => 'string',
+              'description' => t("parent item name (i.e. module or theme name)"),
+              'optional' => TRUE,
+            ),
+            array(
+              'name' => 'subdirectory',
+              'source' => array('data' => 'subdirectory'),
+              'type' => 'string',
+              'description' => t("directory within the parent container; should have leading and trailing slashes"),
+              'optional' => TRUE,
+            ),
           ),
         ),
       ),
