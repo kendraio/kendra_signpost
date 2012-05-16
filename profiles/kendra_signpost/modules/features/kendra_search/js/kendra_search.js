@@ -139,6 +139,10 @@ jQuery.extend(Kendra, {
                 },
             args = {};
 
+            if (Kendra.service.require_connection) {
+                args.sessid = Kendra.service.sessid;
+            }
+
             Kendra.util.log('getMappings');
             Kendra.service.connect(function() {
                 Kendra.util.log('connected OK');
