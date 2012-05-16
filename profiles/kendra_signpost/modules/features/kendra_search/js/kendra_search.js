@@ -147,12 +147,12 @@ jQuery.extend(Kendra, {
             Kendra.service.connect(function() {
                 Kendra.util.log('connected OK');
                 Drupal.service('endpoint', 'kendra_search.get_mappings_array', args,
-                function(result, error) {
+                function(data, error) {
                     if (error) {
-                        Kendra.util.log(result, "Kendra.service.getMappings: error: " + error);
-                        failure(result, error);
+                        Kendra.util.log(data, "Kendra.service.getMappings: error: " + error);
+                        failure(data, error);
                     } else {
-                        Kendra.mapping.mappings = result;
+                        Kendra.mapping.mappings = data;
                         Kendra.util.log(data, 'Kendra.service.getMappings: loaded ' + Kendra.util.arrayLength(Kendra.mapping.mappings) + ' mappings');
 
                         success();
