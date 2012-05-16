@@ -24,124 +24,67 @@ function kendra_search_service_access($account) {
 }
 
 /**
- * Returns an array of mappings
- * explose the mapping array as an array( 'mapping URI' => 'translated name' )
- */
-function kendra_search_service_get_mappings_array() {
-	$mappings = kendra_search_get_array();
-
-	if (!$mappings) {
-		return services_error(t('No mappings were found.'));
-	}
-	return $mappings;
-}
-
-/**
- * Implementation of hook_service()
+ * Implementation of hook_services_resources()
  **/
-function kendra_search_service_service() {
-	return array(
-	array(
-      '#method'   => 'kendra_search.get_mappings_array',
-      '#callback' => 'kendra_search_service_get_mappings_array',
-      '#key'      => FALSE,
-	  '#auth' => FALSE,
-	  '#access arguments' => array('administer nodes'), // @fixme
-      '#args'     => array(
-	array(
-          '#name'         => 'first element value',
-          '#type'         => 'string',
-          '#description'  => t("The value of the first element in the array (defaults to '')"),
-          '#optional'     => TRUE,
-	),
-	array(
-          '#name'         => 'first element label',
-          '#type'         => 'string',
-          '#description'  => t("The label of the first value in the array (defaults to 'Please Choose')"),
-          '#optional'     => TRUE,
-	),
-	),
-      '#return'   => 'array',
-      '#help'     => t('Returns an associative array in $mapping["URI"] => $mapping["printable_name"] format.'),
-	),
-	array(
-      '#method'   => 'kendra_search.get_template',
-      '#callback' => 'kendra_search_service_get_template',
-      '#key'      => FALSE,
-	  '#access arguments' => array('administer nodes'), // @fixme
-	  '#auth' => FALSE,
-      '#args'     => array(
-	array(
-          '#name'         => 'template_name',
-          '#type'         => 'string',
-          '#description'  => t("The name of the JQuery template"),
-          '#optional'     => FALSE,
-	),
-	array(
-          '#name'         => 'parent_type',
-          '#type'         => 'string',
-          '#description'  => t("parent item type (i.e. theme, theme_engine, module, profile)"),
-          '#optional'     => TRUE,
-	),
-	array(
-          '#name'         => 'parent_name',
-          '#type'         => 'string',
-          '#description'  => t("parent item name (i.e. module or theme name)"),
-          '#optional'     => TRUE,
-	),
-	array(
-          '#name'         => 'subdirectory',
-          '#type'         => 'string',
-          '#description'  => t("directory within the parent container; should have leading and trailing slashes"),
-          '#optional'     => TRUE,
-	),
-	),
-      '#return'   => 'array',
-      '#help'     => t('Returns a JQuery template.'),
-	)
+function kendra_search_services_resources() {
+    return array(
+        'kendra_search' => array(
+            'get_mappings_array' => array(
+                'help' => t('Returns an associative array in $mapping["URI"] => $mapping["printable_name"] format.'),
+                'file' => array('file' => 'inc', 'module' => 'kendra_search_service'),
+                'callback' => 'kendra_search_service_get_mappings_array',
+                'access callback' => 'kendra_search_service_access',
+                'access arguments' => array('administer nodes'),
+                'access arguments append' => TRUE,
+                'args' => array(
+                  array(
+                    'name' => 'first element value',
+                    'type' => 'string',
+                    'description' => t("The value of the first element in the array (defaults to '')"),
+                    'optional' => TRUE,
+                  ),
+                  array(
+                    'name' => 'first element label',
+                    'type' => 'string',
+                    'description' => t("The label of the first value in the array (defaults to 'Please Choose')"),
+                    'optional' => TRUE,
+                  ),
+            ),
+            'get_template' => array(
+                'help' => t('Returns a JQuery template.'),
+                'file' => array('file' => 'inc', 'module' => 'kendra_search_service'),
+                'callback' => 'kendra_search_service_get_template',
+                'access callback' => 'kendra_search_service_access',
+                'access arguments' => array('administer nodes'),
+                'access arguments append' => TRUE,
+                'args' => array(
+                  array(
+                    'name' => 'template_name',
+                    'type' => 'string',
+                    'description' => t("The name of the JQuery template"),
+                    'optional' => FALSE,
+                  ),
+                  array(
+                    'name' => 'parent_type',
+                    'type' => 'string',
+                    'description' => t("parent item type (i.e. theme, theme_engine, module, profile)"),
+                    'optional' => TRUE,
+                  ),
+                  array(
+                    'name' => 'parent_name',
+                    'type' => 'string',
+                    'description' => t("parent item name (i.e. module or theme name)"),
+                    'optional' => TRUE,
+                  ),
+                  array(
+                    'name' => 'subdirectory',
+                    'type' => 'string',
+                    'description' => t("directory within the parent container; should have leading and trailing slashes"),
+                    'optional' => TRUE,
+                  ),
+            )
+        )
 	);
-}
-
-/**
- * kendra_search_service_get_template
- *
- * returns the contents of a (cached) JQuery template file
- * removes PHP tags, comments, and excess whitespace from the template body
- *
- * @param $filename String
- * @param $parent_type String parent item type (i.e. theme, theme_engine, module, profile)
- * @param $parent_name String parent item name (i.e. module or theme name)
- * @param $subdirectory String optional directory within the parent container; should have leading and trailing slashes
- */
-function kendra_search_service_get_template($filename, $parent_type = 'module', $parent_name = 'help', $subdirectory = '/') {
-
-	$cache_key = KENDRA_SEARCH_CACHE_PREFIX.$filename;
-
-	$debugging = TRUE;
-
-	if (!$debugging && $cache = cache_get($cache_key)) {
-		$data = $cache->data;
-	} else {
-		$path = drupal_get_path($parent_type, $parent_name);
-		$fullpath = $path . $subdirectory . $filename;
-
-		if (!file_check_location($fullpath, $path) || !is_file($fullpath))
-		return services_error(t('The requested template @fullpath was not found.', array('@fullpath'=>$fullpath)));
-
-		ob_start();
-		include( $fullpath );
-		$data = ob_get_contents();
-		ob_end_clean();
-
-		if (!drupal_validate_utf8($data))
-		return services_error(t('The requested template @fullpath was not valid.', array('@fullpath'=>$fullpath)));
-
-		// strip PHP tags, comments, and excess whitespace from the template body
-		$data = preg_replace(array('/<\?((?!\?>).)*\?>/sU', '/<!\-\-(.+)\-\->/U', '/\s\s+/s'), array('', '', ' '), $data);
-		cache_set($cache_key, $data);
-	}
-
-	return $data;
 }
 
 /**
