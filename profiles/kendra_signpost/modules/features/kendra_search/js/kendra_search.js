@@ -87,7 +87,7 @@ jQuery.extend(Kendra, {
 	 */
     service: {
         sessid: null,
-        require_connection: false,
+        require_connection: true,
 
         /**
 		 * connect to the services module to get a valid session ID
