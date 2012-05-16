@@ -174,6 +174,7 @@ function kendra_search_get_options_array($first_element = array('' => 'Please Ch
  */
 function kendra_search_init() {
 	// required libs
+	drupal_add_js(drupal_get_path('module', 'jsonrpc_server') .'/jsonrpc_server.js');
 	drupal_add_js(drupal_get_path('module', 'kendra_search') .'/js/lib/json2.js');
 	drupal_add_js(drupal_get_path('module', 'draggableviews') .'/draggableviews.js');
 

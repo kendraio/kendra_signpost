@@ -10,3 +10,5 @@ sites/all/modules/krumo/
 >>>>>>> 13f85de119fc28a4bf7d9a9e79a83aeab1f3364b
 sites/default/files/
 sites/default/settings.php
+cgi-bin/*.conf
+sites/default/files
