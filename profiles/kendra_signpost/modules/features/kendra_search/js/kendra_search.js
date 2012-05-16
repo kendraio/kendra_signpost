@@ -107,13 +107,13 @@ jQuery.extend(Kendra, {
 			    success();
 			    return;
 			    Kendra.util.log('ready to connect');
-				Drupal.service('system.connect', {}, function(status, data) {
+			    Drupal.service('endpoint', 'system.connect', {}, function(status, data) {
 					Kendra.util.log('connected');
 					if (status == false) {
 						Kendra.util.log("Kendra.service.connect: failed");
 						failure();
 					} else {
-						Kendra.util.log("Kendra.service.connect: succeeded");
+					    Kendra.util.log(data, "Kendra.service.connect: succeeded");
 						Kendra.service.sessid = data.sessid;
 						success(data);
 					}
@@ -135,8 +135,7 @@ jQuery.extend(Kendra, {
 			Kendra.util.log('getMappings');
 			Kendra.service.connect(function() {
 				Kendra.util.log('connected OK');
-				//return;
-				Drupal.service('kendra_search.get_mappings_array', {
+				Drupal.service('endpoint', 'kendra_search.get_mappings_array', {
 					sessid : Kendra.service.sessid
 				}, function(status, data) {
 					if (status == false) {
