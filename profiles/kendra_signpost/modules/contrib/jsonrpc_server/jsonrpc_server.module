@@ -68,3 +68,19 @@ function jsonrpc_server_add_javascript() {
   $path = drupal_get_path("module", "jsonrpc_server");
   drupal_add_js($path ."/jsonrpc_server.js");
 }
+
+function services_get_all() {
+  $methods = array();
+  module_load_include('runtime.inc', 'services');
+  $resources = services_get_resources(services_get_server_info('services', ''));
+  if (!empty($resources)) {
+    // Translate all resources
+    foreach ($resources as $name => $def) {
+      foreach (services_resources_as_procedures($def, $name) as $method) {
+        $methods[] = $method;
+      }
+    }
+  }
+
+  return $methods;
+}

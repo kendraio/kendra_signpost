@@ -18,6 +18,9 @@ define('JSONRPC_ERROR_PROCEDURE_NOT_FOUND', -32601);
 define('JSONRPC_ERROR_PARAMS', -32602);
 define('JSONRPC_ERROR_INTERNAL_ERROR', -32603);
 
+/**
+ * Return an array of all defined services methods.
+ */
 class JsonRpcServer{
   private $id, $method, $in, $version, $major_version;
   private $service_method, $params, $args;
@@ -38,17 +41,15 @@ class JsonRpcServer{
     }
     
     //Find the method
-    //    $methods = services_get_all();
+    $methods = services_get_all();
     $args = array();
-    /*
     foreach ($methods as $method) {
       if ($method['method'] == $this->method_name) {
         $this->method = $method;
         break;
       }
     }
-    */
-    $this->method = $this->method_name; // @HACK
+
     if (!isset($this->method)) { // No method found is a fatal error
       return $this->error(JSONRPC_ERROR_PROCEDURE_NOT_FOUND, t("Invalid method '@method'", 
         array('@method' => $this->method_name)));
