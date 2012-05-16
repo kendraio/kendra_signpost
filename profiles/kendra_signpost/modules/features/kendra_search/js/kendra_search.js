@@ -147,18 +147,13 @@ jQuery.extend(Kendra, {
             Kendra.service.connect(function() {
                 Kendra.util.log('connected OK');
                 Drupal.service('endpoint', 'kendra_search.get_mappings_array', args,
-                function(status, data) {
-                    if (status == false) {
-                        Kendra.util.log("Kendra.service.getMappings: FATAL ERROR");
-                        failure(status, data);
-                    } else if (data['#error'] == true) {
-                        Kendra.util.log("Kendra.service.getMappings: error: " + data['#message']);
-                        failure(status, data);
+                function(result, error) {
+                    if (error) {
+                        Kendra.util.log(result, "Kendra.service.getMappings: error: " + error);
+                        failure(result, error);
                     } else {
-                        // Kendra.mapping.mappings =
-                        // $.extend(Kendra.mapping.mappings, data);
-                        Kendra.mapping.mappings = data;
-                        Kendra.util.log(data, 'Kendra.service.getMappings: merged ' + Kendra.util.arrayLength(Kendra.mapping.mappings) + ' mappings');
+                        Kendra.mapping.mappings = result;
+                        Kendra.util.log(data, 'Kendra.service.getMappings: loaded ' + Kendra.util.arrayLength(Kendra.mapping.mappings) + ' mappings');
 
                         success();
                     }
@@ -805,9 +800,9 @@ jQuery.extend(Kendra, {
                 });
 
             },
-            failure = function(status, data) {
+            failure = function(data, error) {
                 var html = '';
-                if (data && data['#message'] && data['#message'] == "Access denied") {
+                if (error && error['message'] == "Access denied") {
                     html = 'Access denied. Please <a href="/user">log in</a> first.';
                     $('#page #content .content-wrapper').html(html);
                 } else {
@@ -819,8 +814,8 @@ jQuery.extend(Kendra, {
             Kendra.service.getMappings(function() {
                 success('#kendra-query-builder');
             },
-            function(status, data) {
-                failure(status, data);
+            function(data, error) {
+                failure(data, error);
             });
         }
     });
