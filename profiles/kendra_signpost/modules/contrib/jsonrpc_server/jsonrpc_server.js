@@ -1,14 +1,15 @@
-// $Id: jsonrpc_server.js,v 1.1 2009/02/12 16:33:54 hugowetterberg Exp $
-Drupal.service = function(method, parameters, callback, id) {
+// $Id$
+Drupal.service = function(endpoint, method, parameters, callback, id) {
   var call = {'method': method, 'params': JSON.stringify(parameters)};
   if (id != null)
     call['id'] = id;
   jQuery.ajax({
-    'url': Drupal.settings.basePath +"?q=services/json-rpc",
+    'url': Drupal.settings.basePath + "?q=" + endpoint,
     'type': "POST",
     'data': call,
     'success': function(data) {
-      parsed = Drupal.parseJson(data);
+      if (typeof data !== 'object') parsed = JSON.parse(data);
+      else parsed = data;
       callback(parsed['result'], parsed['error'], parsed['id']);
     }
   });
