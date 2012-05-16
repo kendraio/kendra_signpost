@@ -19,6 +19,7 @@ function kendra_search_service_perm() {
  * Function to check user access
  **/
 function kendra_search_service_access($account) {
+  return true;
   return user_access(KENDRA_SEARCH_SERVICE_PERM, $account);
 }
 
@@ -35,7 +36,7 @@ function kendra_search_services_resources() {
           'callback' => 'kendra_search_service_get_mappings_array',
           'access callback' => 'kendra_search_service_access',
           'access arguments' => array('administer nodes'),
-          'access arguments append' => TRUE,
+          'access arguments append' => FALSE,
           'args' => array(
             array(
               'name' => 'first element value',
@@ -59,7 +60,7 @@ function kendra_search_services_resources() {
           'callback' => 'kendra_search_service_get_template',
           'access callback' => 'kendra_search_service_access',
           'access arguments' => array('administer nodes'),
-          'access arguments append' => TRUE,
+          'access arguments append' => FALSE,
           'args' => array(
             array(
               'name' => 'template_name',
