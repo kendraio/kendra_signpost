@@ -109,7 +109,7 @@ jQuery.extend(Kendra, {
                 success();
             } else {
                 Kendra.util.log('ready to connect');
-                Drupal.service('system.connect', {},
+                Drupal.service('endpoint', 'system.connect', {},
                 function(status, data) {
                     Kendra.util.log('connected');
                     if (status == false) {
@@ -146,7 +146,7 @@ jQuery.extend(Kendra, {
             Kendra.util.log('getMappings');
             Kendra.service.connect(function() {
                 Kendra.util.log('connected OK');
-                Drupal.service('kendra_search.get_mappings_array', args,
+                Drupal.service('endpoint', 'kendra_search.get_mappings_array', args,
                 function(status, data) {
                     if (status == false) {
                         Kendra.util.log("Kendra.service.getMappings: FATAL ERROR");
