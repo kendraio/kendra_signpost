@@ -76,9 +76,10 @@ AjaxSolr.ParameterStore = AjaxSolr.Class.extend(
    *
    * @param {String} name The name of the parameter.
    * @returns {Boolean} Whether the parameter may be specified multiple times.
+   * @see http://lucene.apache.org/solr/api/org/apache/solr/handler/DisMaxRequestHandler.html
    */
   isMultiple: function (name) {
-    return name.match(/^(?:bf|bq|facet\.date|facet\.date\.other|facet\.field|facet\.query|fq|pf|qf)$/);
+    return name.match(/^(?:bf|bq|facet\.date|facet\.date\.other|facet\.date\.include|facet\.field|facet\.pivot|facet\.range|facet\.range\.other|facet\.range\.include|facet\.query|fq|group\.field|group\.func|group\.query|pf|qf)$/);
   },
 
   /**
@@ -209,18 +210,22 @@ AjaxSolr.ParameterStore = AjaxSolr.Class.extend(
    *
    * @param {String} name The name of the parameter.
    * @param {String|Number|String[]|Number[]} value The value.
+   * @param {Object} [locals] The parameter's local parameters.
    * @returns {AjaxSolr.Parameter|Boolean} The parameter, or false.
    */
-  addByValue: function (name, value) {
+  addByValue: function (name, value, locals) {
+    if (locals === undefined) {
+      locals = {};
+    }
     if (this.isMultiple(name) && AjaxSolr.isArray(value)) {
       var ret = [];
       for (var i = 0, l = value.length; i < l; i++) {
-        ret.push(this.add(name, new AjaxSolr.Parameter({ name: name, value: value[i] })));
+        ret.push(this.add(name, new AjaxSolr.Parameter({ name: name, value: value[i], locals: locals })));
       }
       return ret;
     }
     else {
-      return this.add(name, new AjaxSolr.Parameter({ name: name, value: value }))
+      return this.add(name, new AjaxSolr.Parameter({ name: name, value: value, locals: locals }));
     }
   },
 
