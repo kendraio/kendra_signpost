@@ -8,9 +8,13 @@ Drupal.service = function(endpoint, method, parameters, callback, id) {
     'type': "POST",
     'data': call,
     'success': function(data) {
-      if (typeof data !== 'object') parsed = JSON.parse(data);
-      else parsed = data;
-      callback(parsed['result'], parsed['error'], parsed['id']);
+        var parsed = {'result':null,'error':null,'id':null};
+        if (typeof data !== 'object') {
+            parsed = jQuery.extend(parsed, JSON.parse(data));
+        } else {
+            parsed = jQuery.extend(parsed, data);
+        }
+        callback(parsed['result'], parsed['error'], parsed['id']);
     }
   });
 }
