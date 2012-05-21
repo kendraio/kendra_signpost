@@ -553,6 +553,8 @@ jQuery.extend(Kendra, {
                     this.response = data;
                     Kendra.util.log(this.response, 'Kendra.service.solrQuery: got response: ' + data.response.numFound + ' records');
 
+		    Kendra.util.log(this.widgets, "Kendra.service.solrQuery: got widgets");
+
                     for (var widgetId in this.widgets) {
                         this.widgets[widgetId].afterRequest();
                     }
@@ -563,6 +565,9 @@ jQuery.extend(Kendra, {
                 id: 'kendra-search-result',
                 target: '#kendra-search-docs'
             }));
+
+	    /******
+
             Kendra.Manager.addWidget(new AjaxSolr.PagerWidget({
                 id: 'kendra-search-pager',
                 target: '#kendra-search-pager',
@@ -579,6 +584,8 @@ jQuery.extend(Kendra, {
                     $('#kendra-search-pager-header').html($('<span/>').text(text));
                 }
             }));
+
+	    ******/
 
             Kendra.Manager.init();
 
