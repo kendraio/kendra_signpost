@@ -26,7 +26,7 @@ function kendra_signpost_profile_modules() {
     'draggableviews', 'draggableviews_cck', 'number', 'auto_nodetitle', 'token', 'apachesolr', 'search', 'apachesolr_search',
 
   	// services + json backend
-  	'services', 'json_server',
+  	'services', 'jsonrpc_server',
 	// 'node_service', 'services_keyauth', 'system_service',
 
   	// jquery
