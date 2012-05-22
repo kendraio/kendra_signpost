@@ -197,8 +197,13 @@ if is_bad_request():
     sys.exit(0)
 
 try:
+    
+    #solr_host = string.split(os.environ.get("HTTP_HOST"), ':')[0]
+    solr_host = 'solr.kendra.org'
+    solr_port = 8983
+    
 	# Redirect to call update interface of local installation of Solr search
-	absolute_url = '%s://%s:%d%s' % (protocol, os.environ['HTTP_HOST'], 8983, request_uri_path)
+	absolute_url = '%s://%s:%d%s' % (protocol, solr_host, solr_port, request_uri_path)
 
 	content_type = os.environ['CONTENT_TYPE']
 	content_length = os.environ['CONTENT_LENGTH']

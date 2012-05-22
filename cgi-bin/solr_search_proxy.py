@@ -32,7 +32,10 @@ form_data = [(k, form.getlist(k)) for k in form.keys()]
 request_uri = os.environ.get("REQUEST_URI", "")
 request_uri_path = string.split(request_uri, "?")[0]
 recreated_query = string.join([make_url_fields(k, vs) for (k, vs) in form_data], "&")
-request_host = string.split(os.environ.get("HTTP_HOST"), ':')[0]
+
+#solr_host = string.split(os.environ.get("HTTP_HOST"), ':')[0]
+solr_host = 'solr.kendra.org'
+solr_port = 8983
 
 if os.environ.get('HTTPS', '') == 'on':
     # Warning: proxied HTTPS requests will not attempt to validate the server certificate!
@@ -43,7 +46,7 @@ else:
 logfile = open("/tmp/solr_search_proxy_log_%f" % time.time(), "w")
 print >> logfile, "recreated_query", recreated_query
 print >> logfile, "request_uri_path", request_uri_path
-print >> logfile, "recreated_url", '%s://%s:%d%s?%s' % (protocol, request_host, 8983,  request_uri_path, recreated_query)
+print >> logfile, "recreated_url", '%s://%s:%d%s?%s' % (protocol, solr_host, solr_port, request_uri_path, recreated_query)
 print >> logfile, "environment"
 for k in os.environ:
     print >> logfile, k, os.environ.get(k)
