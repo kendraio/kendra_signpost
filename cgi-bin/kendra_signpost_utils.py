@@ -10,9 +10,9 @@ def mangle_uri(type_prefix, uri):
     return type_prefix + string.join([ok_dict.get(x, "_%02X" % ord(x)) for x in uri], '')
 
 type_uri_to_prefix_map = {
-       "http://kendra.org.uk/#number": "fm_kendra_",
-       "http://kendra.org.uk/#datetime": "dm_kendra_",
-       "http://kendra.org.uk/#string": "sm_kendra_"
+       "http://kendra.org/#number": "fm_kendra_",
+       "http://kendra.org/#datetime": "dm_kendra_",
+       "http://kendra.org/#string": "sm_kendra_"
           }
 
 def type_uri_to_prefix(prefix):

@@ -55,15 +55,15 @@ def get_subclass_of_list():
 
 # TODO: Note: assumes that URI is valid: need sanity check here to prevent XSS attacks on SPARQL DB, or assurance this is valid at all callers
 def get_type_list():
-	query = "SELECT ?subject ?object WHERE {?subject <http://kendra.org.uk/#hasType> ?object}"
+	query = "SELECT ?subject ?object WHERE {?subject <http://kendra.org/#hasType> ?object}"
 	query_url = "%s?default-graph-uri=&query=%s&format=text%%2Frdf+n3&debug=on&timeout=" % (kendra_signpost_utils.get_sparql_endpoint_uri(), urllib.quote_plus(query))
 	return map(strip_result_fields, re.findall(r"(?s)<result>.*?</result>", urllib.urlopen(query_url).read()))
 
 def validate_typed_data_value(name, value):
     typ = name_uri_to_type_uri.get(name, None)
-    if typ == "http://kendra.org.uk/#datetime":
+    if typ == "http://kendra.org/#datetime":
        return re.findall(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:.[0-9]+)?Z$", value) != []
-    if typ == "http://kendra.org.uk/#number":
+    if typ == "http://kendra.org/#number":
        return re.findall(r"^[-+]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][-+]?[0-9]+)?$", value) != []
     # Otherwise, everything is valid by default -- will change later
     return 1
