@@ -53,7 +53,7 @@ for k in os.environ:
 logfile.close()
 
 # Redirect to call local installation of Solr search 
-absolute_url = '%s://%s:%d%s?%s' % (protocol, request_host, 8983,
+absolute_url = '%s://%s:%d%s?%s' % (protocol, solr_host, solr_port,
     request_uri_path, recreated_query)
 
 urlobject = urllib.urlopen(absolute_url)
