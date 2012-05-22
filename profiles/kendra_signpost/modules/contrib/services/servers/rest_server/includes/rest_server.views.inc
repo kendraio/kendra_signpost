@@ -52,7 +52,7 @@ class RESTServerViewBuiltIn extends RESTServerView {
   }
 
   private function render_yaml($data) {
-    include_once _rest_server_get_spyc_location();
+    module_load_include('php', 'rest_server', 'lib/spyc');
     return Spyc::YAMLDump($data, 4, 60);
   }
 

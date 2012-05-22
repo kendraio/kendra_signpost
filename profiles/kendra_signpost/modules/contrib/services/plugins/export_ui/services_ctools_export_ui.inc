@@ -19,7 +19,6 @@ $plugin = array(
         'load arguments' => array('services_ctools_export_ui'),
         'access arguments' => array('administer services'),
         'type' => MENU_LOCAL_TASK,
-        'weight' => -1,
       ),
       'server' => array(
         'path' => 'list/%ctools_export_ui/server',
@@ -29,7 +28,7 @@ $plugin = array(
         'load arguments' => array('services_ctools_export_ui'),
         'access arguments' => array('administer services'),
         'type' => MENU_LOCAL_TASK,
-        'weight' => -4,
+        'weight' => -1,
       ),
       'authentication' => array(
         'path' => 'list/%ctools_export_ui/authentication',
@@ -39,7 +38,7 @@ $plugin = array(
         'load arguments' => array('services_ctools_export_ui'),
         'access arguments' => array('administer services'),
         'type' => MENU_LOCAL_TASK,
-        'weight' => -3,
+        'weight' => -1,
       ),
     ),
   ),
@@ -201,12 +200,12 @@ function services_ctools_export_ui_form_submit(&$form, &$form_state) {
       //if module's checkbox is checked, add to empty
       $auth_module = $form_state['values']['authentication'][$module];
       if ($module === $auth_module) {
-        //If existing settings are set, preserve them
+        //If existing settings are set, persist them
         if (isset($endpoint->authentication[$module]) &&  is_array($endpoint->authentication[$module])) {
           $auth[$module] = $endpoint->authentication[$module];
         } 
         else {
-          $auth[$module] = array();
+          $auth[$module] = $auth_module;
         }
       } 
       elseif ($auth_module == 0) {
