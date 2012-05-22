@@ -336,7 +336,11 @@ function services_services_authentication_info() {
  */
 function _services_sessions_authenticate_call() {
   global $user;
-  $user = services_get_server_info('original_user');
+  $arg = func_get_args();
+  if ($arg[1]['callback'] <> '_user_resource_login') {
+    // The account should be restored to the session's user.
+    $user = services_get_server_info('original_user');
+  }
 }
 
 /**

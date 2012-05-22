@@ -104,8 +104,15 @@ function services_controller_execute($controller, $args = array(), $options = ar
   }
 
   $original_user = $user;
-  $old_state = session_save_session();
-  session_save_session(FALSE);
+  if ($controller['callback'] == '_user_resource_login') {
+    // We do not care about the old session.
+    $old_state = session_save_session();
+    session_save_session(FALSE);
+  }
+  else {
+    // Do not obliterate the user session if we're not logging in.
+    $old_state = session_save_session(FALSE);
+  }
   $user = drupal_anonymous_user();
 
   services_set_server_info('original_user', $original_user);
@@ -168,10 +175,13 @@ function services_controller_execute($controller, $args = array(), $options = ar
   $controller['__drupal_alter_by_ref'] = array(&$args, &$result);
   drupal_alter('services_request_postprocess', $controller);
 
-  if (session_save_session($user) === FALSE) {
-    $user = $original_user;
-    session_save_session($old_state);
+  if ($controller['callback'] == '_user_resource_login') {
+    // Obliterate the old user session if we have a new login.
+    session_save_session($user);
   }
+  $user = $original_user;
+  session_save_session($old_state);
+
   if ($server_info->debug) {
     watchdog('services', 'results: <pre>@results</pre>', array('@results' => print_r($result, TRUE)), WATCHDOG_DEBUG);
   }
