@@ -197,41 +197,40 @@ if is_bad_request():
     sys.exit(0)
 
 try:
-    
     #solr_host = string.split(os.environ.get("HTTP_HOST"), ':')[0]
     solr_host = 'solr.kendra.org'
     solr_port = 8983
     
-	# Redirect to call update interface of local installation of Solr search
-	absolute_url = '%s://%s:%d%s' % (protocol, solr_host, solr_port, request_uri_path)
+    # Redirect to call update interface of local installation of Solr search
+    absolute_url = '%s://%s:%d%s' % (protocol, solr_host, solr_port, request_uri_path)
 
-	content_type = os.environ['CONTENT_TYPE']
-	content_length = os.environ['CONTENT_LENGTH']
-	content = sys.stdin.read()
+    content_type = os.environ['CONTENT_TYPE']
+    content_length = os.environ['CONTENT_LENGTH']
+    content = sys.stdin.read()
 
-	print >> logfile, format_comment("indexing input data:")
-	print >> logfile, content
-	logfile.flush()
+    print >> logfile, format_comment("indexing input data:")
+    print >> logfile, content
+    logfile.flush()
 
-        content = rewrite_content(content)
+    content = rewrite_content(content)
 
-	print >> logfile, format_comment("rewritten input data:")
-	print >> logfile, content
-	logfile.flush()
+    print >> logfile, format_comment("rewritten input data:")
+    print >> logfile, content
+    logfile.flush()
 
-	request = urllib2.Request(absolute_url, content, {'Content-Type': content_type})
-	urlobject = urllib2.urlopen(request)
-	results = urlobject.read()
-	results_type = urlobject.info().gettype()
+    request = urllib2.Request(absolute_url, content, {'Content-Type': content_type})
+    urlobject = urllib2.urlopen(request)
+    results = urlobject.read()
+    results_type = urlobject.info().gettype()
 except urllib2.HTTPError, e:
-        results = repr((e.code, e.msg, e.headers.items(), e.read()))
-        results_type = "text/plain"
+    results = repr((e.code, e.msg, e.headers.items(), e.read()))
+    results_type = "text/plain"
 except:
-        exc_info = sys.exc_info()
-        tb = traceback.format_tb(exc_info[2])
-	results = "an exception happened: " + absolute_url + " " + repr(exc_info[0]) + "\n" + string.join(tb, "")
-	results_type = "text/plain"
-
+    exc_info = sys.exc_info()
+    tb = traceback.format_tb(exc_info[2])
+    results = "an exception happened: " + absolute_url + " " + repr(exc_info[0]) + "\n" + string.join(tb, "")
+    results_type = "text/plain"
+    
 print >> logfile, format_comment("indexing output data:")
 print >> logfile, results
 print >> logfile, '</log>'

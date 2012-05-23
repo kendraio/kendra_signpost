@@ -38,8 +38,11 @@ if is_bad_request():
     print "I'm sorry Dave, I can't do that:", is_bad_request()
     sys.exit(0)
 
-# Redirect to call local installation of Solr 
-absolute_url = '%s://%s:%d%s' % (protocol, os.environ['HTTP_HOST'], 8983, request_uri)
+#solr_host = string.split(os.environ.get("HTTP_HOST"), ':')[0]
+solr_host = 'solr.kendra.org'
+solr_port = 8983
+
+absolute_url = '%s://%s:%d%s' % (protocol, solr_host, solr_port, request_uri)
 
 urlobject = urllib.urlopen(absolute_url)
 results = urlobject.read()
