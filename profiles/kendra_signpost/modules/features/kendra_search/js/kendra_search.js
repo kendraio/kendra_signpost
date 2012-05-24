@@ -566,8 +566,6 @@ jQuery.extend(Kendra, {
                 target: '#kendra-search-docs'
             }));
 
-	    /******
-
             Kendra.Manager.addWidget(new AjaxSolr.PagerWidget({
                 id: 'kendra-search-pager',
                 target: '#kendra-search-pager',
@@ -584,8 +582,6 @@ jQuery.extend(Kendra, {
                     $('#kendra-search-pager-header').html($('<span/>').text(text));
                 }
             }));
-
-	    ******/
 
             Kendra.Manager.init();
 
